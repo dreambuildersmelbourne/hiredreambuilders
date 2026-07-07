@@ -316,6 +316,45 @@ export type Database = {
           },
         ]
       }
+      calendar_sync_settings: {
+        Row: {
+          created_at: string
+          feed_token: string
+          id: string
+          include_cancelled: boolean
+          include_contact_details: boolean
+          include_internal_notes: boolean
+          include_statuses: string[]
+          include_tentative: boolean
+          singleton: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          feed_token?: string
+          id?: string
+          include_cancelled?: boolean
+          include_contact_details?: boolean
+          include_internal_notes?: boolean
+          include_statuses?: string[]
+          include_tentative?: boolean
+          singleton?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          feed_token?: string
+          id?: string
+          include_cancelled?: boolean
+          include_contact_details?: boolean
+          include_internal_notes?: boolean
+          include_statuses?: string[]
+          include_tentative?: boolean
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       checklist_templates: {
         Row: {
           active: boolean
