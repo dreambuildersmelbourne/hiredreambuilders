@@ -145,7 +145,24 @@ export function calculateQuote(
     amount: fohAmount,
     detail: `${fohHours}h × $${FOH_MANAGER_RATE}/hr (min ${FOH_MANAGER_MIN_HOURS}h)`,
   });
-  const requiredStaffSubtotal = fohAmount;
+  let requiredStaffSubtotal = fohAmount;
+
+  const techHours = Math.max(hours, EXTRA_CREW_MIN_HOURS);
+  const techDetail = `${techHours}h × $${EXTRA_CREW_RATE}/hr (min ${EXTRA_CREW_MIN_HOURS}h)`;
+  const techAmount = techHours * EXTRA_CREW_RATE;
+  if (input.soundSystem) {
+    requiredStaffLines.push({ label: "Sound Operator", amount: techAmount, detail: techDetail });
+    requiredStaffSubtotal += techAmount;
+  }
+  if (input.avScreens) {
+    requiredStaffLines.push({ label: "Multimedia / AV Operator", amount: techAmount, detail: techDetail });
+    requiredStaffSubtotal += techAmount;
+  }
+  if (input.theatreLighting) {
+    requiredStaffLines.push({ label: "Lighting Operator", amount: techAmount, detail: techDetail });
+    requiredStaffSubtotal += techAmount;
+  }
+
 
   // Staff — extra crew
   const staffLines: QuoteLine[] = [];
