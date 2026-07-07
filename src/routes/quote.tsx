@@ -747,6 +747,15 @@ function RequiredStaffBlock({
         </span>
         <span>{money(total)}</span>
       </div>
+      {lines.length > 0 && (() => {
+        const perHours = lines[0].amount / 80;
+        return (
+          <div className="mt-1 text-[11px] text-muted-foreground">
+            {perHours}h × $80 × {lines.length} required staff = {money(total)}
+          </div>
+        );
+      })()}
+
       <ul className="mt-2 space-y-2">
         {lines.map((l, i) => {
           const meta = STAFF_META[l.label] ?? {
