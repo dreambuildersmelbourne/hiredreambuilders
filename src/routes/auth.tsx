@@ -1,49 +1,81 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Church, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { z } from "zod";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
+import logoAsset from "@/assets/logo-mark.jpg.asset.json";
+
+const searchSchema = z.object({
+  mode: z.enum(["signin", "signup"]).optional(),
+  email: z.string().optional(),
+  next: z.string().optional(),
+});
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Admin sign in — Dreambuilders Venue Hire" }] }),
+  head: () => ({ meta: [{ title: "Sign in — Dreambuilders Venue Hire" }] }),
+  validateSearch: (s) => searchSchema.parse(s),
   component: AuthPage,
 });
 
+async function landingFor(userId: string): Promise<"/admin" | "/account"> {
+  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const roles = (data ?? []).map((r) => r.role);
+  if (roles.includes("admin") || roles.includes("staff")) return "/admin";
+  return "/account";
+}
+
 function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [email, setEmail] = useState("");
+  const search = useSearch({ from: Route.id });
+  const [mode, setMode] = useState<"signin" | "signup">(search.mode ?? "signin");
+  const [email, setEmail] = useState(search.email ?? "");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const nextPath = search.next;
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin" });
+    supabase.auth.getSession().then(async ({ data }) => {
+      if (!data.session) return;
+      if (nextPath) return navigate({ to: nextPath });
+      const landing = await landingFor(data.session.user.id);
+      navigate({ to: landing });
     });
-  }, [navigate]);
+  }, [navigate, nextPath]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo: window.location.origin + (nextPath ?? "/account") },
         });
         if (error) throw error;
         toast.success("Account created. You are signed in.");
+        if (data.user) {
+          if (nextPath) return navigate({ to: nextPath });
+          const landing = await landingFor(data.user.id);
+          navigate({ to: landing });
+          return;
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (nextPath) return navigate({ to: nextPath });
+        if (data.user) {
+          const landing = await landingFor(data.user.id);
+          navigate({ to: landing });
+          return;
+        }
       }
-      navigate({ to: "/admin" });
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Sign in failed";
       toast.error(msg);
@@ -56,20 +88,20 @@ function AuthPage() {
     <div className="flex min-h-screen items-center justify-center bg-hero px-4 py-12">
       <div className="w-full max-w-md">
         <div className="mb-6 flex items-center gap-2.5 text-primary-foreground">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-white/15 backdrop-blur">
-            <Church className="h-5 w-5" />
+          <span className="inline-flex h-10 w-10 items-center justify-center overflow-hidden rounded-md bg-black">
+            <img src={logoAsset.url} alt="Dreambuilders" className="h-full w-full object-contain" />
           </span>
-          <span className="font-display text-lg font-semibold">Dreambuilders Admin</span>
+          <span className="font-display text-lg font-semibold">Dreambuilders Venue Hire</span>
         </div>
         <Card className="shadow-elevated">
           <CardContent className="p-6 sm:p-8">
             <h1 className="font-display text-2xl font-semibold">
-              {mode === "signin" ? "Sign in" : "Create admin account"}
+              {mode === "signin" ? "Sign in" : "Create your account"}
             </h1>
             <p className="mt-1.5 text-sm text-muted-foreground">
               {mode === "signin"
-                ? "Access the venue hire dashboard."
-                : "The first account created becomes the primary admin."}
+                ? "Access your bookings, upload documents and sign your contract."
+                : "Create an account to track your hire, upload documents and sign your contract."}
             </p>
             <form onSubmit={submit} className="mt-6 space-y-4">
               <div>

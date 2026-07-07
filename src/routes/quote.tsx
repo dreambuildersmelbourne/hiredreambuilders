@@ -249,7 +249,23 @@ function QuotePage() {
               Thank you — your booking enquiry <span className="font-semibold text-foreground">{submitted.ref}</span>{" "}
               has been sent to our hire coordinator. We'll be in touch to confirm staff availability and next steps.
             </p>
-            <p className="mt-3 text-sm text-muted-foreground">
+            <div className="mt-6 rounded-lg border border-brand/30 bg-brand/5 p-4 text-left">
+              <div className="font-display text-base font-semibold">Create an account to manage this booking</div>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Sign up with the same email ({form.email}) to upload your public liability insurance,
+                Streatrader approval and advertising material — and to sign your hire contract online.
+              </p>
+              <Button
+                asChild
+                className="mt-3"
+                size="sm"
+              >
+                <Link to="/auth" search={{ mode: "signup", email: form.email, next: "/account" }}>
+                  Create my account
+                </Link>
+              </Button>
+            </div>
+            <p className="mt-4 text-sm text-muted-foreground">
               The figures shown are a baseline estimate; final pricing is confirmed once your event
               details and staffing are reviewed.
             </p>
