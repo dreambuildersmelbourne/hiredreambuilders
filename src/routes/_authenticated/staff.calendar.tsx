@@ -339,6 +339,21 @@ function StaffCalendarPage() {
           </Card>
         </>
       )}
+
+      <RoleAssignmentModal
+        open={!!assignFor}
+        onOpenChange={(v) => !v && setAssignFor(null)}
+        booking={
+          assignFor
+            ? {
+                id: assignFor.id,
+                reference: assignFor.reference,
+                event_name: assignFor.event_name,
+                event_date: assignFor.event_date,
+              }
+            : null
+        }
+      />
     </div>
   );
 }
