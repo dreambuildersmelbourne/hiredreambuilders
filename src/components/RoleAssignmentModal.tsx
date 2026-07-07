@@ -71,7 +71,7 @@ export function RoleAssignmentModal({
         .eq("booking_id", bookingId!)
         .order("created_at");
       if (error) throw error;
-      return (data ?? []) as Array<{
+      return (data ?? []) as unknown as Array<{
         id: string;
         name: string | null;
         user_id: string | null;
