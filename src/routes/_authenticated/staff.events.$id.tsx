@@ -34,12 +34,29 @@ function StaffEventPage() {
     );
   }
 
+  const isAdmin = meQ.data?.isAdmin ?? false;
+  const staffRoleId = meQ.data?.staffRoleId ?? null;
+  const isAssigned = staffRoleId !== null;
+
+  if (!isAdmin && !isAssigned) {
+    return (
+      <div className="space-y-4">
+        <Link to="/staff" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+          <ChevronLeft className="h-4 w-4" /> Back to my events
+        </Link>
+        <div className="rounded-md border border-border bg-muted/40 p-6 text-center text-sm text-muted-foreground">
+          You aren't assigned to this event, so the checklist isn't available. Ask an admin to add you if you should be rostered on.
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <Link to="/staff" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
         <ChevronLeft className="h-4 w-4" /> Back to my events
       </Link>
-      <EventDayView bookingId={id} staffRoleId={meQ.data?.staffRoleId} isAdmin={meQ.data?.isAdmin} />
+      <EventDayView bookingId={id} staffRoleId={staffRoleId} isAdmin={isAdmin} />
     </div>
   );
 }
