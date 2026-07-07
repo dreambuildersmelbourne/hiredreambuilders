@@ -6,8 +6,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin")({
+  head: () => ({
+    meta: [
+      { title: "Admin — Dreambuilders Venue Hire" },
+      { name: "description", content: "Internal admin dashboard for Dreambuilders venue hire enquiries and bookings." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AdminLayout,
 });
+
 
 function AdminLayout() {
   const navigate = useNavigate();
