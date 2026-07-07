@@ -1,13 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Church } from "lucide-react";
+import logoAsset from "@/assets/logo.svg.asset.json";
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <Church className="h-5 w-5" />
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-brand p-1.5">
+            <img src={logoAsset.url} alt="Dreambuilders Church" className="h-full w-full object-contain [filter:brightness(0)_invert(1)]" />
           </span>
           <span className="font-display text-lg font-semibold tracking-tight">
             Dreambuilders <span className="text-muted-foreground font-normal">Venue Hire</span>
