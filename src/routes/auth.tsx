@@ -18,10 +18,28 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Dreambuilders Venue Hire" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in — Dreambuilders Venue Hire" },
+      {
+        name: "description",
+        content:
+          "Sign in or create your Dreambuilders venue hire account to manage bookings, upload documents and sign your hire contract.",
+      },
+      { property: "og:title", content: "Sign in — Dreambuilders Venue Hire" },
+      {
+        property: "og:description",
+        content: "Access your Dreambuilders venue hire account.",
+      },
+      { property: "og:url", content: "https://hiredreambuilders.lovable.app/auth" },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+    links: [{ rel: "canonical", href: "https://hiredreambuilders.lovable.app/auth" }],
+  }),
   validateSearch: (s) => searchSchema.parse(s),
   component: AuthPage,
 });
+
 
 async function landingFor(userId: string): Promise<"/admin" | "/account"> {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
