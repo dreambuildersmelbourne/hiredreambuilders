@@ -489,7 +489,9 @@ function QuotePage() {
                   <SummaryBlock title="Room hire" total={quote.roomSubtotal} lines={quote.roomLines} />
                   <SummaryBlock title="Extras" total={quote.extrasSubtotal} lines={quote.extrasLines} />
                   <SummaryBlock title="Cleaning" total={quote.cleaningSubtotal} lines={quote.cleaningLines} />
-                  <SummaryBlock title="Staff" total={quote.staffSubtotal} lines={quote.staffLines} />
+                  <RequiredStaffBlock total={quote.requiredStaffSubtotal} lines={quote.requiredStaffLines} />
+                  <SummaryBlock title="Additional staff" total={quote.staffSubtotal} lines={quote.staffLines} />
+
 
                   <Separator />
                   <Row label="Subtotal (ex bond)" value={money(quote.subtotalExBond)} bold />
