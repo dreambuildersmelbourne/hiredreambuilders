@@ -82,15 +82,17 @@ function BookingDetail() {
     );
   }
 
-  async function patch(patch: Record<string, any>, msg: string) {
-    const { error } = await supabase.from("bookings").update(patch).eq("id", id);
+  const bk = data;
+
+  async function patch(patch: Record<string, unknown>, msg: string) {
+    const { error } = await supabase.from("bookings").update(patch as never).eq("id", id);
     if (error) return toast.error(error.message);
     toast.success(msg);
     qc.invalidateQueries({ queryKey: ["admin"] });
   }
 
   async function updateStatus(v: string) {
-    await patch({ status: v as any }, "Status updated");
+    await patch({ status: v }, "Status updated");
   }
 
   async function saveNotes() {
@@ -108,14 +110,14 @@ function BookingDetail() {
     await patch({ status: "staffing_confirmed", staffing_confirmed_at: new Date().toISOString() }, "Staffing confirmed");
   }
   async function markDepositPaid() {
-    const amt = Number(data.deposit_amount);
+    const amt = Number(bk.deposit_amount);
     const { error } = await supabase.from("payments").insert({ booking_id: id, kind: "deposit", amount: amt, paid_at: new Date().toISOString() });
     if (error) return toast.error(error.message);
     await patch({ status: "deposit_paid", deposit_paid_at: new Date().toISOString() }, "Deposit marked paid");
   }
   async function markBalancePaid() {
-    const discount = Number(data.discount_amount ?? 0);
-    const balance = Number(data.total_amount) - discount - Number(data.deposit_amount);
+    const discount = Number(bk.discount_amount ?? 0);
+    const balance = Number(bk.total_amount) - discount - Number(bk.deposit_amount);
     const { error } = await supabase.from("payments").insert({ booking_id: id, kind: "balance", amount: balance, paid_at: new Date().toISOString() });
     if (error) return toast.error(error.message);
     await patch({ status: "confirmed", balance_paid_at: new Date().toISOString() }, "Balance marked paid");
