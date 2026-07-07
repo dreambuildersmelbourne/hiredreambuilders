@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
-import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Info as InfoIcon, Loader2, ShieldCheck } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { QuoteRoomPicker, type RichRoom } from "@/components/QuoteRoomPicker";
@@ -16,6 +16,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const FOH_TOOLTIP =
+  "The Hire Front of House Manager is your required Dreambuilders contact on the day of your hire. They open and close the building, help manage access to hired rooms, monitor venue use, support basic facility needs, and act as the single point of contact for any on-site questions or issues during your event.";
+
 
 export const Route = createFileRoute("/quote")({
   validateSearch: (s: Record<string, unknown>) => ({
