@@ -21,9 +21,11 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_authenticated/admin.rooms.index'
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
+import { Route as AuthenticatedAdminRoomsIdMediaRouteImport } from './routes/_authenticated/admin.rooms.$id.media'
 
 const QuoteRoute = QuoteRouteImport.update({
   id: '/quote',
@@ -85,6 +87,12 @@ const AuthenticatedAccountIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const AuthenticatedAdminRoomsIndexRoute =
+  AuthenticatedAdminRoomsIndexRouteImport.update({
+    id: '/rooms/',
+    path: '/rooms/',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedStaffEventsIdRoute =
   AuthenticatedStaffEventsIdRouteImport.update({
     id: '/events/$id',
@@ -103,6 +111,12 @@ const AuthenticatedAccountBookingsIdRoute =
     path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const AuthenticatedAdminRoomsIdMediaRoute =
+  AuthenticatedAdminRoomsIdMediaRouteImport.update({
+    id: '/rooms/$id/media',
+    path: '/rooms/$id/media',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -119,6 +133,8 @@ export interface FileRoutesByFullPath {
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
+  '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -132,6 +148,8 @@ export interface FileRoutesByTo {
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/admin/rooms': typeof AuthenticatedAdminRoomsIndexRoute
+  '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -150,6 +168,8 @@ export interface FileRoutesById {
   '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/_authenticated/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
+  '/_authenticated/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -168,6 +188,8 @@ export interface FileRouteTypes {
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
     | '/staff/events/$id'
+    | '/admin/rooms/'
+    | '/admin/rooms/$id/media'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -181,6 +203,8 @@ export interface FileRouteTypes {
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
     | '/staff/events/$id'
+    | '/admin/rooms'
+    | '/admin/rooms/$id/media'
   id:
     | '__root__'
     | '/'
@@ -198,6 +222,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account/bookings/$id'
     | '/_authenticated/admin/bookings/$id'
     | '/_authenticated/staff/events/$id'
+    | '/_authenticated/admin/rooms/'
+    | '/_authenticated/admin/rooms/$id/media'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -295,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/_authenticated/admin/rooms/': {
+      id: '/_authenticated/admin/rooms/'
+      path: '/rooms'
+      fullPath: '/admin/rooms/'
+      preLoaderRoute: typeof AuthenticatedAdminRoomsIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/staff/events/$id': {
       id: '/_authenticated/staff/events/$id'
       path: '/events/$id'
@@ -316,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/_authenticated/admin/rooms/$id/media': {
+      id: '/_authenticated/admin/rooms/$id/media'
+      path: '/rooms/$id/media'
+      fullPath: '/admin/rooms/$id/media'
+      preLoaderRoute: typeof AuthenticatedAdminRoomsIdMediaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -335,11 +375,15 @@ const AuthenticatedAccountRouteWithChildren =
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
+  AuthenticatedAdminRoomsIndexRoute: typeof AuthenticatedAdminRoomsIndexRoute
+  AuthenticatedAdminRoomsIdMediaRoute: typeof AuthenticatedAdminRoomsIdMediaRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
+  AuthenticatedAdminRoomsIndexRoute: AuthenticatedAdminRoomsIndexRoute,
+  AuthenticatedAdminRoomsIdMediaRoute: AuthenticatedAdminRoomsIdMediaRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
