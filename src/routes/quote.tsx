@@ -308,6 +308,13 @@ function QuotePage() {
           </p>
         </div>
 
+        {inspectionRequested && (
+          <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+            <strong className="font-medium">Booking an inspection?</strong> Fill in your details below
+            and mention preferred inspection times in the notes — we'll be in touch to schedule a walk-through.
+          </div>
+        )}
+
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           {/* FORM */}
           <div className="space-y-6">
