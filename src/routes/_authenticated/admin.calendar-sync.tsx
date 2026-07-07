@@ -76,8 +76,16 @@ function CalendarSyncPage() {
     [feedUrl],
   );
 
+  type SyncPatch = {
+    include_statuses?: string[];
+    include_tentative?: boolean;
+    include_cancelled?: boolean;
+    include_contact_details?: boolean;
+    include_internal_notes?: boolean;
+    feed_token?: string;
+  };
   const savePatch = useMutation({
-    mutationFn: async (patch: Partial<NonNullable<typeof settings>>) => {
+    mutationFn: async (patch: SyncPatch) => {
       if (!settings) return;
       setSaving(true);
       const { error } = await supabase
