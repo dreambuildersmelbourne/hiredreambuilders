@@ -364,12 +364,16 @@ function EventRow({
   myRole,
   onOpen,
   showDate,
+  isAdmin,
+  onAssign,
 }: {
   b: StaffBooking;
   assigned: boolean;
   myRole: string | null;
   onOpen: () => void;
   showDate?: boolean;
+  isAdmin?: boolean;
+  onAssign?: () => void;
 }) {
   const cs = calendarStatusFor(b.status, b.tentative_hold_requested);
   const meta = CALENDAR_STATUS_META[cs];
