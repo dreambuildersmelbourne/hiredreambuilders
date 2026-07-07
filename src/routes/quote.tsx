@@ -49,6 +49,9 @@ const enquirySchema = z.object({
 
 function QuotePage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const initialRoomIds = search.rooms ? search.rooms.split(",").filter(Boolean) : [];
+  const inspectionRequested = !!search.inspection;
   const roomsQuery = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
