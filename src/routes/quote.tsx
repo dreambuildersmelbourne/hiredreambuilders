@@ -591,6 +591,27 @@ function QuotePage() {
                     </span>
                   </div>
                 </div>
+                <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-3">
+                  <label className="flex items-start gap-2.5 text-sm">
+                    <Checkbox
+                      className="mt-0.5"
+                      checked={form.tentativeHold}
+                      onCheckedChange={(v) => setForm({ ...form, tentativeHold: !!v })}
+                    />
+                    <span>
+                      <span className="font-medium text-amber-900">
+                        Would you like us to tentatively hold this date while your booking is reviewed?
+                      </span>
+                      {form.tentativeHold && (
+                        <span className="mt-1.5 block text-[11px] leading-relaxed text-amber-900/80">
+                          This booking is tentative and subject to Dreambuilders approval, staffing availability,
+                          document checks, and deposit payment.
+                        </span>
+                      )}
+                    </span>
+                  </label>
+                </div>
+
 
                 <Button
                   className="mt-6 w-full"
