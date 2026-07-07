@@ -39,7 +39,10 @@ function AdminLayout() {
     navigate({ to: "/auth" });
   }
 
-  const navItems = [{ to: "/admin", label: "Enquiries", exact: true }];
+  const navItems = [
+    { to: "/admin", label: "Enquiries", exact: true },
+    { to: "/staff", label: "Staff portal", exact: false },
+  ];
 
   if (roleQ.isLoading || roleQ.data === false) {
     return (
