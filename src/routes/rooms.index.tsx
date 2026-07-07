@@ -43,10 +43,14 @@ export const Route = createFileRoute("/rooms/")({
         property: "og:description",
         content: "Every space available for hire, with capacity, pricing and photos.",
       },
+      { property: "og:url", content: "https://hiredreambuilders.lovable.app/rooms" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://hiredreambuilders.lovable.app/rooms" }],
   }),
   component: RoomsIndex,
 });
+
 
 type Room = {
   id: string;
