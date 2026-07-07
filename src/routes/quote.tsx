@@ -17,6 +17,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/quote")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    rooms: typeof s.rooms === "string" ? s.rooms : undefined,
+    inspection: s.inspection === "1" || s.inspection === true ? true : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Get a Quote — Dreambuilders Venue Hire" },
@@ -45,6 +49,9 @@ const enquirySchema = z.object({
 
 function QuotePage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
+  const initialRoomIds = search.rooms ? search.rooms.split(",").filter(Boolean) : [];
+  const inspectionRequested = !!search.inspection;
   const roomsQuery = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
@@ -64,7 +71,7 @@ function QuotePage() {
     bump_in: "09:00",
     bump_out: "13:00",
     attendance: "" as string,
-    selectedRoomIds: [] as string[],
+    selectedRoomIds: initialRoomIds as string[],
     kitchen: false,
     foodServed: false,
     soundSystem: false,
@@ -300,6 +307,13 @@ function QuotePage() {
             you're happy — no obligation.
           </p>
         </div>
+
+        {inspectionRequested && (
+          <div className="mt-6 rounded-lg border border-primary/30 bg-primary/5 p-4 text-sm">
+            <strong className="font-medium">Booking an inspection?</strong> Fill in your details below
+            and mention preferred inspection times in the notes — we'll be in touch to schedule a walk-through.
+          </div>
+        )}
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
           {/* FORM */}

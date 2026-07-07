@@ -647,54 +647,125 @@ export type Database = {
           },
         ]
       }
+      room_media: {
+        Row: {
+          caption: string | null
+          created_at: string
+          display_order: number
+          id: string
+          is_featured: boolean
+          is_public: boolean
+          media_type: string
+          media_url: string
+          room_id: string
+          storage_path: string | null
+          thumbnail_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          is_public?: boolean
+          media_type: string
+          media_url: string
+          room_id: string
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          is_featured?: boolean
+          is_public?: boolean
+          media_type?: string
+          media_url?: string
+          room_id?: string
+          storage_path?: string | null
+          thumbnail_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_media_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           active: boolean
+          best_for: string[]
           bond: number
           capacity: number | null
           created_at: string
           description: string | null
+          hero_url: string | null
           hourly_rate: number
           id: string
+          included_equipment: string[]
           includes_cleaning: boolean
           includes_staff: boolean
           min_hours: number
           name: string
+          optional_extras: string[]
           slug: string
           sort_order: number
+          summary: string | null
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           active?: boolean
+          best_for?: string[]
           bond?: number
           capacity?: number | null
           created_at?: string
           description?: string | null
+          hero_url?: string | null
           hourly_rate: number
           id?: string
+          included_equipment?: string[]
           includes_cleaning?: boolean
           includes_staff?: boolean
           min_hours?: number
           name: string
+          optional_extras?: string[]
           slug: string
           sort_order?: number
+          summary?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           active?: boolean
+          best_for?: string[]
           bond?: number
           capacity?: number | null
           created_at?: string
           description?: string | null
+          hero_url?: string | null
           hourly_rate?: number
           id?: string
+          included_equipment?: string[]
           includes_cleaning?: boolean
           includes_staff?: boolean
           min_hours?: number
           name?: string
+          optional_extras?: string[]
           slug?: string
           sort_order?: number
+          summary?: string | null
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: []
       }
