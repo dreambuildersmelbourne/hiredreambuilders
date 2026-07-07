@@ -202,7 +202,7 @@ function QuotePage() {
           room_subtotal: quote.roomSubtotal,
           extras_subtotal: quote.extrasSubtotal,
           cleaning_subtotal: quote.cleaningSubtotal,
-          staff_subtotal: quote.staffSubtotal,
+          staff_subtotal: quote.requiredStaffSubtotal + quote.staffSubtotal,
           bond: quote.bond,
           subtotal_ex_bond: quote.subtotalExBond,
           deposit_amount: quote.depositAmount,
