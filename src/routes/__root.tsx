@@ -84,12 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content:
           "Hire the Main Auditorium, Function Rooms or Lounge at Dreambuilders Church in Hoppers Crossing. Get an instant quote and submit your booking enquiry.",
       },
-      { property: "og:title", content: "Dreambuilders Church — Venue Hire" },
-      {
-        property: "og:description",
-        content:
-          "Instant quotes for the Main Auditorium, Function Rooms, Lounge and Kitchen. Beautiful spaces for conferences, concerts, workshops and celebrations.",
-      },
+      { property: "og:site_name", content: "Dreambuilders Venue Hire" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -110,12 +105,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Dreambuilders Venue Hire",
+          url: "https://hiredreambuilders.lovable.app",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
+
 
 function RootShell({ children }: { children: ReactNode }) {
   return (

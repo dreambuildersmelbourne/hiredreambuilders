@@ -40,20 +40,56 @@ export const Route = createFileRoute("/rooms/$slug")({
       </div>
     </div>
   ),
-  head: ({ loaderData }) => {
+  head: ({ loaderData, params }) => {
     const r: any = loaderData;
     const title = r ? `${r.name} — Dreambuilders Venue Hire` : "Room";
     const desc = r?.summary || r?.description || "Room at Dreambuilders Church available for hire.";
+    const url = `https://hiredreambuilders.lovable.app/rooms/${params.slug}`;
     return {
       meta: [
         { title },
         { name: "description", content: desc },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "product" },
         ...(r?.hero_url ? [{ property: "og:image", content: r.hero_url }] : []),
       ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: r
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Product",
+                name: r.name,
+                description: desc,
+                url,
+                ...(r.hero_url ? { image: r.hero_url } : {}),
+                ...(r.capacity
+                  ? { additionalProperty: [{ "@type": "PropertyValue", name: "Capacity", value: r.capacity }] }
+                  : {}),
+                offers: r.hourly_rate
+                  ? {
+                      "@type": "Offer",
+                      price: r.hourly_rate,
+                      priceCurrency: "AUD",
+                      priceSpecification: {
+                        "@type": "UnitPriceSpecification",
+                        price: r.hourly_rate,
+                        priceCurrency: "AUD",
+                        unitCode: "HUR",
+                      },
+                    }
+                  : undefined,
+              }),
+            },
+          ]
+        : [],
     };
   },
+
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("rooms")

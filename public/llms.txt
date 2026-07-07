@@ -1,0 +1,17 @@
+# Dreambuilders Church — Venue Hire
+
+> Hire the Main Auditorium, Function Rooms, Lounge, Foyer and Kitchen at Dreambuilders Church in Hoppers Crossing, Melbourne. Instant online quotes and booking enquiries for conferences, concerts, workshops, weddings and celebrations.
+
+Dreambuilders is a church venue in Hoppers Crossing, Victoria offering hire of a 250-seat main auditorium (expandable to ~600), two function rooms, a lounge, foyer and commercial kitchen. Customers can browse each space, generate a baseline quote, and submit a booking enquiry online.
+
+## Pages
+
+- [Home](/): Overview of Dreambuilders venue hire, spaces, pricing and contact.
+- [Rooms & Spaces](/rooms): Browse every hireable space with photos, capacity, pricing and included equipment.
+- [Main Auditorium](/rooms/main-auditorium): 250-seat theatre (up to ~600 expanded) with sound, lighting and projection.
+- [Function Room 2](/rooms/function-room-2): Mid-sized function room for workshops and meetings up to ~80 guests.
+- [Function Room 3](/rooms/function-room-3): Smaller function space for meetings and classes up to ~60 guests.
+- [Lounge](/rooms/lounge): Intimate 16–30 guest lounge with kitchenette.
+- [Foyer](/rooms/foyer): Welcoming foyer for receptions and registration.
+- [Kitchen](/rooms/kitchen): Commercial kitchen hired alongside another room.
+- [Get a Quote](/quote): Instant baseline quote and booking enquiry form.

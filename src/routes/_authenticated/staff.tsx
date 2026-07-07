@@ -6,8 +6,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/staff")({
+  head: () => ({
+    meta: [
+      { title: "Staff portal — Dreambuilders Venue Hire" },
+      { name: "description", content: "Event-day operations portal for Dreambuilders venue staff and operators." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: StaffLayout,
 });
+
 
 function StaffLayout() {
   const navigate = useNavigate();
