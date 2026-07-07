@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
+  Calendar,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -12,8 +13,12 @@ import {
   MessageSquare,
   Paperclip,
   Phone,
+  ShieldAlert,
+  Sparkles,
   StickyNote,
+  Trash2,
   UserCheck,
+  UserPlus,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
