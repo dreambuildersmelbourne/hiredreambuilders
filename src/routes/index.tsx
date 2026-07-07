@@ -3,8 +3,47 @@ import { ArrowRight, CheckCircle2, Clock3, MapPin, Sparkles, Users } from "lucid
 import { SiteHeader } from "@/components/SiteHeader";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Dreambuilders Venue Hire — Auditorium, Function Rooms & Lounge" },
+      {
+        name: "description",
+        content:
+          "Hire the 250-seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online quotes.",
+      },
+      { property: "og:title", content: "Dreambuilders Venue Hire — Hoppers Crossing" },
+      {
+        property: "og:description",
+        content:
+          "Beautiful spaces for conferences, concerts, workshops and celebrations. Get an instant baseline quote and submit your booking enquiry online.",
+      },
+      { property: "og:url", content: "https://hiredreambuilders.lovable.app/" },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: "https://hiredreambuilders.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "Dreambuilders Church — Venue Hire",
+          url: "https://hiredreambuilders.lovable.app",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Hoppers Crossing",
+            addressRegion: "VIC",
+            addressCountry: "AU",
+          },
+          priceRange: "$$",
+          areaServed: "Melbourne",
+        }),
+      },
+    ],
+  }),
   component: Landing,
 });
+
 
 const rooms = [
   {
