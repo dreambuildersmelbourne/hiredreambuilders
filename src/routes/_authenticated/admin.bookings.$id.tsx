@@ -166,7 +166,31 @@ function BookingDetail() {
             {format(new Date(data.event_date), "EEEE d MMMM yyyy")} · {data.bump_in_time?.slice(0, 5)}–
             {data.bump_out_time?.slice(0, 5)} · {data.hours}h
           </p>
-          <Badge variant="outline" className={`mt-2 ${s.className}`}>{s.label}</Badge>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <Badge variant="outline" className={s.className}>{s.label}</Badge>
+            {data.tentative_hold_requested && (
+              <Badge variant="outline" className="border-amber-300 bg-amber-100 text-amber-900">
+                Tentative hold requested
+              </Badge>
+            )}
+          </div>
+          {data.tentative_hold_requested && data.status === "enquiry" && (
+            <div className="mt-3 flex flex-wrap items-center gap-2 rounded-md border border-amber-300 bg-amber-50 p-2.5 text-xs text-amber-900">
+              <span>
+                Customer requested a tentative date hold — subject to approval, staffing, documents and deposit.
+              </span>
+              <label className="ml-auto inline-flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  checked={!!data.staff_can_view_tentative}
+                  onChange={async (e) => {
+                    await patch({ staff_can_view_tentative: e.target.checked }, "Staff visibility updated");
+                  }}
+                />
+                Visible to staff (read-only)
+              </label>
+            </div>
+          )}
         </div>
         <div className="min-w-[220px]">
           <label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Status</label>

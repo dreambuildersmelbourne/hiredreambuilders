@@ -52,7 +52,10 @@ function StaffLayout() {
     );
   }
 
-  const navItems = [{ to: "/staff", label: "My events", exact: true }];
+  const navItems = [
+    { to: "/staff", label: "My events", exact: true },
+    { to: "/staff/calendar", label: "Calendar", exact: false },
+  ];
 
   return (
     <div className="min-h-screen bg-muted/40">

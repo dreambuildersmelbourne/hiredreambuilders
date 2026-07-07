@@ -101,9 +101,10 @@ function QuotePage() {
     email: "",
     phone: "",
     notes: "",
+    tentativeHold: false,
   });
   const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState<null | { ref: string }>(null);
+  const [submitted, setSubmitted] = useState<null | { ref: string; tentative: boolean }>(null);
 
   const rooms = roomsQuery.data ?? [];
   const nonKitchenRooms = useMemo(
@@ -237,6 +238,7 @@ function QuotePage() {
           deposit_amount: quote.depositAmount,
           total_amount: quote.totalAmount,
           status: "enquiry",
+          tentative_hold_requested: form.tentativeHold,
         })
         .select("id, reference")
         .single();
@@ -267,7 +269,7 @@ function QuotePage() {
         if (error) throw error;
       }
 
-      setSubmitted({ ref: booking.reference });
+      setSubmitted({ ref: booking.reference, tentative: form.tentativeHold });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
@@ -291,6 +293,15 @@ function QuotePage() {
               Thank you — your booking enquiry <span className="font-semibold text-foreground">{submitted.ref}</span>{" "}
               has been sent to our hire coordinator. We'll be in touch to confirm staff availability and next steps.
             </p>
+            {submitted.tentative && (
+              <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-4 text-left">
+                <div className="text-sm font-semibold text-amber-900">Tentative hold requested</div>
+                <p className="mt-1 text-xs leading-relaxed text-amber-900/80">
+                  This booking is tentative and subject to Dreambuilders approval, staffing availability,
+                  document checks, and deposit payment.
+                </p>
+              </div>
+            )}
             <div className="mt-6 rounded-lg border border-brand/30 bg-brand/5 p-4 text-left">
               <div className="font-display text-base font-semibold">Create an account to manage this booking</div>
               <p className="mt-1 text-sm text-muted-foreground">
@@ -589,6 +600,27 @@ function QuotePage() {
                     </span>
                   </div>
                 </div>
+                <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-3">
+                  <label className="flex items-start gap-2.5 text-sm">
+                    <Checkbox
+                      className="mt-0.5"
+                      checked={form.tentativeHold}
+                      onCheckedChange={(v) => setForm({ ...form, tentativeHold: !!v })}
+                    />
+                    <span>
+                      <span className="font-medium text-amber-900">
+                        Would you like us to tentatively hold this date while your booking is reviewed?
+                      </span>
+                      {form.tentativeHold && (
+                        <span className="mt-1.5 block text-[11px] leading-relaxed text-amber-900/80">
+                          This booking is tentative and subject to Dreambuilders approval, staffing availability,
+                          document checks, and deposit payment.
+                        </span>
+                      )}
+                    </span>
+                  </label>
+                </div>
+
 
                 <Button
                   className="mt-6 w-full"

@@ -204,10 +204,12 @@ export type Database = {
           seating_changes: boolean
           security_required: boolean
           sound_system: boolean
+          staff_can_view_tentative: boolean
           staff_subtotal: number
           staffing_confirmed_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond: number
+          tentative_hold_requested: boolean
           theatre_lighting: boolean
           total_amount: number
           updated_at: string
@@ -248,10 +250,12 @@ export type Database = {
           seating_changes?: boolean
           security_required?: boolean
           sound_system?: boolean
+          staff_can_view_tentative?: boolean
           staff_subtotal?: number
           staffing_confirmed_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond?: number
+          tentative_hold_requested?: boolean
           theatre_lighting?: boolean
           total_amount?: number
           updated_at?: string
@@ -292,10 +296,12 @@ export type Database = {
           seating_changes?: boolean
           security_required?: boolean
           sound_system?: boolean
+          staff_can_view_tentative?: boolean
           staff_subtotal?: number
           staffing_confirmed_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond?: number
+          tentative_hold_requested?: boolean
           theatre_lighting?: boolean
           total_amount?: number
           updated_at?: string
