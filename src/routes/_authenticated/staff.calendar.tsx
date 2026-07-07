@@ -27,7 +27,8 @@ type Assignment = {
   staff_roles?: { name: string | null } | null;
 };
 
-type StaffBooking = CalendarBooking & {
+type StaffBooking = Omit<CalendarBooking, "booking_rooms"> & {
+  booking_rooms?: Array<{ rooms?: { id?: string | null; name?: string | null } | null }> | null;
   booking_staff?: Array<{
     quantity: number | null;
     staff_roles?: { id: string; name: string | null; slug: string | null } | null;
