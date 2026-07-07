@@ -13,7 +13,7 @@ import {
   MessageSquare,
   Paperclip,
   Phone,
-  ShieldAlert,
+  ShieldCheck,
   Sparkles,
   StickyNote,
   Trash2,
