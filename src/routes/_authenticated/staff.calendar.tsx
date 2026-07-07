@@ -30,7 +30,7 @@ type Assignment = {
 type StaffBooking = Omit<CalendarBooking, "booking_rooms"> & {
   booking_rooms?: Array<{ rooms?: { id?: string | null; name?: string | null } | null }> | null;
   booking_staff?: Array<{
-    quantity: number | null;
+    count: number | null;
     staff_roles?: { id: string; name: string | null; slug: string | null } | null;
   }> | null;
   staff_assignments?: Array<{
@@ -77,7 +77,7 @@ function StaffCalendarPage() {
         supabase
           .from("bookings")
           .select(
-            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(id, name)), booking_staff(quantity, staff_roles(id, name, slug)), staff_assignments(user_id, staff_roles(name))",
+            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(id, name)), booking_staff(count, staff_roles(id, name, slug)), staff_assignments(user_id, staff_roles(name))",
           )
           .order("event_date", { ascending: true }),
         uid
@@ -346,7 +346,7 @@ function EventRow({
   const meta = CALENDAR_STATUS_META[cs];
   const rooms = (b.booking_rooms ?? []).map((r) => r.rooms?.name).filter(Boolean).join(", ");
   const requiredRoles = (b.booking_staff ?? [])
-    .map((s) => `${s.staff_roles?.name ?? ""}${(s.quantity ?? 1) > 1 ? ` ×${s.quantity}` : ""}`)
+    .map((s) => `${s.staff_roles?.name ?? ""}${(s.count ?? 1) > 1 ? ` ×${s.count}` : ""}`)
     .filter(Boolean);
 
   return (

@@ -55,7 +55,7 @@ export function RoleAssignmentModal({
       if (error) throw error;
       return (data ?? []) as Array<{
         id: string;
-        quantity: number | null;
+        count: number | null;
         staff_roles: StaffRole | null;
       }>;
     },
@@ -85,7 +85,7 @@ export function RoleAssignmentModal({
   const requiredByRole = useMemo(() => {
     const m = new Map<string, number>();
     for (const r of requiredQ.data ?? []) {
-      if (r.staff_roles?.id) m.set(r.staff_roles.id, (m.get(r.staff_roles.id) ?? 0) + (r.quantity ?? 1));
+      if (r.staff_roles?.id) m.set(r.staff_roles.id, (m.get(r.staff_roles.id) ?? 0) + (r.count ?? 1));
     }
     return m;
   }, [requiredQ.data]);
@@ -177,7 +177,7 @@ export function RoleAssignmentModal({
               ) : (
                 <div className="flex flex-wrap gap-2">
                   {required.map((r) => {
-                    const need = r.quantity ?? 1;
+                    const need = r.count ?? 1;
                     const have = r.staff_roles ? assignedByRole.get(r.staff_roles.id) ?? 0 : 0;
                     const complete = have >= need;
                     return (
