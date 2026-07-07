@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /staff
+Disallow: /account
+Disallow: /auth
+
+Sitemap: https://hiredreambuilders.lovable.app/sitemap.xml
