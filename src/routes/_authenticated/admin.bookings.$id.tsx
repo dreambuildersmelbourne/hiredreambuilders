@@ -276,7 +276,63 @@ function BookingDetail() {
             </CardContent>
           </Card>
 
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+                <h2 className="font-display text-lg font-semibold">Required staff</h2>
+              </div>
+              <div className="mt-3 rounded-lg border border-primary/25 bg-primary/5 p-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <div>
+                    <div className="font-medium">Hire Front of House Manager</div>
+                    <div className="text-xs text-muted-foreground">
+                      Auto-assigned to every hire · required on-site contact
+                    </div>
+                  </div>
+                  <div className="text-sm">
+                    <span className="font-semibold">{money(fohAmount)}</span>
+                    <span className="ml-1 text-muted-foreground">
+                      · {fohHours}h × $80/hr (min 4h)
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+                  <div>
+                    <div className="uppercase tracking-wider text-muted-foreground">Hire access</div>
+                    <div className="mt-0.5 text-sm">
+                      {bk.bump_in_time?.slice(0, 5)}–{bk.bump_out_time?.slice(0, 5)} · {bk.hours}h
+                    </div>
+                  </div>
+                  <div>
+                    <div className="uppercase tracking-wider text-muted-foreground">Key contact</div>
+                    <div className="mt-0.5 text-sm">
+                      {c?.contact_name}
+                      {c?.phone ? <span className="text-muted-foreground"> · {c.phone}</span> : null}
+                    </div>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <div className="uppercase tracking-wider text-muted-foreground">Rooms hired</div>
+                    <div className="mt-0.5 text-sm">
+                      {(bk.booking_rooms ?? [])
+                        .map((br: any) => br.rooms?.name)
+                        .filter(Boolean)
+                        .join(", ") || "—"}
+                    </div>
+                  </div>
+                  {bk.notes && (
+                    <div className="sm:col-span-2">
+                      <div className="uppercase tracking-wider text-muted-foreground">Event day notes</div>
+                      <div className="mt-0.5 whitespace-pre-wrap text-sm">{bk.notes}</div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Documents */}
+
           <Card>
             <CardContent className="p-6">
               <h2 className="font-display text-lg font-semibold">Customer documents</h2>
