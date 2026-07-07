@@ -238,6 +238,7 @@ function QuotePage() {
           deposit_amount: quote.depositAmount,
           total_amount: quote.totalAmount,
           status: "enquiry",
+          tentative_hold_requested: form.tentativeHold,
         })
         .select("id, reference")
         .single();
