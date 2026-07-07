@@ -49,6 +49,19 @@ function StaffCalendarPage() {
   const [when, setWhen] = useState<When>("any");
   const [roomId, setRoomId] = useState<string>("all");
   const [staffRoleId, setStaffRoleId] = useState<string>("all");
+  const [assignFor, setAssignFor] = useState<StaffBooking | null>(null);
+
+  const isAdminQ = useQuery({
+    queryKey: ["me", "isAdmin"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return false;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      return (data ?? []).some((r) => r.role === "admin");
+    },
+  });
+  const isAdmin = !!isAdminQ.data;
 
   const roomsQ = useQuery({
     queryKey: ["rooms", "list"],
