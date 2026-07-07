@@ -77,7 +77,7 @@ function CalendarSyncPage() {
   );
 
   const savePatch = useMutation({
-    mutationFn: async (patch: Record<string, unknown>) => {
+    mutationFn: async (patch: Partial<NonNullable<typeof settings>>) => {
       if (!settings) return;
       setSaving(true);
       const { error } = await supabase

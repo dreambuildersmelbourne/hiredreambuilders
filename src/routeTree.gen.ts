@@ -23,6 +23,7 @@ import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
 import { Route as AuthenticatedStaffCalendarRouteImport } from './routes/_authenticated/staff.calendar'
+import { Route as AuthenticatedAdminCalendarSyncRouteImport } from './routes/_authenticated/admin.calendar-sync'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_authenticated/admin.rooms.index'
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
@@ -102,6 +103,12 @@ const AuthenticatedStaffCalendarRoute =
     path: '/calendar',
     getParentRoute: () => AuthenticatedStaffRoute,
   } as any)
+const AuthenticatedAdminCalendarSyncRoute =
+  AuthenticatedAdminCalendarSyncRouteImport.update({
+    id: '/calendar-sync',
+    path: '/calendar-sync',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCalendarRoute =
   AuthenticatedAdminCalendarRouteImport.update({
     id: '/calendar',
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms': typeof RoomsIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/_authenticated/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/_authenticated/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms/'
     | '/admin/calendar'
+    | '/admin/calendar-sync'
     | '/staff/calendar'
     | '/account/'
     | '/admin/'
@@ -242,6 +253,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms'
     | '/admin/calendar'
+    | '/admin/calendar-sync'
     | '/staff/calendar'
     | '/account'
     | '/admin'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms/'
     | '/_authenticated/admin/calendar'
+    | '/_authenticated/admin/calendar-sync'
     | '/_authenticated/staff/calendar'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
@@ -388,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStaffCalendarRouteImport
       parentRoute: typeof AuthenticatedStaffRoute
     }
+    '/_authenticated/admin/calendar-sync': {
+      id: '/_authenticated/admin/calendar-sync'
+      path: '/calendar-sync'
+      fullPath: '/admin/calendar-sync'
+      preLoaderRoute: typeof AuthenticatedAdminCalendarSyncRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/calendar': {
       id: '/_authenticated/admin/calendar'
       path: '/calendar'
@@ -455,6 +475,7 @@ const AuthenticatedAccountRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
+  AuthenticatedAdminCalendarSyncRoute: typeof AuthenticatedAdminCalendarSyncRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
   AuthenticatedAdminRoomsIndexRoute: typeof AuthenticatedAdminRoomsIndexRoute
@@ -463,6 +484,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCalendarRoute: AuthenticatedAdminCalendarRoute,
+  AuthenticatedAdminCalendarSyncRoute: AuthenticatedAdminCalendarSyncRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
   AuthenticatedAdminRoomsIndexRoute: AuthenticatedAdminRoomsIndexRoute,
