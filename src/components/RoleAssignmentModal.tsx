@@ -50,7 +50,7 @@ export function RoleAssignmentModal({
     queryFn: async () => {
       const { data, error } = await supabase
         .from("booking_staff")
-        .select("id, quantity, staff_roles(id, name, slug)")
+        .select("id, count, staff_roles(id, name, slug)")
         .eq("booking_id", bookingId!);
       if (error) throw error;
       return (data ?? []) as Array<{
