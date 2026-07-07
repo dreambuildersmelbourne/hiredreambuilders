@@ -634,3 +634,54 @@ function SummaryBlock({
     </div>
   );
 }
+
+function RequiredStaffBlock({
+  total,
+  lines,
+}: {
+  total: number;
+  lines: { label: string; amount: number; detail?: string }[];
+}) {
+  const foh = lines[0];
+  return (
+    <div className="rounded-lg border border-primary/25 bg-primary/5 p-3">
+      <div className="flex items-baseline justify-between font-medium">
+        <span className="inline-flex items-center gap-1.5">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          Required staff
+        </span>
+        <span>{money(total)}</span>
+      </div>
+      {foh && (
+        <div className="mt-2 flex items-start justify-between gap-3 text-xs">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+              {foh.label}
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="About the Hire Front of House Manager"
+                      className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+                    >
+                      <InfoIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs leading-relaxed">
+                    {FOH_TOOLTIP}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="text-muted-foreground">Required on-site contact for your event</div>
+            {foh.detail && <div className="mt-0.5 text-muted-foreground opacity-80">{foh.detail}</div>}
+            <div className="mt-1 text-[11px] uppercase tracking-wider text-primary/80">Included — cannot be removed</div>
+          </div>
+          <span className="whitespace-nowrap text-sm">{money(foh.amount)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
