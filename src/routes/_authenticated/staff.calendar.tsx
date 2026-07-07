@@ -282,7 +282,7 @@ function StaffCalendarPage() {
                       b={b}
                       assigned={q.data?.assignedIds.has(b.id) ?? false}
                       myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                      onOpen={() => go(b)}
+                      onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     />
                   ))
                 )}
@@ -304,7 +304,7 @@ function StaffCalendarPage() {
                       b={b}
                       assigned={q.data?.assignedIds.has(b.id) ?? false}
                       myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                      onOpen={() => go(b)}
+                      onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     />
                   ))
                 )}
@@ -330,7 +330,7 @@ function StaffCalendarPage() {
                     b={b}
                     assigned={q.data?.assignedIds.has(b.id) ?? false}
                     myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                    onOpen={() => go(b)}
+                    onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     showDate
                   />
                 ))
