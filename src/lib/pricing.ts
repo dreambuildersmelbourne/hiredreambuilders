@@ -38,16 +38,22 @@ export type QuoteResult = {
   roomLines: QuoteLine[];
   extrasLines: QuoteLine[];
   cleaningLines: QuoteLine[];
+  requiredStaffLines: QuoteLine[];
   staffLines: QuoteLine[];
   roomSubtotal: number;
   extrasSubtotal: number;
   cleaningSubtotal: number;
+  requiredStaffSubtotal: number;
   staffSubtotal: number;
   bond: number;
   subtotalExBond: number;
   depositAmount: number;
   totalAmount: number;
 };
+
+export const FOH_MANAGER_RATE = 80;
+export const FOH_MANAGER_MIN_HOURS = 4;
+
 
 const EXTRA_CREW_RATE = 80;
 const EXTRA_CREW_MIN_HOURS = 4;
