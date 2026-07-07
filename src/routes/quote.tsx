@@ -367,40 +367,16 @@ function QuotePage() {
               </div>
             </Section>
 
-            <Section title="Rooms" description="Select every space you need. Minimum 4-hour booking.">
-              {roomsQuery.isLoading ? (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-4 w-4 animate-spin" /> Loading rooms…
-                </div>
-              ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {nonKitchenRooms.map((r) => {
-                    const selected = form.selectedRoomIds.includes(r.id);
-                    return (
-                      <button
-                        type="button"
-                        key={r.id}
-                        onClick={() => toggleRoom(r.id)}
-                        className={`text-left rounded-xl border p-4 transition ${
-                          selected
-                            ? "border-primary bg-primary/5 shadow-soft"
-                            : "border-border bg-card hover:border-primary/40"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <div>
-                            <div className="font-semibold">{r.name}</div>
-                            <div className="text-xs text-muted-foreground">
-                              ${r.hourly_rate}/hr · min {r.min_hours}h · bond ${r.bond}
-                            </div>
-                          </div>
-                          <Checkbox checked={selected} onCheckedChange={() => toggleRoom(r.id)} />
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+            <Section
+              title="Rooms"
+              description="Browse each space, view galleries and walkthroughs, then add the rooms you need. Compare up to 3 side by side."
+            >
+              <QuoteRoomPicker
+                rooms={nonKitchenRooms}
+                selectedIds={form.selectedRoomIds}
+                onToggle={toggleRoom}
+                isLoading={roomsQuery.isLoading}
+              />
               <div className="mt-4 flex items-start gap-3 rounded-lg border border-dashed border-border p-3">
                 <Checkbox
                   id="kitchen"
