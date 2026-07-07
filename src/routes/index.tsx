@@ -78,7 +78,7 @@ function Landing() {
               </a>
             </div>
             <div className="mt-10 grid grid-cols-2 gap-6 text-sm text-white/80 sm:grid-cols-3">
-              <div className="flex items-center gap-2"><Users className="h-4 w-4" /> Up to 250 guests</div>
+              <div className="flex items-center gap-2"><Users className="h-4 w-4" /> From 250 Up to 600 guests</div>
               <div className="flex items-center gap-2"><MapPin className="h-4 w-4" /> 150 parking spaces</div>
               <div className="flex items-center gap-2"><Clock3 className="h-4 w-4" /> 4-hour minimum hire</div>
             </div>
