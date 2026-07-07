@@ -827,8 +827,14 @@ function CompareModal({
     { label: "Bond", render: (r) => money(Number(r.bond)) },
     {
       label: "Capacity",
-      render: (r) => (r.capacity ? `Up to ${r.capacity} guests` : "—"),
+      render: (r) =>
+        r.slug === "main-auditorium"
+          ? "Standard theatre: ~250 · Expanded: up to ~600*"
+          : r.capacity
+            ? `Up to ${r.capacity} guests`
+            : "—",
     },
+
     {
       label: "Description",
       render: (r) => (
