@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
+import { Route as ApiPublicCalendarTokenFeedDoticsRouteImport } from './routes/api/public/calendar.$token.feed[.]ics'
 import { Route as AuthenticatedAdminRoomsIdMediaRouteImport } from './routes/_authenticated/admin.rooms.$id.media'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -131,6 +132,12 @@ const AuthenticatedAccountBookingsIdRoute =
     path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const ApiPublicCalendarTokenFeedDoticsRoute =
+  ApiPublicCalendarTokenFeedDoticsRouteImport.update({
+    id: '/api/public/calendar/$token/feed.ics',
+    path: '/api/public/calendar/$token/feed.ics',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminRoomsIdMediaRoute =
   AuthenticatedAdminRoomsIdMediaRouteImport.update({
     id: '/rooms/$id/media',
@@ -158,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,6 +184,7 @@ export interface FileRoutesByTo {
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/admin/rooms': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -199,6 +208,7 @@ export interface FileRoutesById {
   '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/_authenticated/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/_authenticated/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -222,6 +232,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/admin/rooms/'
     | '/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/admin/rooms'
     | '/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   id:
     | '__root__'
     | '/'
@@ -262,6 +274,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff/events/$id'
     | '/_authenticated/admin/rooms/'
     | '/_authenticated/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,6 +285,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
+  ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -409,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/api/public/calendar/$token/feed.ics': {
+      id: '/api/public/calendar/$token/feed.ics'
+      path: '/api/public/calendar/$token/feed.ics'
+      fullPath: '/api/public/calendar/$token/feed.ics'
+      preLoaderRoute: typeof ApiPublicCalendarTokenFeedDoticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/rooms/$id/media': {
       id: '/_authenticated/admin/rooms/$id/media'
       path: '/rooms/$id/media'
@@ -489,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsIndexRoute: RoomsIndexRoute,
+  ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
