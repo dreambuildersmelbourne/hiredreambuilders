@@ -101,6 +101,7 @@ function QuotePage() {
     email: "",
     phone: "",
     notes: "",
+    tentativeHold: false,
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<null | { ref: string }>(null);
