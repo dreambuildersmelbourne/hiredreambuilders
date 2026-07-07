@@ -41,6 +41,7 @@ function AdminLayout() {
 
   const navItems = [
     { to: "/admin", label: "Enquiries", exact: true },
+    { to: "/admin/rooms", label: "Room media", exact: false },
     { to: "/staff", label: "Staff portal", exact: false },
   ];
 
