@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
-import { CheckCircle2, ChevronLeft, Loader2 } from "lucide-react";
+import { CheckCircle2, ChevronLeft, Info as InfoIcon, Loader2, ShieldCheck } from "lucide-react";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { QuoteRoomPicker, type RichRoom } from "@/components/QuoteRoomPicker";
@@ -16,6 +16,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+const FOH_TOOLTIP =
+  "The Hire Front of House Manager is your required Dreambuilders contact on the day of your hire. They open and close the building, help manage access to hired rooms, monitor venue use, support basic facility needs, and act as the single point of contact for any on-site questions or issues during your event.";
+
 
 export const Route = createFileRoute("/quote")({
   validateSearch: (s: Record<string, unknown>) => ({
@@ -197,7 +202,7 @@ function QuotePage() {
           room_subtotal: quote.roomSubtotal,
           extras_subtotal: quote.extrasSubtotal,
           cleaning_subtotal: quote.cleaningSubtotal,
-          staff_subtotal: quote.staffSubtotal,
+          staff_subtotal: quote.requiredStaffSubtotal + quote.staffSubtotal,
           bond: quote.bond,
           subtotal_ex_bond: quote.subtotalExBond,
           deposit_amount: quote.depositAmount,
@@ -484,7 +489,9 @@ function QuotePage() {
                   <SummaryBlock title="Room hire" total={quote.roomSubtotal} lines={quote.roomLines} />
                   <SummaryBlock title="Extras" total={quote.extrasSubtotal} lines={quote.extrasLines} />
                   <SummaryBlock title="Cleaning" total={quote.cleaningSubtotal} lines={quote.cleaningLines} />
-                  <SummaryBlock title="Staff" total={quote.staffSubtotal} lines={quote.staffLines} />
+                  <RequiredStaffBlock total={quote.requiredStaffSubtotal} lines={quote.requiredStaffLines} />
+                  <SummaryBlock title="Additional staff" total={quote.staffSubtotal} lines={quote.staffLines} />
+
 
                   <Separator />
                   <Row label="Subtotal (ex bond)" value={money(quote.subtotalExBond)} bold />
@@ -627,3 +634,54 @@ function SummaryBlock({
     </div>
   );
 }
+
+function RequiredStaffBlock({
+  total,
+  lines,
+}: {
+  total: number;
+  lines: { label: string; amount: number; detail?: string }[];
+}) {
+  const foh = lines[0];
+  return (
+    <div className="rounded-lg border border-primary/25 bg-primary/5 p-3">
+      <div className="flex items-baseline justify-between font-medium">
+        <span className="inline-flex items-center gap-1.5">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          Required staff
+        </span>
+        <span>{money(total)}</span>
+      </div>
+      {foh && (
+        <div className="mt-2 flex items-start justify-between gap-3 text-xs">
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+              {foh.label}
+              <TooltipProvider delayDuration={150}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="About the Hire Front of House Manager"
+                      className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+                    >
+                      <InfoIcon className="h-3.5 w-3.5" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-xs leading-relaxed">
+                    {FOH_TOOLTIP}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <div className="text-muted-foreground">Required on-site contact for your event</div>
+            {foh.detail && <div className="mt-0.5 text-muted-foreground opacity-80">{foh.detail}</div>}
+            <div className="mt-1 text-[11px] uppercase tracking-wider text-primary/80">Included — cannot be removed</div>
+          </div>
+          <span className="whitespace-nowrap text-sm">{money(foh.amount)}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
