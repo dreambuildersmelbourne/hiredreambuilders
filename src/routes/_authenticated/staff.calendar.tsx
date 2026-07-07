@@ -2,9 +2,10 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { addDays, endOfMonth, endOfWeek, format, isSameDay, isWithinInterval, parseISO, startOfMonth, startOfWeek } from "date-fns";
-import { CalendarDays, ClipboardList, DoorOpen, Info, Loader2, Users } from "lucide-react";
+import { CalendarDays, ClipboardList, DoorOpen, Info, Loader2, Users, UserCog } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BookingCalendar, type CalendarBooking } from "@/components/BookingCalendar";
+import { RoleAssignmentModal } from "@/components/RoleAssignmentModal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,7 +31,7 @@ type Assignment = {
 type StaffBooking = Omit<CalendarBooking, "booking_rooms"> & {
   booking_rooms?: Array<{ rooms?: { id?: string | null; name?: string | null } | null }> | null;
   booking_staff?: Array<{
-    quantity: number | null;
+    count: number | null;
     staff_roles?: { id: string; name: string | null; slug: string | null } | null;
   }> | null;
   staff_assignments?: Array<{
@@ -48,6 +49,19 @@ function StaffCalendarPage() {
   const [when, setWhen] = useState<When>("any");
   const [roomId, setRoomId] = useState<string>("all");
   const [staffRoleId, setStaffRoleId] = useState<string>("all");
+  const [assignFor, setAssignFor] = useState<StaffBooking | null>(null);
+
+  const isAdminQ = useQuery({
+    queryKey: ["me", "isAdmin"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return false;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      return (data ?? []).some((r) => r.role === "admin");
+    },
+  });
+  const isAdmin = !!isAdminQ.data;
 
   const roomsQ = useQuery({
     queryKey: ["rooms", "list"],
@@ -77,7 +91,7 @@ function StaffCalendarPage() {
         supabase
           .from("bookings")
           .select(
-            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(id, name)), booking_staff(quantity, staff_roles(id, name, slug)), staff_assignments(user_id, staff_roles(name))",
+            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(id, name)), booking_staff(count, staff_roles(id, name, slug)), staff_assignments(user_id, staff_roles(name))",
           )
           .order("event_date", { ascending: true }),
         uid
@@ -268,7 +282,7 @@ function StaffCalendarPage() {
                       b={b}
                       assigned={q.data?.assignedIds.has(b.id) ?? false}
                       myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                      onOpen={() => go(b)}
+                      onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     />
                   ))
                 )}
@@ -290,7 +304,7 @@ function StaffCalendarPage() {
                       b={b}
                       assigned={q.data?.assignedIds.has(b.id) ?? false}
                       myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                      onOpen={() => go(b)}
+                      onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     />
                   ))
                 )}
@@ -316,7 +330,7 @@ function StaffCalendarPage() {
                     b={b}
                     assigned={q.data?.assignedIds.has(b.id) ?? false}
                     myRole={q.data?.myRoleByBooking.get(b.id) ?? null}
-                    onOpen={() => go(b)}
+                    onOpen={() => go(b)} isAdmin={isAdmin} onAssign={() => setAssignFor(b)}
                     showDate
                   />
                 ))
@@ -325,6 +339,21 @@ function StaffCalendarPage() {
           </Card>
         </>
       )}
+
+      <RoleAssignmentModal
+        open={!!assignFor}
+        onOpenChange={(v) => !v && setAssignFor(null)}
+        booking={
+          assignFor
+            ? {
+                id: assignFor.id,
+                reference: assignFor.reference,
+                event_name: assignFor.event_name,
+                event_date: assignFor.event_date,
+              }
+            : null
+        }
+      />
     </div>
   );
 }
@@ -335,18 +364,22 @@ function EventRow({
   myRole,
   onOpen,
   showDate,
+  isAdmin,
+  onAssign,
 }: {
   b: StaffBooking;
   assigned: boolean;
   myRole: string | null;
   onOpen: () => void;
   showDate?: boolean;
+  isAdmin?: boolean;
+  onAssign?: () => void;
 }) {
   const cs = calendarStatusFor(b.status, b.tentative_hold_requested);
   const meta = CALENDAR_STATUS_META[cs];
   const rooms = (b.booking_rooms ?? []).map((r) => r.rooms?.name).filter(Boolean).join(", ");
   const requiredRoles = (b.booking_staff ?? [])
-    .map((s) => `${s.staff_roles?.name ?? ""}${(s.quantity ?? 1) > 1 ? ` ×${s.quantity}` : ""}`)
+    .map((s) => `${s.staff_roles?.name ?? ""}${(s.count ?? 1) > 1 ? ` ×${s.count}` : ""}`)
     .filter(Boolean);
 
   return (
@@ -383,6 +416,11 @@ function EventRow({
               <Link to="/staff/events/$id" params={{ id: b.id }}>
                 <ClipboardList className="mr-1 h-3.5 w-3.5" /> Checklist
               </Link>
+            </Button>
+          )}
+          {isAdmin && onAssign && (
+            <Button size="sm" variant="secondary" onClick={onAssign}>
+              <UserCog className="mr-1 h-3.5 w-3.5" /> Assign roles
             </Button>
           )}
           <Button size="sm" variant="outline" onClick={onOpen}>Open</Button>
