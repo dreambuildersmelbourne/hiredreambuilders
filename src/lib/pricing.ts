@@ -132,6 +132,17 @@ export function calculateQuote(
     }
   }
 
+  // Required staff — Front of House Manager is included on every booking
+  const requiredStaffLines: QuoteLine[] = [];
+  const fohHours = Math.max(hours, FOH_MANAGER_MIN_HOURS);
+  const fohAmount = fohHours * FOH_MANAGER_RATE;
+  requiredStaffLines.push({
+    label: "Hire Front of House Manager",
+    amount: fohAmount,
+    detail: `${fohHours}h × $${FOH_MANAGER_RATE}/hr (min ${FOH_MANAGER_MIN_HOURS}h)`,
+  });
+  const requiredStaffSubtotal = fohAmount;
+
   // Staff — extra crew
   const staffLines: QuoteLine[] = [];
   let staffSubtotal = 0;
@@ -146,7 +157,8 @@ export function calculateQuote(
     staffSubtotal += amt;
   }
 
-  const subtotalExBond = roomSubtotal + extrasSubtotal + cleaningSubtotal + staffSubtotal;
+  const subtotalExBond =
+    roomSubtotal + extrasSubtotal + cleaningSubtotal + requiredStaffSubtotal + staffSubtotal;
   const depositAmount = Math.round(subtotalExBond * 0.2 * 100) / 100;
   const totalAmount = Math.round((subtotalExBond + bond) * 100) / 100;
 
@@ -155,10 +167,12 @@ export function calculateQuote(
     roomLines,
     extrasLines,
     cleaningLines,
+    requiredStaffLines,
     staffLines,
     roomSubtotal,
     extrasSubtotal,
     cleaningSubtotal,
+    requiredStaffSubtotal,
     staffSubtotal,
     bond,
     subtotalExBond,
@@ -166,6 +180,7 @@ export function calculateQuote(
     totalAmount,
   };
 }
+
 
 export const money = (n: number) =>
   new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD" }).format(n);
