@@ -113,6 +113,9 @@ function QuotePage() {
           foodServed: form.foodServed,
           seatingChanges: form.seatingChanges,
           removeDrums: form.removeDrums,
+          soundSystem: form.soundSystem,
+          avScreens: form.avScreens,
+          theatreLighting: form.theatreLighting,
           extraStaffCount: form.extraStaffCount,
         },
         nonKitchenRooms,
@@ -429,9 +432,9 @@ function QuotePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   ["foodServed", "Food will be served (adds cleaning fee)"],
-                  ["soundSystem", "Sound system needed"],
-                  ["avScreens", "AV screens needed"],
-                  ["theatreLighting", "Theatre lighting needed"],
+                  ["soundSystem", "Sound system needed (adds required Sound Operator)"],
+                  ["avScreens", "AV screens needed (adds required Multimedia / AV Operator)"],
+                  ["theatreLighting", "Theatre lighting needed (adds required Lighting Operator)"],
                   ["removeDrums", "Remove drums from stage (+$200)"],
                 ].map(([key, label]) => (
                   <label
@@ -706,6 +709,28 @@ function SummaryBlock({
   );
 }
 
+const STAFF_META: Record<string, { subtitle: string; tooltip: string }> = {
+  "Hire Front of House Manager": {
+    subtitle: "Required on-site contact for your event",
+    tooltip: FOH_TOOLTIP,
+  },
+  "Sound Operator": {
+    subtitle: "Auto-added — Sound system selected",
+    tooltip:
+      "Required when using the in-house sound system. A Dreambuilders operator must be on site to operate or supervise the sound equipment during your hire.",
+  },
+  "Multimedia / AV Operator": {
+    subtitle: "Auto-added — AV screens selected",
+    tooltip:
+      "Required when using Dreambuilders AV screens or multimedia equipment. This ensures the system is set up, operated, and used correctly during your hire.",
+  },
+  "Lighting Operator": {
+    subtitle: "Auto-added — Theatre lighting selected",
+    tooltip:
+      "Required when using theatre lighting. A Dreambuilders operator must be on site to operate or supervise the lighting system during your hire.",
+  },
+};
+
 function RequiredStaffBlock({
   total,
   lines,
@@ -713,7 +738,6 @@ function RequiredStaffBlock({
   total: number;
   lines: { label: string; amount: number; detail?: string }[];
 }) {
-  const foh = lines[0];
   return (
     <div className="rounded-lg border border-primary/25 bg-primary/5 p-3">
       <div className="flex items-baseline justify-between font-medium">
@@ -723,36 +747,51 @@ function RequiredStaffBlock({
         </span>
         <span>{money(total)}</span>
       </div>
-      {foh && (
-        <div className="mt-2 flex items-start justify-between gap-3 text-xs">
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
-              {foh.label}
-              <TooltipProvider delayDuration={150}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="About the Hire Front of House Manager"
-                      className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
-                    >
-                      <InfoIcon className="h-3.5 w-3.5" />
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent className="max-w-xs text-xs leading-relaxed">
-                    {FOH_TOOLTIP}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <div className="text-muted-foreground">Required on-site contact for your event</div>
-            {foh.detail && <div className="mt-0.5 text-muted-foreground opacity-80">{foh.detail}</div>}
-            <div className="mt-1 text-[11px] uppercase tracking-wider text-primary/80">Included — cannot be removed</div>
-          </div>
-          <span className="whitespace-nowrap text-sm">{money(foh.amount)}</span>
-        </div>
-      )}
+      <ul className="mt-2 space-y-2">
+        {lines.map((l, i) => {
+          const meta = STAFF_META[l.label] ?? {
+            subtitle: "Required for your event",
+            tooltip: "Required Dreambuilders crew member for this hire.",
+          };
+          return (
+            <li key={i} className="flex items-start justify-between gap-3 text-xs">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                  {l.label}
+                  <TooltipProvider delayDuration={150}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          type="button"
+                          aria-label={`About ${l.label}`}
+                          className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+                        >
+                          <InfoIcon className="h-3.5 w-3.5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs text-xs leading-relaxed">
+                        {meta.tooltip}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <div className="text-muted-foreground">{meta.subtitle}</div>
+                {l.detail && (
+                  <div className="mt-0.5 text-muted-foreground opacity-80">{l.detail}</div>
+                )}
+                <div className="mt-1 text-[11px] uppercase tracking-wider text-primary/80">
+                  {l.label === "Hire Front of House Manager"
+                    ? "Included — cannot be removed"
+                    : "Locked — untick the requirement to remove"}
+                </div>
+              </div>
+              <span className="whitespace-nowrap text-sm">{money(l.amount)}</span>
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }
+
 
