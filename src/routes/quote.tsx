@@ -62,7 +62,7 @@ function QuotePage() {
         .eq("active", true)
         .order("sort_order");
       if (error) throw error;
-      return data as unknown as Room[];
+      return data as unknown as RichRoom[];
     },
   });
 
