@@ -14,8 +14,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
+import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
 
 const QuoteRoute = QuoteRouteImport.update({
   id: '/quote',
@@ -41,31 +44,53 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAccountIndexRoute =
+  AuthenticatedAccountIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
 const AuthenticatedAdminBookingsIdRoute =
   AuthenticatedAdminBookingsIdRouteImport.update({
     id: '/bookings/$id',
     path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAccountBookingsIdRoute =
+  AuthenticatedAccountBookingsIdRouteImport.update({
+    id: '/bookings/$id',
+    path: '/bookings/$id',
+    getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/quote': typeof QuoteRoute
+  '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/quote': typeof QuoteRoute
+  '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
 }
 export interface FileRoutesById {
@@ -74,8 +99,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/quote': typeof QuoteRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
 }
 export interface FileRouteTypes {
@@ -84,19 +112,32 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/quote'
+    | '/account'
     | '/admin'
+    | '/account/'
     | '/admin/'
+    | '/account/bookings/$id'
     | '/admin/bookings/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/quote' | '/admin' | '/admin/bookings/$id'
+  to:
+    | '/'
+    | '/auth'
+    | '/quote'
+    | '/account'
+    | '/admin'
+    | '/account/bookings/$id'
+    | '/admin/bookings/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/quote'
+    | '/_authenticated/account'
     | '/_authenticated/admin'
+    | '/_authenticated/account/'
     | '/_authenticated/admin/'
+    | '/_authenticated/account/bookings/$id'
     | '/_authenticated/admin/bookings/$id'
   fileRoutesById: FileRoutesById
 }
@@ -144,12 +185,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/account/': {
+      id: '/_authenticated/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
     }
     '/_authenticated/admin/bookings/$id': {
       id: '/_authenticated/admin/bookings/$id'
@@ -158,8 +213,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/account/bookings/$id': {
+      id: '/_authenticated/account/bookings/$id'
+      path: '/bookings/$id'
+      fullPath: '/account/bookings/$id'
+      preLoaderRoute: typeof AuthenticatedAccountBookingsIdRouteImport
+      parentRoute: typeof AuthenticatedAccountRoute
+    }
   }
 }
+
+interface AuthenticatedAccountRouteChildren {
+  AuthenticatedAccountIndexRoute: typeof AuthenticatedAccountIndexRoute
+  AuthenticatedAccountBookingsIdRoute: typeof AuthenticatedAccountBookingsIdRoute
+}
+
+const AuthenticatedAccountRouteChildren: AuthenticatedAccountRouteChildren = {
+  AuthenticatedAccountIndexRoute: AuthenticatedAccountIndexRoute,
+  AuthenticatedAccountBookingsIdRoute: AuthenticatedAccountBookingsIdRoute,
+}
+
+const AuthenticatedAccountRouteWithChildren =
+  AuthenticatedAccountRoute._addFileChildren(AuthenticatedAccountRouteChildren)
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -175,10 +250,12 @@ const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRouteWithChildren
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRouteWithChildren,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
 }
 

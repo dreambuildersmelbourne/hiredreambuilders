@@ -1,5 +1,7 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Church, LogOut } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { LogOut, Church, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
@@ -11,14 +13,41 @@ function AdminLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  const roleQ = useQuery({
+    queryKey: ["me", "isAdmin"],
+    queryFn: async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const uid = userRes.user?.id;
+      if (!uid) return false;
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", uid);
+      if (error) return false;
+      return (data ?? []).some((r) => r.role === "admin" || r.role === "staff");
+    },
+  });
+
+  useEffect(() => {
+    if (roleQ.isSuccess && roleQ.data === false) {
+      navigate({ to: "/account", replace: true });
+    }
+  }, [roleQ.isSuccess, roleQ.data, navigate]);
+
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
   }
 
-  const navItems = [
-    { to: "/admin", label: "Enquiries", exact: true },
-  ];
+  const navItems = [{ to: "/admin", label: "Enquiries", exact: true }];
+
+  if (roleQ.isLoading || roleQ.data === false) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking access…
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-muted/40">

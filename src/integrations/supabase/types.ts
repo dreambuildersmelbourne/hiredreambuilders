@@ -170,7 +170,9 @@ export type Database = {
       bookings: {
         Row: {
           admin_notes: string | null
+          approved_at: string | null
           av_screens: boolean
+          balance_paid_at: string | null
           bond: number
           bump_in_time: string
           bump_out_time: string
@@ -178,6 +180,9 @@ export type Database = {
           created_at: string
           customer_id: string
           deposit_amount: number
+          deposit_paid_at: string | null
+          discount_amount: number
+          discount_reason: string | null
           estimated_attendance: number | null
           event_date: string
           event_name: string
@@ -186,14 +191,18 @@ export type Database = {
           food_served: boolean
           hours: number
           id: string
+          info_request_message: string | null
           kitchen: boolean
           notes: string | null
           reference: string
+          rejected_at: string | null
+          rejection_reason: string | null
           remove_drums: boolean
           room_subtotal: number
           seating_changes: boolean
           sound_system: boolean
           staff_subtotal: number
+          staffing_confirmed_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond: number
           theatre_lighting: boolean
@@ -202,7 +211,9 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          approved_at?: string | null
           av_screens?: boolean
+          balance_paid_at?: string | null
           bond?: number
           bump_in_time: string
           bump_out_time: string
@@ -210,6 +221,9 @@ export type Database = {
           created_at?: string
           customer_id: string
           deposit_amount?: number
+          deposit_paid_at?: string | null
+          discount_amount?: number
+          discount_reason?: string | null
           estimated_attendance?: number | null
           event_date: string
           event_name: string
@@ -218,14 +232,18 @@ export type Database = {
           food_served?: boolean
           hours?: number
           id?: string
+          info_request_message?: string | null
           kitchen?: boolean
           notes?: string | null
           reference?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
           remove_drums?: boolean
           room_subtotal?: number
           seating_changes?: boolean
           sound_system?: boolean
           staff_subtotal?: number
+          staffing_confirmed_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond?: number
           theatre_lighting?: boolean
@@ -234,7 +252,9 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          approved_at?: string | null
           av_screens?: boolean
+          balance_paid_at?: string | null
           bond?: number
           bump_in_time?: string
           bump_out_time?: string
@@ -242,6 +262,9 @@ export type Database = {
           created_at?: string
           customer_id?: string
           deposit_amount?: number
+          deposit_paid_at?: string | null
+          discount_amount?: number
+          discount_reason?: string | null
           estimated_attendance?: number | null
           event_date?: string
           event_name?: string
@@ -250,14 +273,18 @@ export type Database = {
           food_served?: boolean
           hours?: number
           id?: string
+          info_request_message?: string | null
           kitchen?: boolean
           notes?: string | null
           reference?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
           remove_drums?: boolean
           room_subtotal?: number
           seating_changes?: boolean
           sound_system?: boolean
           staff_subtotal?: number
+          staffing_confirmed_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           subtotal_ex_bond?: number
           theatre_lighting?: boolean
@@ -321,6 +348,7 @@ export type Database = {
           organisation: string | null
           phone: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           contact_name: string
@@ -330,6 +358,7 @@ export type Database = {
           organisation?: string | null
           phone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           contact_name?: string
@@ -339,6 +368,7 @@ export type Database = {
           organisation?: string | null
           phone?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -716,6 +746,9 @@ export type Database = {
       booking_status:
         | "enquiry"
         | "reviewing"
+        | "approved"
+        | "rejected"
+        | "info_requested"
         | "staffing_confirmed"
         | "invoiced"
         | "deposit_paid"
@@ -855,6 +888,9 @@ export const Constants = {
       booking_status: [
         "enquiry",
         "reviewing",
+        "approved",
+        "rejected",
+        "info_requested",
         "staffing_confirmed",
         "invoiced",
         "deposit_paid",
