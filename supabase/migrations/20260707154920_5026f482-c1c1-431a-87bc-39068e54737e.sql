@@ -1,0 +1,2 @@
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS tentative_hold_requested boolean NOT NULL DEFAULT false;
+ALTER TABLE public.bookings ADD COLUMN IF NOT EXISTS staff_can_view_tentative boolean NOT NULL DEFAULT false;
