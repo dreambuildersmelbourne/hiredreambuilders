@@ -269,7 +269,7 @@ function QuotePage() {
         if (error) throw error;
       }
 
-      setSubmitted({ ref: booking.reference });
+      setSubmitted({ ref: booking.reference, tentative: form.tentativeHold });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
