@@ -53,8 +53,8 @@ function Landing() {
         />
         <div className="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-28 lg:py-36">
           <div className="max-w-2xl text-primary-foreground">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5" /> Hoppers Crossing, VIC
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+              <Sparkles className="h-3.5 w-3.5 text-white" /> Hoppers Crossing, VIC
             </span>
             <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
               A beautiful place for your next event.
