@@ -432,9 +432,9 @@ function QuotePage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   ["foodServed", "Food will be served (adds cleaning fee)"],
-                  ["soundSystem", "Sound system needed"],
-                  ["avScreens", "AV screens needed"],
-                  ["theatreLighting", "Theatre lighting needed"],
+                  ["soundSystem", "Sound system needed (adds required Sound Operator)"],
+                  ["avScreens", "AV screens needed (adds required Multimedia / AV Operator)"],
+                  ["theatreLighting", "Theatre lighting needed (adds required Lighting Operator)"],
                   ["removeDrums", "Remove drums from stage (+$200)"],
                 ].map(([key, label]) => (
                   <label
