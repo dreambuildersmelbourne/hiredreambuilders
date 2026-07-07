@@ -23,11 +23,13 @@ import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
 import { Route as AuthenticatedStaffCalendarRouteImport } from './routes/_authenticated/staff.calendar'
+import { Route as AuthenticatedAdminCalendarSyncRouteImport } from './routes/_authenticated/admin.calendar-sync'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_authenticated/admin.rooms.index'
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
+import { Route as ApiPublicCalendarTokenFeedDoticsRouteImport } from './routes/api/public/calendar.$token.feed[.]ics'
 import { Route as AuthenticatedAdminRoomsIdMediaRouteImport } from './routes/_authenticated/admin.rooms.$id.media'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -101,6 +103,12 @@ const AuthenticatedStaffCalendarRoute =
     path: '/calendar',
     getParentRoute: () => AuthenticatedStaffRoute,
   } as any)
+const AuthenticatedAdminCalendarSyncRoute =
+  AuthenticatedAdminCalendarSyncRouteImport.update({
+    id: '/calendar-sync',
+    path: '/calendar-sync',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCalendarRoute =
   AuthenticatedAdminCalendarRouteImport.update({
     id: '/calendar',
@@ -131,6 +139,12 @@ const AuthenticatedAccountBookingsIdRoute =
     path: '/bookings/$id',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const ApiPublicCalendarTokenFeedDoticsRoute =
+  ApiPublicCalendarTokenFeedDoticsRouteImport.update({
+    id: '/api/public/calendar/$token/feed.ics',
+    path: '/api/public/calendar/$token/feed.ics',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminRoomsIdMediaRoute =
   AuthenticatedAdminRoomsIdMediaRouteImport.update({
     id: '/rooms/$id/media',
@@ -149,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -158,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -167,6 +183,7 @@ export interface FileRoutesByTo {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms': typeof RoomsIndexRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -176,6 +193,7 @@ export interface FileRoutesByTo {
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/admin/rooms': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -190,6 +208,7 @@ export interface FileRoutesById {
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
+  '/_authenticated/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/_authenticated/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -199,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/_authenticated/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/_authenticated/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
+  '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -213,6 +233,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms/'
     | '/admin/calendar'
+    | '/admin/calendar-sync'
     | '/staff/calendar'
     | '/account/'
     | '/admin/'
@@ -222,6 +243,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/admin/rooms/'
     | '/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -231,6 +253,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms'
     | '/admin/calendar'
+    | '/admin/calendar-sync'
     | '/staff/calendar'
     | '/account'
     | '/admin'
@@ -240,6 +263,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/admin/rooms'
     | '/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   id:
     | '__root__'
     | '/'
@@ -253,6 +277,7 @@ export interface FileRouteTypes {
     | '/rooms/$slug'
     | '/rooms/'
     | '/_authenticated/admin/calendar'
+    | '/_authenticated/admin/calendar-sync'
     | '/_authenticated/staff/calendar'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
@@ -262,6 +287,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff/events/$id'
     | '/_authenticated/admin/rooms/'
     | '/_authenticated/admin/rooms/$id/media'
+    | '/api/public/calendar/$token/feed.ics'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,6 +298,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
+  ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -374,6 +401,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedStaffCalendarRouteImport
       parentRoute: typeof AuthenticatedStaffRoute
     }
+    '/_authenticated/admin/calendar-sync': {
+      id: '/_authenticated/admin/calendar-sync'
+      path: '/calendar-sync'
+      fullPath: '/admin/calendar-sync'
+      preLoaderRoute: typeof AuthenticatedAdminCalendarSyncRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/calendar': {
       id: '/_authenticated/admin/calendar'
       path: '/calendar'
@@ -409,6 +443,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountBookingsIdRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/api/public/calendar/$token/feed.ics': {
+      id: '/api/public/calendar/$token/feed.ics'
+      path: '/api/public/calendar/$token/feed.ics'
+      fullPath: '/api/public/calendar/$token/feed.ics'
+      preLoaderRoute: typeof ApiPublicCalendarTokenFeedDoticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/rooms/$id/media': {
       id: '/_authenticated/admin/rooms/$id/media'
       path: '/rooms/$id/media'
@@ -434,6 +475,7 @@ const AuthenticatedAccountRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
+  AuthenticatedAdminCalendarSyncRoute: typeof AuthenticatedAdminCalendarSyncRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
   AuthenticatedAdminRoomsIndexRoute: typeof AuthenticatedAdminRoomsIndexRoute
@@ -442,6 +484,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCalendarRoute: AuthenticatedAdminCalendarRoute,
+  AuthenticatedAdminCalendarSyncRoute: AuthenticatedAdminCalendarSyncRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
   AuthenticatedAdminRoomsIndexRoute: AuthenticatedAdminRoomsIndexRoute,
@@ -489,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsIndexRoute: RoomsIndexRoute,
+  ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
