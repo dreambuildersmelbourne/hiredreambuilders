@@ -6,8 +6,16 @@ import { Button } from "@/components/ui/button";
 import logoAsset from "@/assets/logo-mark.jpg.asset.json";
 
 export const Route = createFileRoute("/_authenticated/account")({
+  head: () => ({
+    meta: [
+      { title: "My account — Dreambuilders Venue Hire" },
+      { name: "description", content: "Manage your Dreambuilders venue hire bookings, upload documents and sign contracts." },
+      { name: "robots", content: "noindex, nofollow" },
+    ],
+  }),
   component: AccountLayout,
 });
+
 
 function AccountLayout() {
   const navigate = useNavigate();
