@@ -418,6 +418,11 @@ function EventRow({
               </Link>
             </Button>
           )}
+          {isAdmin && onAssign && (
+            <Button size="sm" variant="secondary" onClick={onAssign}>
+              <UserCog className="mr-1 h-3.5 w-3.5" /> Assign roles
+            </Button>
+          )}
           <Button size="sm" variant="outline" onClick={onOpen}>Open</Button>
         </div>
       </div>
