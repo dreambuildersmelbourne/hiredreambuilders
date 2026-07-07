@@ -29,8 +29,12 @@ export type QuoteInput = {
   foodServed: boolean;
   seatingChanges: boolean;
   removeDrums: boolean;
+  soundSystem: boolean;
+  avScreens: boolean;
+  theatreLighting: boolean;
   extraStaffCount: number;
 };
+
 
 export type QuoteLine = { label: string; amount: number; detail?: string };
 export type QuoteResult = {
