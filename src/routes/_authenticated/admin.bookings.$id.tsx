@@ -139,6 +139,10 @@ function BookingDetail() {
   if (data.kitchen) requirements.push("Kitchen");
   if (data.extra_staff_count > 0) requirements.push(`${data.extra_staff_count} extra crew`);
 
+  const fohHours = Math.max(Number(data.hours ?? 0), 4);
+  const fohAmount = fohHours * 80;
+
+
   const s = statusMeta(data.status);
   const discount = Number(data.discount_amount ?? 0);
   const netTotal = Number(data.total_amount) - discount;
