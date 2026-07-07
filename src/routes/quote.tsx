@@ -120,6 +120,22 @@ function QuotePage() {
     [form, nonKitchenRooms],
   );
 
+  const auditorium = useMemo(
+    () => nonKitchenRooms.find((r) => r.slug === "main-auditorium"),
+    [nonKitchenRooms],
+  );
+  const auditoriumSelected = !!auditorium && form.selectedRoomIds.includes(auditorium.id);
+  const attendanceNum = Number(form.attendance) || 0;
+  const oversizedAuditorium = auditoriumSelected && attendanceNum > 250;
+
+  // Auto-add expanded seating when attendance exceeds standard capacity
+  useEffect(() => {
+    if (oversizedAuditorium && !form.seatingChanges) {
+      setForm((f) => ({ ...f, seatingChanges: true }));
+    }
+  }, [oversizedAuditorium, form.seatingChanges]);
+
+
   const canSubmit =
     form.event_name.trim() &&
     form.event_date &&
