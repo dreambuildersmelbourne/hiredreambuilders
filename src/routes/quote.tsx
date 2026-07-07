@@ -33,10 +33,20 @@ export const Route = createFileRoute("/quote")({
       {
         name: "description",
         content:
-          "Configure your rooms, extras and staffing to get an instant baseline hire quote from Dreambuilders Church.",
+          "Configure your rooms, extras and staffing to get an instant baseline hire quote from Dreambuilders Church in Hoppers Crossing.",
       },
+      { property: "og:title", content: "Get an instant venue hire quote — Dreambuilders" },
+      {
+        property: "og:description",
+        content:
+          "Build your event, pick your rooms and get a baseline quote in seconds. Submit a no-obligation booking enquiry online.",
+      },
+      { property: "og:url", content: "https://hiredreambuilders.lovable.app/quote" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "https://hiredreambuilders.lovable.app/quote" }],
   }),
+
   component: QuotePage,
 });
 
