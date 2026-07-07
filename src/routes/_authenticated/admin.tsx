@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate, useRouterState } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { LogOut, Church, Loader2 } from "lucide-react";
@@ -88,16 +88,8 @@ function AdminLayout() {
         </div>
       </header>
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-        <div />
-        {/* React Router Outlet */}
-        <AdminOutlet />
+        <Outlet />
       </main>
     </div>
   );
-}
-
-// Local Outlet import kept separate to keep top clean
-import { Outlet } from "@tanstack/react-router";
-function AdminOutlet() {
-  return <Outlet />;
 }
