@@ -78,7 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Dreambuilders Church — Venue Hire" },
+      { title: "Dreambuilders Venue Hire — Auditorium, Function Rooms & Lounge" },
       {
         name: "description",
         content:
@@ -87,6 +87,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:site_name", content: "Dreambuilders Venue Hire" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:title", content: "Dreambuilders Venue Hire — Auditorium, Function Rooms & Lounge" },
+      { name: "twitter:title", content: "Dreambuilders Venue Hire — Auditorium, Function Rooms & Lounge" },
+      { name: "description", content: "Hire the 250-600 seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online quotes." },
+      { property: "og:description", content: "Hire the 250-600 seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online quotes." },
+      { name: "twitter:description", content: "Hire the 250-600 seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online quotes." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1969234c-bc14-4700-9883-79fd63770643/id-preview-94ffb182--eeecb9e6-7956-4af8-8eb3-8a4580c8f704.lovable.app-1783440363659.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1969234c-bc14-4700-9883-79fd63770643/id-preview-94ffb182--eeecb9e6-7956-4af8-8eb3-8a4580c8f704.lovable.app-1783440363659.png" },
     ],
     links: [
       {
