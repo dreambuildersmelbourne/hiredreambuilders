@@ -293,6 +293,15 @@ function QuotePage() {
               Thank you — your booking enquiry <span className="font-semibold text-foreground">{submitted.ref}</span>{" "}
               has been sent to our hire coordinator. We'll be in touch to confirm staff availability and next steps.
             </p>
+            {submitted.tentative && (
+              <div className="mt-5 rounded-lg border border-amber-300 bg-amber-50 p-4 text-left">
+                <div className="text-sm font-semibold text-amber-900">Tentative hold requested</div>
+                <p className="mt-1 text-xs leading-relaxed text-amber-900/80">
+                  This booking is tentative and subject to Dreambuilders approval, staffing availability,
+                  document checks, and deposit payment.
+                </p>
+              </div>
+            )}
             <div className="mt-6 rounded-lg border border-brand/30 bg-brand/5 p-4 text-left">
               <div className="font-display text-base font-semibold">Create an account to manage this booking</div>
               <p className="mt-1 text-sm text-muted-foreground">
