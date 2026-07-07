@@ -347,11 +347,16 @@ function RoomsIndex() {
                       </div>
                     )}
                     <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
-                      {r.capacity && (
+                      {r.slug === "main-auditorium" ? (
+                        <Badge className="bg-background/90 text-foreground shadow">
+                          <Users className="mr-1 h-3 w-3" /> 250 std · up to 600*
+                        </Badge>
+                      ) : r.capacity ? (
                         <Badge className="bg-background/90 text-foreground shadow">
                           <Users className="mr-1 h-3 w-3" /> Up to {r.capacity}
                         </Badge>
-                      )}
+                      ) : null}
+
                     </div>
                     <div className="absolute right-3 top-3 flex gap-1.5">
                       {images.length > 0 && (
