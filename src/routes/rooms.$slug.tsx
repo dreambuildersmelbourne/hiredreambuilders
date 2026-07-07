@@ -146,10 +146,21 @@ function RoomDetail() {
               <p className="mt-3 text-muted-foreground">{room.summary || room.description}</p>
 
               <div className="mt-5 flex flex-wrap gap-2">
-                {room.capacity && (
-                  <Badge variant="secondary" className="text-sm">
-                    <Users className="mr-1 h-3 w-3" /> Up to {room.capacity} guests
-                  </Badge>
+                {room.slug === "main-auditorium" ? (
+                  <>
+                    <Badge variant="secondary" className="text-sm">
+                      <Users className="mr-1 h-3 w-3" /> Standard theatre: ~250 guests
+                    </Badge>
+                    <Badge variant="secondary" className="text-sm">
+                      <Users className="mr-1 h-3 w-3" /> Expanded: up to ~600 guests*
+                    </Badge>
+                  </>
+                ) : (
+                  room.capacity && (
+                    <Badge variant="secondary" className="text-sm">
+                      <Users className="mr-1 h-3 w-3" /> Up to {room.capacity} guests
+                    </Badge>
+                  )
                 )}
                 <Badge variant="secondary" className="text-sm">
                   {Number(room.hourly_rate) > 0 ? `${money(Number(room.hourly_rate))} / hour` : "Included with hire"}
@@ -161,6 +172,19 @@ function RoomDetail() {
                   <Badge variant="outline" className="text-sm">Min {room.min_hours}h</Badge>
                 )}
               </div>
+              {room.slug === "main-auditorium" && (
+                <div className="mt-4 rounded-lg border border-border bg-muted/40 p-4 text-sm">
+                  <div className="font-medium">Capacity</div>
+                  <ul className="mt-2 space-y-1 text-muted-foreground">
+                    <li>• Standard Theatre Layout: Approximately 250 guests</li>
+                    <li>• Expanded Seating Layout: Up to approximately 600 guests*</li>
+                  </ul>
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    *Expanded seating requires a one-time $200 setup fee.
+                  </p>
+                </div>
+              )}
+
 
               <div className="mt-6 flex flex-col gap-2 sm:flex-row">
                 <Button size="lg" onClick={goQuote} className="flex-1">

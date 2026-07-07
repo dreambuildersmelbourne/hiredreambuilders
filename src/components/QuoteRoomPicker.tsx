@@ -212,10 +212,12 @@ function RoomCard({
             </div>
           </div>
           {room.capacity ? (
-            <Badge variant="secondary" className="gap-1 shrink-0">
-              <Users className="h-3 w-3" /> {room.capacity}
+            <Badge variant="secondary" className="gap-1 shrink-0 whitespace-nowrap">
+              <Users className="h-3 w-3" />{" "}
+              {room.slug === "main-auditorium" ? "250 / 600*" : room.capacity}
             </Badge>
           ) : null}
+
         </div>
 
         {(room.summary || room.description) && (
@@ -475,8 +477,14 @@ function CompareModal({
     { label: "Bond", render: (r) => money(r.bond) },
     {
       label: "Capacity",
-      render: (r) => (r.capacity ? `Up to ${r.capacity} guests` : "—"),
+      render: (r) =>
+        r.slug === "main-auditorium"
+          ? "Standard theatre: ~250 · Expanded: up to ~600*"
+          : r.capacity
+            ? `Up to ${r.capacity} guests`
+            : "—",
     },
+
     {
       label: "Description",
       render: (r) => (

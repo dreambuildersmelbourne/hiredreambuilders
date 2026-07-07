@@ -107,7 +107,7 @@ export function calculateQuote(
     extrasSubtotal += KITCHEN_FEE;
   }
   if (input.seatingChanges) {
-    extrasLines.push({ label: "Extra / changed auditorium seating", amount: SEATING_FEE, detail: "Flat fee" });
+    extrasLines.push({ label: "Expanded auditorium seating configuration", amount: SEATING_FEE, detail: "Flat fee" });
     extrasSubtotal += SEATING_FEE;
   }
   if (input.removeDrums) {

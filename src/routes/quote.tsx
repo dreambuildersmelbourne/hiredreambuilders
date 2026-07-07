@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -119,6 +119,22 @@ function QuotePage() {
       ),
     [form, nonKitchenRooms],
   );
+
+  const auditorium = useMemo(
+    () => nonKitchenRooms.find((r) => r.slug === "main-auditorium"),
+    [nonKitchenRooms],
+  );
+  const auditoriumSelected = !!auditorium && form.selectedRoomIds.includes(auditorium.id);
+  const attendanceNum = Number(form.attendance) || 0;
+  const oversizedAuditorium = auditoriumSelected && attendanceNum > 250;
+
+  // Auto-add expanded seating when attendance exceeds standard capacity
+  useEffect(() => {
+    if (oversizedAuditorium && !form.seatingChanges) {
+      setForm((f) => ({ ...f, seatingChanges: true }));
+    }
+  }, [oversizedAuditorium, form.seatingChanges]);
+
 
   const canSubmit =
     form.event_name.trim() &&
@@ -400,13 +416,22 @@ function QuotePage() {
             </Section>
 
             <Section title="Extras & requirements">
+              {oversizedAuditorium && (
+                <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-300/60 bg-amber-50 p-3 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
+                  <InfoIcon className="mt-0.5 h-4 w-4 shrink-0" />
+                  <div>
+                    Your event exceeds our standard auditorium layout. To accommodate more than
+                    approximately 250 guests, an expanded seating configuration will be required.
+                    We've added it to your quote below.
+                  </div>
+                </div>
+              )}
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   ["foodServed", "Food will be served (adds cleaning fee)"],
                   ["soundSystem", "Sound system needed"],
                   ["avScreens", "AV screens needed"],
                   ["theatreLighting", "Theatre lighting needed"],
-                  ["seatingChanges", "Extra / changed seating (+$200)"],
                   ["removeDrums", "Remove drums from stage (+$200)"],
                 ].map(([key, label]) => (
                   <label
@@ -420,7 +445,53 @@ function QuotePage() {
                     <span className="text-sm">{label}</span>
                   </label>
                 ))}
+                <label
+                  className={`flex items-start gap-3 rounded-lg border p-3 sm:col-span-2 ${
+                    oversizedAuditorium
+                      ? "border-primary/40 bg-primary/5"
+                      : "border-border bg-card hover:border-primary/30"
+                  }`}
+                >
+                  <Checkbox
+                    checked={form.seatingChanges}
+                    onCheckedChange={(v) => setForm({ ...form, seatingChanges: !!v })}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm font-medium">
+                      Expanded Auditorium Seating Configuration
+                      <span className="text-muted-foreground">(+$200 flat fee)</span>
+                      <TooltipProvider delayDuration={150}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <button
+                              type="button"
+                              aria-label="About expanded auditorium seating"
+                              className="inline-flex h-4 w-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground"
+                            >
+                              <InfoIcon className="h-3.5 w-3.5" />
+                            </button>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs text-xs leading-relaxed">
+                            {oversizedAuditorium
+                              ? "Added because your estimated attendance exceeds the standard 250-guest theatre layout. Provides seating for up to approximately 600 guests."
+                              : "Provides additional seating capacity for up to approximately 600 guests or any requested changes to the standard seating layout."}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      Provides additional seating capacity for up to approximately 600 guests or any
+                      requested changes to the standard seating layout.
+                    </p>
+                    {oversizedAuditorium && (
+                      <p className="mt-1 text-[11px] uppercase tracking-wider text-primary/80">
+                        Recommended for your attendance
+                      </p>
+                    )}
+                  </div>
+                </label>
               </div>
+
               <div className="mt-4">
                 <Field label="Extra Dreambuilders crew required">
                   <Input
