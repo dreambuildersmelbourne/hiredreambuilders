@@ -318,6 +318,10 @@ function BookingDetail() {
             </CardContent>
           </Card>
 
+          <EventDayOpsCard booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
+
+
+
           <Card>
             <CardContent className="p-6">
               <h2 className="font-display text-lg font-semibold">Internal notes</h2>
