@@ -17,6 +17,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/quote")({
+  validateSearch: (s: Record<string, unknown>) => ({
+    rooms: typeof s.rooms === "string" ? s.rooms : undefined,
+    inspection: s.inspection === "1" || s.inspection === true ? true : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Get a Quote — Dreambuilders Venue Hire" },
