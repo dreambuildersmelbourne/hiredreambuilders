@@ -71,7 +71,7 @@ function QuotePage() {
     bump_in: "09:00",
     bump_out: "13:00",
     attendance: "" as string,
-    selectedRoomIds: initialRoomIds,
+    selectedRoomIds: initialRoomIds as string[],
     kitchen: false,
     foodServed: false,
     soundSystem: false,
