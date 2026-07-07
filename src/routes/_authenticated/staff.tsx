@@ -54,6 +54,7 @@ function StaffLayout() {
 
   const navItems = [
     { to: "/staff", label: "My events", exact: true },
+    { to: "/staff/checklist", label: "Checklist", exact: false },
     { to: "/staff/calendar", label: "Calendar", exact: false },
   ];
 

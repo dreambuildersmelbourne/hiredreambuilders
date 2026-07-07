@@ -22,6 +22,7 @@ import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as AuthenticatedStaffChecklistRouteImport } from './routes/_authenticated/staff.checklist'
 import { Route as AuthenticatedStaffCalendarRouteImport } from './routes/_authenticated/staff.calendar'
 import { Route as AuthenticatedAdminCalendarSyncRouteImport } from './routes/_authenticated/admin.calendar-sync'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
@@ -97,6 +98,12 @@ const AuthenticatedAccountIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const AuthenticatedStaffChecklistRoute =
+  AuthenticatedStaffChecklistRouteImport.update({
+    id: '/checklist',
+    path: '/checklist',
+    getParentRoute: () => AuthenticatedStaffRoute,
+  } as any)
 const AuthenticatedStaffCalendarRoute =
   AuthenticatedStaffCalendarRouteImport.update({
     id: '/calendar',
@@ -165,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
+  '/staff/checklist': typeof AuthenticatedStaffChecklistRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
@@ -185,6 +193,7 @@ export interface FileRoutesByTo {
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
+  '/staff/checklist': typeof AuthenticatedStaffChecklistRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
@@ -210,6 +219,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/_authenticated/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
   '/_authenticated/staff/calendar': typeof AuthenticatedStaffCalendarRoute
+  '/_authenticated/staff/checklist': typeof AuthenticatedStaffChecklistRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/admin/calendar'
     | '/admin/calendar-sync'
     | '/staff/calendar'
+    | '/staff/checklist'
     | '/account/'
     | '/admin/'
     | '/staff/'
@@ -255,6 +266,7 @@ export interface FileRouteTypes {
     | '/admin/calendar'
     | '/admin/calendar-sync'
     | '/staff/calendar'
+    | '/staff/checklist'
     | '/account'
     | '/admin'
     | '/staff'
@@ -279,6 +291,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/calendar'
     | '/_authenticated/admin/calendar-sync'
     | '/_authenticated/staff/calendar'
+    | '/_authenticated/staff/checklist'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/staff/'
@@ -394,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
     }
+    '/_authenticated/staff/checklist': {
+      id: '/_authenticated/staff/checklist'
+      path: '/checklist'
+      fullPath: '/staff/checklist'
+      preLoaderRoute: typeof AuthenticatedStaffChecklistRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
     '/_authenticated/staff/calendar': {
       id: '/_authenticated/staff/calendar'
       path: '/calendar'
@@ -496,12 +516,14 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedStaffRouteChildren {
   AuthenticatedStaffCalendarRoute: typeof AuthenticatedStaffCalendarRoute
+  AuthenticatedStaffChecklistRoute: typeof AuthenticatedStaffChecklistRoute
   AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
   AuthenticatedStaffEventsIdRoute: typeof AuthenticatedStaffEventsIdRoute
 }
 
 const AuthenticatedStaffRouteChildren: AuthenticatedStaffRouteChildren = {
   AuthenticatedStaffCalendarRoute: AuthenticatedStaffCalendarRoute,
+  AuthenticatedStaffChecklistRoute: AuthenticatedStaffChecklistRoute,
   AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
   AuthenticatedStaffEventsIdRoute: AuthenticatedStaffEventsIdRoute,
 }
