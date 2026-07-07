@@ -53,7 +53,7 @@ export function RoleAssignmentModal({
         .select("id, count, staff_roles(id, name, slug)")
         .eq("booking_id", bookingId!);
       if (error) throw error;
-      return (data ?? []) as Array<{
+      return (data ?? []) as unknown as Array<{
         id: string;
         count: number | null;
         staff_roles: StaffRole | null;
