@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
+  Calendar,
   Check,
   CheckCircle2,
   ChevronLeft,
@@ -12,8 +13,12 @@ import {
   MessageSquare,
   Paperclip,
   Phone,
+  ShieldAlert,
+  Sparkles,
   StickyNote,
+  Trash2,
   UserCheck,
+  UserPlus,
   X,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -312,6 +317,10 @@ function BookingDetail() {
               )}
             </CardContent>
           </Card>
+
+          <EventDayOpsCard booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
+
+
 
           <Card>
             <CardContent className="p-6">
@@ -616,3 +625,198 @@ function OverrideDialog({ booking, onDone }: { booking: any; onDone: () => void 
     </Dialog>
   );
 }
+
+// ============ Event Day Ops ============
+
+function EventDayOpsCard({ booking, onDone }: { booking: any; onDone: () => void }) {
+  const qc = useQueryClient();
+  const [secSaving, setSecSaving] = useState(false);
+
+  const rolesQ = useQuery({
+    queryKey: ["staff_roles"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("staff_roles").select("id, name, slug").eq("active", true).order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const assignQ = useQuery({
+    queryKey: ["admin", "assignments", booking.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("staff_assignments")
+        .select("*, staff_roles(name)")
+        .eq("booking_id", booking.id)
+        .order("created_at");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  async function toggleSecurity(v: boolean) {
+    setSecSaving(true);
+    const { error } = await supabase.from("bookings").update({ security_required: v }).eq("id", booking.id);
+    setSecSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success(v ? "Security marked required" : "Security requirement removed");
+    onDone();
+  }
+
+  async function generateChecklist() {
+    const { data, error } = await supabase.rpc("generate_event_checklist", { _booking_id: booking.id });
+    if (error) return toast.error(error.message);
+    toast.success(`${data ?? 0} checklist items generated`);
+  }
+
+  return (
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
+            <Calendar className="h-5 w-5 text-primary" /> Event day operations
+          </h2>
+          <div className="flex gap-2">
+            <Link
+              to="/staff/events/$id"
+              params={{ id: booking.id }}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-muted"
+            >
+              Open event day page
+            </Link>
+            <Button size="sm" variant="secondary" onClick={generateChecklist}>
+              <Sparkles className="mr-1.5 h-4 w-4" /> Generate checklists
+            </Button>
+          </div>
+        </div>
+
+        <label className="mt-4 flex items-start gap-3 rounded-lg border border-dashed border-border p-3">
+          <input
+            type="checkbox"
+            className="mt-0.5 h-4 w-4"
+            checked={!!booking.security_required}
+            disabled={secSaving}
+            onChange={(e) => toggleSecurity(e.target.checked)}
+          />
+          <div>
+            <div className="flex items-center gap-1.5 text-sm font-medium">
+              <ShieldAlert className="h-3.5 w-3.5 text-amber-600" /> Security required for this event
+            </div>
+            <p className="text-xs text-muted-foreground">
+              When enabled, security tasks are added to the event day checklist.
+            </p>
+          </div>
+        </label>
+
+        <div className="mt-5">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Staff assignments</div>
+          </div>
+          {assignQ.isLoading ? (
+            <div className="text-sm text-muted-foreground">Loading…</div>
+          ) : (assignQ.data ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">No staff assigned yet.</p>
+          ) : (
+            <ul className="divide-y divide-border rounded-lg border border-border">
+              {assignQ.data!.map((a: any) => (
+                <li key={a.id} className="flex items-center justify-between px-3 py-2 text-sm">
+                  <div>
+                    <div className="font-medium">{a.name ?? "Unnamed"}</div>
+                    <div className="text-xs text-muted-foreground">{a.staff_roles?.name ?? "No role"}</div>
+                  </div>
+                  <RemoveAssignmentBtn
+                    id={a.id}
+                    onDone={() => qc.invalidateQueries({ queryKey: ["admin", "assignments", booking.id] })}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+          <AddAssignmentForm
+            bookingId={booking.id}
+            roles={rolesQ.data ?? []}
+            onDone={() => qc.invalidateQueries({ queryKey: ["admin", "assignments", booking.id] })}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AddAssignmentForm({
+  bookingId,
+  roles,
+  onDone,
+}: {
+  bookingId: string;
+  roles: { id: string; name: string; slug: string }[];
+  onDone: () => void;
+}) {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [roleId, setRoleId] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  async function add() {
+    if (!roleId) return toast.error("Select a role");
+    setSaving(true);
+    let userId: string | null = null;
+    if (email.trim()) {
+      const { data } = await supabase
+        .from("customers")
+        .select("user_id")
+        .ilike("email", email.trim())
+        .maybeSingle();
+      userId = data?.user_id ?? null;
+    }
+    const { error } = await supabase.from("staff_assignments").insert({
+      booking_id: bookingId,
+      staff_role_id: roleId,
+      name: name.trim() || null,
+      user_id: userId,
+      confirmed: false,
+    });
+    setSaving(false);
+    if (error) return toast.error(error.message);
+    toast.success(userId ? "Assigned & linked to account" : "Assigned (no matching account found)");
+    setName("");
+    setEmail("");
+    setRoleId("");
+    onDone();
+  }
+
+  return (
+    <div className="mt-3 grid gap-2 rounded-lg border border-dashed border-border p-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+      <Input placeholder="Staff name" value={name} onChange={(e) => setName(e.target.value)} />
+      <Input placeholder="Email (optional, links account)" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <Select value={roleId} onValueChange={setRoleId}>
+        <SelectTrigger><SelectValue placeholder="Role" /></SelectTrigger>
+        <SelectContent>
+          {roles.map((r) => (
+            <SelectItem key={r.id} value={r.id}>{r.name}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button size="sm" onClick={add} disabled={saving || !roleId}>
+        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><UserPlus className="mr-1.5 h-4 w-4" /> Assign</>}
+      </Button>
+    </div>
+  );
+}
+
+function RemoveAssignmentBtn({ id, onDone }: { id: string; onDone: () => void }) {
+  const [busy, setBusy] = useState(false);
+  async function remove() {
+    setBusy(true);
+    const { error } = await supabase.from("staff_assignments").delete().eq("id", id);
+    setBusy(false);
+    if (error) return toast.error(error.message);
+    onDone();
+  }
+  return (
+    <Button size="sm" variant="ghost" onClick={remove} disabled={busy}>
+      <Trash2 className="h-3.5 w-3.5" />
+    </Button>
+  );
+}
+

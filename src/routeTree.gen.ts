@@ -13,10 +13,13 @@ import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
+import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
 
@@ -39,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -48,6 +56,11 @@ const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
   id: '/account',
   path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedStaffRoute,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -59,6 +72,12 @@ const AuthenticatedAccountIndexRoute =
     id: '/',
     path: '/',
     getParentRoute: () => AuthenticatedAccountRoute,
+  } as any)
+const AuthenticatedStaffEventsIdRoute =
+  AuthenticatedStaffEventsIdRouteImport.update({
+    id: '/events/$id',
+    path: '/events/$id',
+    getParentRoute: () => AuthenticatedStaffRoute,
   } as any)
 const AuthenticatedAdminBookingsIdRoute =
   AuthenticatedAdminBookingsIdRouteImport.update({
@@ -79,10 +98,13 @@ export interface FileRoutesByFullPath {
   '/quote': typeof QuoteRoute
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/staff': typeof AuthenticatedStaffRouteWithChildren
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/staff/': typeof AuthenticatedStaffIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -90,8 +112,10 @@ export interface FileRoutesByTo {
   '/quote': typeof QuoteRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/staff': typeof AuthenticatedStaffIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -101,10 +125,13 @@ export interface FileRoutesById {
   '/quote': typeof QuoteRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/staff': typeof AuthenticatedStaffRouteWithChildren
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
   '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -114,10 +141,13 @@ export interface FileRouteTypes {
     | '/quote'
     | '/account'
     | '/admin'
+    | '/staff'
     | '/account/'
     | '/admin/'
+    | '/staff/'
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
+    | '/staff/events/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -125,8 +155,10 @@ export interface FileRouteTypes {
     | '/quote'
     | '/account'
     | '/admin'
+    | '/staff'
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
+    | '/staff/events/$id'
   id:
     | '__root__'
     | '/'
@@ -135,10 +167,13 @@ export interface FileRouteTypes {
     | '/quote'
     | '/_authenticated/account'
     | '/_authenticated/admin'
+    | '/_authenticated/staff'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
+    | '/_authenticated/staff/'
     | '/_authenticated/account/bookings/$id'
     | '/_authenticated/admin/bookings/$id'
+    | '/_authenticated/staff/events/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -178,6 +213,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/staff': {
+      id: '/_authenticated/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof AuthenticatedStaffRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -192,6 +234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/staff/': {
+      id: '/_authenticated/staff/'
+      path: '/'
+      fullPath: '/staff/'
+      preLoaderRoute: typeof AuthenticatedStaffIndexRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -205,6 +254,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account/'
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/_authenticated/staff/events/$id': {
+      id: '/_authenticated/staff/events/$id'
+      path: '/events/$id'
+      fullPath: '/staff/events/$id'
+      preLoaderRoute: typeof AuthenticatedStaffEventsIdRouteImport
+      parentRoute: typeof AuthenticatedStaffRoute
     }
     '/_authenticated/admin/bookings/$id': {
       id: '/_authenticated/admin/bookings/$id'
@@ -249,14 +305,29 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedStaffRouteChildren {
+  AuthenticatedStaffIndexRoute: typeof AuthenticatedStaffIndexRoute
+  AuthenticatedStaffEventsIdRoute: typeof AuthenticatedStaffEventsIdRoute
+}
+
+const AuthenticatedStaffRouteChildren: AuthenticatedStaffRouteChildren = {
+  AuthenticatedStaffIndexRoute: AuthenticatedStaffIndexRoute,
+  AuthenticatedStaffEventsIdRoute: AuthenticatedStaffEventsIdRoute,
+}
+
+const AuthenticatedStaffRouteWithChildren =
+  AuthenticatedStaffRoute._addFileChildren(AuthenticatedStaffRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAccountRoute: typeof AuthenticatedAccountRouteWithChildren
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedStaffRoute: typeof AuthenticatedStaffRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAccountRoute: AuthenticatedAccountRouteWithChildren,
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedStaffRoute: AuthenticatedStaffRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =

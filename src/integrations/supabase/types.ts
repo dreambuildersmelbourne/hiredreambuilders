@@ -174,6 +174,8 @@ export type Database = {
           av_screens: boolean
           balance_paid_at: string | null
           bond: number
+          bond_release_notes: string | null
+          bond_released_at: string | null
           bump_in_time: string
           bump_out_time: string
           cleaning_subtotal: number
@@ -200,6 +202,7 @@ export type Database = {
           remove_drums: boolean
           room_subtotal: number
           seating_changes: boolean
+          security_required: boolean
           sound_system: boolean
           staff_subtotal: number
           staffing_confirmed_at: string | null
@@ -215,6 +218,8 @@ export type Database = {
           av_screens?: boolean
           balance_paid_at?: string | null
           bond?: number
+          bond_release_notes?: string | null
+          bond_released_at?: string | null
           bump_in_time: string
           bump_out_time: string
           cleaning_subtotal?: number
@@ -241,6 +246,7 @@ export type Database = {
           remove_drums?: boolean
           room_subtotal?: number
           seating_changes?: boolean
+          security_required?: boolean
           sound_system?: boolean
           staff_subtotal?: number
           staffing_confirmed_at?: string | null
@@ -256,6 +262,8 @@ export type Database = {
           av_screens?: boolean
           balance_paid_at?: string | null
           bond?: number
+          bond_release_notes?: string | null
+          bond_released_at?: string | null
           bump_in_time?: string
           bump_out_time?: string
           cleaning_subtotal?: number
@@ -282,6 +290,7 @@ export type Database = {
           remove_drums?: boolean
           room_subtotal?: number
           seating_changes?: boolean
+          security_required?: boolean
           sound_system?: boolean
           staff_subtotal?: number
           staffing_confirmed_at?: string | null
@@ -297,6 +306,47 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      checklist_templates: {
+        Row: {
+          active: boolean
+          category: string
+          condition: string | null
+          created_at: string
+          id: string
+          sort_order: number
+          staff_role_id: string | null
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          category?: string
+          condition?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number
+          staff_role_id?: string | null
+          title: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          condition?: string | null
+          created_at?: string
+          id?: string
+          sort_order?: number
+          staff_role_id?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "checklist_templates_staff_role_id_fkey"
+            columns: ["staff_role_id"]
+            isOneToOne: false
+            referencedRelation: "staff_roles"
             referencedColumns: ["id"]
           },
         ]
@@ -372,6 +422,50 @@ export type Database = {
         }
         Relationships: []
       }
+      damage_reports: {
+        Row: {
+          booking_id: string
+          created_at: string
+          description: string
+          id: string
+          location: string | null
+          photo_paths: string[]
+          reported_by: string | null
+          reporter_name: string | null
+          severity: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          description: string
+          id?: string
+          location?: string | null
+          photo_paths?: string[]
+          reported_by?: string | null
+          reporter_name?: string | null
+          severity?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          location?: string | null
+          photo_paths?: string[]
+          reported_by?: string | null
+          reporter_name?: string | null
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "damage_reports_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       documents: {
         Row: {
           booking_id: string | null
@@ -413,33 +507,42 @@ export type Database = {
       event_day_checklists: {
         Row: {
           booking_id: string
+          category: string
           completed: boolean
           completed_at: string | null
           completed_by: string | null
           created_at: string
           id: string
           item: string
+          note: string | null
           sort_order: number
+          staff_role_id: string | null
         }
         Insert: {
           booking_id: string
+          category?: string
           completed?: boolean
           completed_at?: string | null
           completed_by?: string | null
           created_at?: string
           id?: string
           item: string
+          note?: string | null
           sort_order?: number
+          staff_role_id?: string | null
         }
         Update: {
           booking_id?: string
+          category?: string
           completed?: boolean
           completed_at?: string | null
           completed_by?: string | null
           created_at?: string
           id?: string
           item?: string
+          note?: string | null
           sort_order?: number
+          staff_role_id?: string | null
         }
         Relationships: [
           {
@@ -447,6 +550,13 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: false
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_day_checklists_staff_role_id_fkey"
+            columns: ["staff_role_id"]
+            isOneToOne: false
+            referencedRelation: "staff_roles"
             referencedColumns: ["id"]
           },
         ]
@@ -739,7 +849,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_event_checklist: {
+        Args: { _booking_id: string }
+        Returns: number
+      }
     }
     Enums: {
       app_role: "admin" | "staff"
