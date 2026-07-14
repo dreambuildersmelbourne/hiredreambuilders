@@ -4,11 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
 import { toast } from "sonner";
 import { CheckCircle2, ChevronLeft, Info as InfoIcon, Loader2, ShieldCheck } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 
 import { SiteHeader } from "@/components/SiteHeader";
 import { QuoteRoomPicker, type RichRoom } from "@/components/QuoteRoomPicker";
 import { supabase } from "@/integrations/supabase/client";
 import { calculateQuote, money } from "@/lib/pricing";
+import { submitQuote } from "@/lib/quote.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
