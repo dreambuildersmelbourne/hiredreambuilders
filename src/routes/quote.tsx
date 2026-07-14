@@ -193,86 +193,31 @@ function QuotePage() {
 
     setSubmitting(true);
     try {
-      // Create customer
-      const { data: customer, error: cErr } = await supabase
-        .from("customers")
-        .insert({
-          contact_name: parse.data.contact_name,
-          organisation: parse.data.organisation ?? null,
-          email: parse.data.email,
-          phone: parse.data.phone ?? null,
-        })
-        .select("id")
-        .single();
-      if (cErr) throw cErr;
-
-      // Create booking
-      const noteParts: string[] = [];
-      if (form.soundSystem) noteParts.push("Sound system required");
-      if (form.avScreens) noteParts.push("AV screens required");
-      if (form.theatreLighting) noteParts.push("Theatre lighting required");
-      if (form.notes.trim()) noteParts.push(form.notes.trim());
-
-      const { data: booking, error: bErr } = await supabase
-        .from("bookings")
-        .insert({
-          customer_id: customer.id,
+      const booking = await doSubmitQuote({
+        data: {
           event_name: parse.data.event_name,
           event_date: parse.data.event_date,
-          bump_in_time: parse.data.bump_in,
-          bump_out_time: parse.data.bump_out,
-          estimated_attendance: parse.data.attendance ?? null,
+          bump_in: parse.data.bump_in,
+          bump_out: parse.data.bump_out,
+          attendance: parse.data.attendance,
+          contact_name: parse.data.contact_name,
+          organisation: parse.data.organisation,
+          email: parse.data.email,
+          phone: parse.data.phone,
+          notes: parse.data.notes,
+          selected_room_ids: form.selectedRoomIds,
+          kitchen: form.kitchen,
           food_served: form.foodServed,
           sound_system: form.soundSystem,
           av_screens: form.avScreens,
           theatre_lighting: form.theatreLighting,
           seating_changes: form.seatingChanges,
           remove_drums: form.removeDrums,
-          kitchen: form.kitchen,
           extra_staff_count: form.extraStaffCount,
-          notes: noteParts.join("\n") || null,
-          hours: quote.hours,
-          room_subtotal: quote.roomSubtotal,
-          extras_subtotal: quote.extrasSubtotal,
-          cleaning_subtotal: quote.cleaningSubtotal,
-          staff_subtotal: quote.requiredStaffSubtotal + quote.staffSubtotal,
-          bond: quote.bond,
-          subtotal_ex_bond: quote.subtotalExBond,
-          deposit_amount: quote.depositAmount,
-          total_amount: quote.totalAmount,
-          status: "enquiry",
-          tentative_hold_requested: form.tentativeHold,
-        })
-        .select("id, reference")
-        .single();
-      if (bErr) throw bErr;
-
-      // Booking rooms
-      const bookingRoomsRows = nonKitchenRooms
-        .filter((r) => form.selectedRoomIds.includes(r.id))
-        .map((r) => {
-          const chargeHours = Math.max(quote.hours, r.min_hours);
-          return {
-            booking_id: booking.id,
-            room_id: r.id,
-            hours: chargeHours,
-            line_total: chargeHours * r.hourly_rate,
-          };
-        });
-      if (form.kitchen && kitchenRoom) {
-        bookingRoomsRows.push({
-          booking_id: booking.id,
-          room_id: kitchenRoom.id,
-          hours: 0,
-          line_total: 250,
-        });
-      }
-      if (bookingRoomsRows.length) {
-        const { error } = await supabase.from("booking_rooms").insert(bookingRoomsRows);
-        if (error) throw error;
-      }
-
-      setSubmitted({ ref: booking.reference, tentative: form.tentativeHold });
+          tentative_hold: form.tentativeHold,
+        },
+      });
+      setSubmitted({ ref: booking.reference, tentative: booking.tentative });
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       console.error(err);
