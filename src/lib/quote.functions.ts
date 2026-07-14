@@ -27,7 +27,7 @@ const quoteInputSchema = z.object({
 });
 
 export const submitQuote = createServerFn({ method: "POST" })
-  .inputValidator((input) => quoteInputSchema.parse(input))
+  .validator((input) => quoteInputSchema.parse(input))
   .handler(async ({ data }) => {
     const [{ supabaseAdmin }, { render }, { sendLovableEmail }] = await Promise.all([
       import("@/integrations/supabase/client.server"),
