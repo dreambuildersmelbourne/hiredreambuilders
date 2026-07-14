@@ -52,6 +52,7 @@ function AdminLayout() {
     { to: "/admin/calendar", label: "Calendar", exact: false },
     { to: "/admin/calendar-sync", label: "Calendar sync", exact: false },
     { to: "/admin/rooms", label: "Room media", exact: false },
+    { to: "/admin/settings", label: "Settings", exact: false },
     { to: "/staff", label: "Staff portal", exact: false },
   ];
 
