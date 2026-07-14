@@ -28,7 +28,7 @@ function AdminSettings() {
     },
   });
 
-  const [form, setForm] = useState({ notification_email: "", sender_domain: "" });
+  const [form, setForm] = useState<Record<string, string>>({});
   const [saving, setSaving] = useState(false);
 
   const current = data ?? { notification_email: "", sender_domain: "" };
