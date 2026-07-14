@@ -107,6 +107,7 @@ function QuotePage() {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState<null | { ref: string; tentative: boolean }>(null);
+  const doSubmitQuote = useServerFn(submitQuote);
 
   const rooms = roomsQuery.data ?? [];
   const nonKitchenRooms = useMemo(
