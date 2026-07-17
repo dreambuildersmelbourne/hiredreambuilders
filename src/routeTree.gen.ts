@@ -28,6 +28,7 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminCalendarSyncRouteImport } from './routes/_authenticated/admin.calendar-sync'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_authenticated/admin.rooms.index'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
 import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_authenticated/admin.bookings.$id'
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
@@ -135,6 +136,12 @@ const AuthenticatedAdminRoomsIndexRoute =
     path: '/rooms/',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedStaffEventsIdRoute =
   AuthenticatedStaffEventsIdRouteImport.update({
     id: '/events/$id',
@@ -187,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
@@ -209,6 +217,7 @@ export interface FileRoutesByTo {
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/rooms': typeof AuthenticatedAdminRoomsIndexRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
@@ -236,6 +245,7 @@ export interface FileRoutesById {
   '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
   '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/_authenticated/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
   '/_authenticated/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
@@ -263,6 +273,7 @@ export interface FileRouteTypes {
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
     | '/staff/events/$id'
+    | '/lovable/email/queue/process'
     | '/admin/rooms/'
     | '/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/account/bookings/$id'
     | '/admin/bookings/$id'
     | '/staff/events/$id'
+    | '/lovable/email/queue/process'
     | '/admin/rooms'
     | '/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
@@ -311,6 +323,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/bookings/$id'
     | '/_authenticated/admin/bookings/$id'
     | '/_authenticated/staff/events/$id'
+    | '/lovable/email/queue/process'
     | '/_authenticated/admin/rooms/'
     | '/_authenticated/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
@@ -324,6 +337,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
 
@@ -462,6 +476,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRoomsIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/staff/events/$id': {
       id: '/_authenticated/staff/events/$id'
       path: '/events/$id'
@@ -576,18 +597,9 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsIndexRoute: RoomsIndexRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
