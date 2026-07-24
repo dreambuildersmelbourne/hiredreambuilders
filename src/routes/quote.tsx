@@ -31,17 +31,17 @@ export const Route = createFileRoute("/quote")({
   }),
   head: () => ({
     meta: [
-      { title: "Get a Quote — Dreambuilders Venue Hire" },
+      { title: "Get an Estimate — Dreambuilders Venue Hire" },
       {
         name: "description",
         content:
-          "Configure your rooms, extras and staffing to get an instant baseline hire quote from Dreambuilders Church in Hoppers Crossing.",
+          "Configure your rooms, extras and staffing to get an instant baseline hire estimate from Dreambuilders Church in Hoppers Crossing.",
       },
-      { property: "og:title", content: "Get an instant venue hire quote — Dreambuilders" },
+      { property: "og:title", content: "Get an instant venue hire estimate — Dreambuilders" },
       {
         property: "og:description",
         content:
-          "Build your event, pick your rooms and get a baseline quote in seconds. Submit a no-obligation booking enquiry online.",
+          "Build your event, pick your rooms and get a baseline estimate in seconds. Submit a no-obligation booking enquiry online.",
       },
       { property: "og:url", content: "https://hiredreambuilders.lovable.app/quote" },
       { property: "og:type", content: "website" },
@@ -275,7 +275,7 @@ function QuotePage() {
                 <Link to="/">Back to home</Link>
               </Button>
               <Button onClick={() => { setSubmitted(null); navigate({ to: "/quote" }); }}>
-                Start another quote
+                Start another estimate
               </Button>
             </div>
           </div>
@@ -295,9 +295,9 @@ function QuotePage() {
           <ChevronLeft className="h-4 w-4" /> Back
         </Link>
         <div className="mt-4">
-          <h1 className="font-display text-3xl font-semibold sm:text-4xl">Get a hire quote</h1>
+          <h1 className="font-display text-3xl font-semibold sm:text-4xl">Get a hire estimate</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Configure your event on the left and see your baseline quote on the right. Submit when
+            Configure your event on the left and see your baseline estimate on the right. Submit when
             you're happy — no obligation.
           </p>
         </div>
@@ -394,7 +394,7 @@ function QuotePage() {
                   <div>
                     Your event exceeds our standard auditorium layout. To accommodate more than
                     approximately 250 guests, an expanded seating configuration will be required.
-                    We've added it to your quote below.
+                    We've added it to your estimate below.
                   </div>
                 </div>
               )}
@@ -521,11 +521,11 @@ function QuotePage() {
             </Section>
           </div>
 
-          {/* QUOTE SUMMARY */}
+          {/* ESTIMATE SUMMARY */}
           <div className="lg:sticky lg:top-24 lg:h-fit">
             <Card className="shadow-elevated">
               <CardContent className="p-6">
-                <h2 className="font-display text-xl font-semibold">Your quote</h2>
+                <h2 className="font-display text-xl font-semibold">Your estimate</h2>
                 <p className="text-xs text-muted-foreground">Baseline estimate — pending approval</p>
 
                 <div className="mt-5 space-y-4 text-sm">

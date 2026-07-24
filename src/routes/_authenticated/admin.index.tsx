@@ -73,7 +73,7 @@ function AdminEnquiries() {
             </div>
             <h3 className="mt-4 font-display text-lg font-semibold">No enquiries yet</h3>
             <p className="mt-1 text-sm text-muted-foreground">
-              When customers submit a quote it will appear here.
+              When customers submit an estimate it will appear here.
             </p>
           </CardContent>
         </Card>

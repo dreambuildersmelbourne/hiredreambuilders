@@ -145,7 +145,7 @@ function buildIcs(bookings: any[], settings: any) {
               ? "COMPLETED"
               : bucket === "pending_approval"
                 ? "PENDING"
-                : "QUOTE";
+                : "ESTIMATE";
 
     const summary = `[${shortStatus}] ${b.event_name}${rooms ? ` - ${rooms}` : ""}`;
 

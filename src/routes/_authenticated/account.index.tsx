@@ -57,7 +57,7 @@ function MyBookings() {
               start a new one.
             </p>
             <Button asChild className="mt-5">
-              <Link to="/quote">Start a quote</Link>
+              <Link to="/quote">Start an estimate</Link>
             </Button>
           </CardContent>
         </Card>

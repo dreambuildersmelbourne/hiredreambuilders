@@ -59,9 +59,9 @@ function AdminSettings() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-display">Quote enquiry notifications</CardTitle>
+          <CardTitle className="font-display">Estimate enquiry notifications</CardTitle>
           <CardDescription>
-            When a customer submits a quote, an email is sent to this address. The sender domain must
+            When a customer submits an estimate, an email is sent to this address. The sender domain must
             match the email domain configured in Lovable Cloud.
           </CardDescription>
         </CardHeader>
@@ -84,7 +84,7 @@ function AdminSettings() {
                   onChange={(e) => setForm((f) => ({ ...f, notification_email: e.target.value }))}
                 />
                 <p className="text-xs text-muted-foreground">
-                  The staff address that receives new quote enquiry alerts.
+                  The staff address that receives new estimate enquiry alerts.
                 </p>
               </div>
 

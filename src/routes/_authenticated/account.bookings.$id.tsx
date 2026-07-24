@@ -145,7 +145,7 @@ function CustomerBookingDetail() {
         <div>
           <Card className="lg:sticky lg:top-24">
             <CardContent className="p-6">
-              <h2 className="font-display text-lg font-semibold">Quote</h2>
+              <h2 className="font-display text-lg font-semibold">Estimate</h2>
               <div className="mt-4 space-y-1.5 text-sm">
                 <Row label="Room hire" value={money(Number(b.room_subtotal))} />
                 <Row label="Extras" value={money(Number(b.extras_subtotal))} />

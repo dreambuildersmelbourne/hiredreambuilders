@@ -224,7 +224,7 @@ function RoomDetail() {
 
               <div className="mt-6 flex flex-col gap-2 sm:flex-row">
                 <Button size="lg" onClick={goQuote} className="flex-1">
-                  Add to quote
+                  Add to estimate
                 </Button>
                 <Button size="lg" variant="outline" onClick={bookInspection} className="flex-1">
                   <CalendarCheck className="mr-1.5 h-4 w-4" /> Book inspection
@@ -298,10 +298,10 @@ function RoomDetail() {
         <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl border border-border bg-primary/5 p-8 text-center md:flex-row md:text-left">
           <div>
             <h3 className="font-display text-xl font-semibold">Interested in {room.name}?</h3>
-            <p className="text-sm text-muted-foreground">Add it to a quote or book a walk-through to see it in person.</p>
+            <p className="text-sm text-muted-foreground">Add it to an estimate or book a walk-through to see it in person.</p>
           </div>
           <div className="flex gap-2">
-            <Button onClick={goQuote}>Add to quote</Button>
+            <Button onClick={goQuote}>Add to estimate</Button>
             <Button variant="outline" onClick={bookInspection}>
               <CalendarCheck className="mr-1.5 h-4 w-4" /> Book inspection
             </Button>

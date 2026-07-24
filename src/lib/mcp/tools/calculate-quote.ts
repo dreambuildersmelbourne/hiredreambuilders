@@ -5,7 +5,7 @@ import { supabaseForUser } from "./list-rooms";
 
 export default defineTool({
   name: "calculate_quote",
-  title: "Calculate a venue-hire quote",
+  title: "Calculate a venue-hire estimate",
   description:
     "Preview pricing for a venue-hire enquiry without saving anything. Returns hours, per-room line items, extras, cleaning, required staff, bond, deposit, and total.",
   inputSchema: {
