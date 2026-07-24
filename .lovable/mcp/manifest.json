@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "sdk_version": "0.24.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://dzssqwrbwvabrkzwefft.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "dreambuilders-venue-hire",
+      "version": "0.1.0",
+      "title": "Dreambuilders Venue Hire"
+    },
+    "tools": [
+      {
+        "name": "list_rooms",
+        "title": "List venue rooms",
+        "description": "List every active venue-hire room with hourly rate, minimum hours, bond, and description. Use before quoting or picking rooms.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_bookings",
+        "title": "List my bookings",
+        "description": "List the signed-in customer's own venue-hire bookings (event name, date, status, totals). RLS ensures only bookings owned by the caller are returned.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_booking",
+        "title": "Get booking details",
+        "description": "Get full details for a single booking the caller owns: event fields, requirements, rooms, and totals. Returns not-found (via RLS) if the booking is not owned by the caller.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "booking_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Booking id (uuid) from list_my_bookings."
+            }
+          },
+          "required": [
+            "booking_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "calculate_quote",
+        "title": "Calculate a venue-hire quote",
+        "description": "Preview pricing for a venue-hire enquiry without saving anything. Returns hours, per-room line items, extras, cleaning, required staff, bond, deposit, and total.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "bump_in": {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$",
+              "description": "Start time, HH:MM (24h)."
+            },
+            "bump_out": {
+              "type": "string",
+              "pattern": "^\\d{2}:\\d{2}$",
+              "description": "End time, HH:MM (24h)."
+            },
+            "selected_room_slugs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "description": "Room slugs to hire (excluding kitchen). Get from list_rooms."
+            },
+            "kitchen": {
+              "type": "boolean",
+              "default": false
+            },
+            "food_served": {
+              "type": "boolean",
+              "default": false
+            },
+            "seating_changes": {
+              "type": "boolean",
+              "default": false
+            },
+            "remove_drums": {
+              "type": "boolean",
+              "default": false
+            },
+            "sound_system": {
+              "type": "boolean",
+              "default": false
+            },
+            "av_screens": {
+              "type": "boolean",
+              "default": false
+            },
+            "theatre_lighting": {
+              "type": "boolean",
+              "default": false
+            },
+            "extra_staff_count": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": [
+            "bump_in",
+            "bump_out",
+            "selected_room_slugs"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
