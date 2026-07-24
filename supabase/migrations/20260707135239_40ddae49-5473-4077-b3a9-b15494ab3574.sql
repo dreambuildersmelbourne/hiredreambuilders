@@ -385,7 +385,7 @@ CREATE TRIGGER on_auth_user_created
 
 -- ============ SEED CATALOG ============
 INSERT INTO public.rooms (slug, name, description, hourly_rate, min_hours, bond, capacity, includes_staff, includes_cleaning, sort_order) VALUES
-  ('main-auditorium', 'Main Auditorium', '3 large audience screens, quality sound system, theatre lighting. Fully air-conditioned/heated.', 480, 4, 800, 250, true, true, 1),
+  ('main-auditorium', 'Main Auditorium', '3 large audience screens, quality sound system, theatre lighting. Fully air-conditioned/heated.', 400, 4, 800, 250, true, true, 1),
   ('function-room-2', 'Function Room 2', 'Air-conditioned/heated. Capacity ~80.', 150, 4, 500, 80, false, false, 2),
   ('function-room-3', 'Function Room 3', 'Air-conditioned/heated, white board, flat screen TV. Capacity ~60.', 150, 4, 500, 60, false, false, 3),
   ('lounge', 'Lounge', 'Air-conditioned/heated, kitchenette. Capacity 16–30.', 150, 4, 500, 30, false, false, 4),

@@ -48,7 +48,7 @@ export const Route = createFileRoute("/")({
 const rooms = [
   {
     name: "Main Auditorium",
-    price: "$480/hr",
+    price: "$400/hr",
     capacity: "Seats ~250 theatre style",
     features: ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
     highlight: true,
