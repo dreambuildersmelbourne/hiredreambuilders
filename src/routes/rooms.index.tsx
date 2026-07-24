@@ -255,7 +255,7 @@ function RoomsIndex() {
           </h1>
           <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
             Explore every room at Dreambuilders Church — from the 250-seat main auditorium to the
-            intimate lounge and welcoming foyer. Filter, compare and add to a quote in seconds.
+            intimate lounge and welcoming foyer. Filter, compare and add to an estimate in seconds.
           </p>
         </div>
       </section>
@@ -411,7 +411,7 @@ function RoomsIndex() {
 
                     <div className="mt-4 flex flex-wrap items-center gap-2">
                       <Button size="sm" onClick={() => goQuote([r.id])}>
-                        Add to quote
+                        Add to estimate
                       </Button>
                       <Button asChild size="sm" variant="outline">
                         <Link to="/rooms/$slug" params={{ slug: r.slug }}>
@@ -498,7 +498,7 @@ function RoomsIndex() {
             </p>
             <h2 className="mt-2 font-display text-3xl font-semibold">Suggested combinations</h2>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Room bundles our hire coordinator recommends most. Add the whole combo to your quote
+              Room bundles our hire coordinator recommends most. Add the whole combo to your estimate
               in one click.
             </p>
           </div>
@@ -536,7 +536,7 @@ function RoomsIndex() {
                       onClick={() => goQuote(matched.map((m) => m.id))}
                       disabled={disabled}
                     >
-                      Add combo to quote
+                      Add combo to estimate
                     </Button>
                     {matched.length > 0 && (
                       <Button
@@ -566,11 +566,11 @@ function RoomsIndex() {
           <div>
             <h3 className="font-display text-xl font-semibold">Ready to book?</h3>
             <p className="text-sm text-muted-foreground">
-              Get an instant quote for any combination of rooms.
+              Get an instant estimate for any combination of rooms.
             </p>
           </div>
           <Button size="lg" onClick={() => goQuote()}>
-            Start a quote
+            Start an estimate
           </Button>
         </div>
       </section>
@@ -607,10 +607,10 @@ function RoomsIndex() {
         </div>
       )}
 
-      {/* Sticky Get Quote FAB */}
+      {/* Sticky Get Estimate FAB */}
       <div className="fixed bottom-6 right-6 z-30">
         <Button size="lg" className="rounded-full shadow-elevated" onClick={() => goQuote()}>
-          Get quote
+          Get estimate
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
@@ -895,7 +895,7 @@ function CompareModal({
       </div>
       <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border p-4">
         <Button variant="ghost" onClick={onClose}>Close</Button>
-        <Button onClick={onAddCombo}>Add all to quote</Button>
+        <Button onClick={onAddCombo}>Add all to estimate</Button>
       </div>
     </ModalShell>
   );
