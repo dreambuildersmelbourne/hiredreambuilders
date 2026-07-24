@@ -256,7 +256,7 @@ function RoomCard({
             variant={selected ? "secondary" : "default"}
             onClick={onToggle}
           >
-            {selected ? "Added to quote" : "Add to quote"}
+            {selected ? "Added to estimate" : "Add to estimate"}
           </Button>
           <Button
             type="button"
@@ -519,7 +519,7 @@ function CompareModal({
                     className="mt-2"
                     onClick={() => onToggle(r.id)}
                   >
-                    {selectedIds.includes(r.id) ? "Added" : "Add to quote"}
+                    {selectedIds.includes(r.id) ? "Added" : "Add to estimate"}
                   </Button>
                 </th>
               ))}

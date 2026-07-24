@@ -87,7 +87,7 @@ function Consent() {
         <h1 className="font-display text-2xl font-semibold">Authorize {clientName}</h1>
         <p className="mt-2 text-muted-foreground">
           {clientName} is requesting access to your Dreambuilders Venue Hire account. It will be
-          able to view your bookings and price quotes on your behalf.
+          able to view your bookings and price estimates on your behalf.
         </p>
       </div>
       {error && (
