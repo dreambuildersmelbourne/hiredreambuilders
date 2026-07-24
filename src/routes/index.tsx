@@ -50,7 +50,7 @@ const rooms = [
     name: "Main Auditorium",
     price: "$480/hr",
     capacity: "Seats ~250 theatre style",
-    features: ["3 projectors", "Quality sound system", "Theatre lighting", "Air conditioned"],
+    features: ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
     highlight: true,
   },
   {
