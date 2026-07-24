@@ -31,6 +31,7 @@ import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminCalendarSyncRouteImport } from './routes/_authenticated/admin.calendar-sync'
 import { Route as AuthenticatedAdminCalendarRouteImport } from './routes/_authenticated/admin.calendar'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
 import { Route as AuthenticatedAdminRoomsIndexRouteImport } from './routes/_authenticated/admin.rooms.index'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as AuthenticatedStaffEventsIdRouteImport } from './routes/_authenticated/staff.events.$id'
@@ -157,6 +158,11 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
+  id: '/.lovable/oauth/consent',
+  path: '/.lovable/oauth/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoomsIndexRoute =
   AuthenticatedAdminRoomsIndexRouteImport.update({
     id: '/rooms/',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/staff': typeof AuthenticatedStaffRouteWithChildren
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
@@ -240,6 +247,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms': typeof RoomsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
@@ -272,6 +280,7 @@ export interface FileRoutesById {
   '/_authenticated/staff': typeof AuthenticatedStaffRouteWithChildren
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
+  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/calendar': typeof AuthenticatedAdminCalendarRoute
   '/_authenticated/admin/calendar-sync': typeof AuthenticatedAdminCalendarSyncRoute
@@ -304,6 +313,7 @@ export interface FileRouteTypes {
     | '/staff'
     | '/rooms/$slug'
     | '/rooms/'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/calendar'
     | '/admin/calendar-sync'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/rooms/$slug'
     | '/rooms'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/admin/calendar'
     | '/admin/calendar-sync'
@@ -362,6 +373,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff'
     | '/rooms/$slug'
     | '/rooms/'
+    | '/.lovable/oauth/consent'
     | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/calendar'
     | '/_authenticated/admin/calendar-sync'
@@ -391,6 +403,7 @@ export interface RootRouteChildren {
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
+  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
@@ -552,6 +565,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/.lovable/oauth/consent': {
+      id: '/.lovable/oauth/consent'
+      path: '/.lovable/oauth/consent'
+      fullPath: '/.lovable/oauth/consent'
+      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/rooms/': {
       id: '/_authenticated/admin/rooms/'
       path: '/rooms'
@@ -684,6 +704,7 @@ const rootRouteChildren: RootRouteChildren = {
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsIndexRoute: RoomsIndexRoute,
+  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
