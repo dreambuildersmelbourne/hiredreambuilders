@@ -130,7 +130,7 @@ function Landing() {
           <div>
             <p className="text-sm font-medium uppercase tracking-widest text-brand">Our spaces</p>
             <h2 className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-              Rooms sized for every gathering
+              Select the room that meets your needs
             </h2>
           </div>
           <Link to="/quote" className="hidden text-sm font-medium text-primary hover:underline sm:inline">
