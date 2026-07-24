@@ -96,11 +96,10 @@ function Landing() {
               <Sparkles className="h-3.5 w-3.5 text-white" /> Hoppers Crossing, VIC
             </span>
             <h1 className="mt-6 font-display text-4xl font-semibold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
-              A beautiful place for your next event.
+              A welcoming space for your next event
             </h1>
             <p className="mt-5 max-w-xl text-lg text-white/80">
-              Hire our Main Auditorium, Function Rooms, Lounge or Kitchen at Dreambuilders
-              Church. Get an instant baseline quote in under two minutes.
+              From small meetings of 10 to large gatherings of up to 800 people, choose the space that is right for you. Explore our Auditorium, Function Rooms, Lounge and Kitchen, then get an instant estimate in under two minutes.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
