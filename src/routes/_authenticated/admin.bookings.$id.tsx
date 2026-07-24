@@ -429,7 +429,7 @@ function BookingDetail() {
         <div>
           <Card className="lg:sticky lg:top-24">
             <CardContent className="p-6">
-              <h2 className="font-display text-lg font-semibold">Quote breakdown</h2>
+              <h2 className="font-display text-lg font-semibold">Estimate breakdown</h2>
               <div className="mt-4 space-y-1.5 text-sm">
                 <Row label="Room hire" value={money(Number(data.room_subtotal))} />
                 <Row label="Extras" value={money(Number(data.extras_subtotal))} />
@@ -673,7 +673,7 @@ function OverrideDialog({ booking, onDone }: { booking: any; onDone: () => void 
     }).eq("id", booking.id);
     setSaving(false);
     if (error) return toast.error(error.message);
-    toast.success("Quote overridden");
+    toast.success("Estimate overridden");
     setOpen(false);
     onDone();
   }
@@ -681,11 +681,11 @@ function OverrideDialog({ booking, onDone }: { booking: any; onDone: () => void 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" variant="outline">Override quote</Button>
+        <Button size="sm" variant="outline">Override estimate</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Override quote line items</DialogTitle>
+          <DialogTitle>Override estimate line items</DialogTitle>
           <DialogDescription>Deposit (20%) and total are recalculated automatically.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-3 sm:grid-cols-2">

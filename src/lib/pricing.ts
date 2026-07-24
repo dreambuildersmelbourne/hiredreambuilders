@@ -1,4 +1,4 @@
-// Quote calculation engine for Dreambuilders venue hire.
+// Estimate calculation engine for Dreambuilders venue hire.
 // Pricing rules mirror the 2026 v1.1 hire contract.
 
 export type Room = {
