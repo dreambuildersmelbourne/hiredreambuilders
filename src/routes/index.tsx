@@ -9,13 +9,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Hire the 250-seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online quotes.",
+          "Hire the 250-seat Main Auditorium, Function Rooms, Lounge or commercial Kitchen at Dreambuilders Church in Hoppers Crossing. Instant online estimates.",
       },
       { property: "og:title", content: "Dreambuilders Venue Hire — Hoppers Crossing" },
       {
         property: "og:description",
         content:
-          "Beautiful spaces for conferences, concerts, workshops and celebrations. Get an instant baseline quote and submit your booking enquiry online.",
+          "Beautiful spaces for conferences, concerts, workshops and celebrations. Get an instant baseline estimate and submit your booking enquiry online.",
       },
       { property: "og:url", content: "https://hiredreambuilders.lovable.app/" },
       { property: "og:type", content: "website" },
@@ -106,7 +106,7 @@ function Landing() {
                 to="/quote"
                 className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-primary shadow-elevated transition hover:bg-white/95"
               >
-                Get an instant quote <ArrowRight className="h-4 w-4" />
+                Get an instant estimate <ArrowRight className="h-4 w-4" />
               </Link>
               <a
                 href="mailto:hire@dreambuilders.church"
@@ -185,7 +185,7 @@ function Landing() {
           <h2 className="font-display text-2xl font-semibold sm:text-3xl">How hire works</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[
-              { n: "01", t: "Build your quote", d: "Pick your rooms and extras. We calculate a baseline estimate on the spot." },
+              { n: "01", t: "Build your estimate", d: "Pick your rooms and extras. We calculate a baseline estimate on the spot." },
               { n: "02", t: "Submit your enquiry", d: "Share your event details. Our hire coordinator confirms staff availability." },
               { n: "03", t: "Pay 20% deposit", d: "Once confirmed, secure your booking with the deposit within 7 days." },
             ].map((s) => (
@@ -206,14 +206,14 @@ function Landing() {
             Ready to plan your event?
           </h2>
           <p className="mt-3 max-w-xl text-white/80">
-            Get an instant baseline quote — no account needed. Our hire coordinator will follow up
+            Get an instant baseline estimate — no account needed. Our hire coordinator will follow up
             to confirm availability.
           </p>
           <Link
             to="/quote"
             className="mt-6 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-primary shadow-elevated transition hover:bg-white/95"
           >
-            Start my quote <ArrowRight className="h-4 w-4" />
+            Start my estimate <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
