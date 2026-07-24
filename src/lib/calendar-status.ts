@@ -14,8 +14,8 @@ export const CALENDAR_STATUS_META: Record<
   { label: string; short: string; className: string; dot: string; bar: string }
 > = {
   quote_created: {
-    label: "Quote Created",
-    short: "QUOTE",
+    label: "Estimate Created",
+    short: "ESTIMATE",
     className: "bg-slate-100 text-slate-800 border-slate-300",
     dot: "bg-slate-400",
     bar: "border-l-slate-400 bg-slate-50",

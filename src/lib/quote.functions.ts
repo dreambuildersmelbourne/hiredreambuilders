@@ -217,14 +217,14 @@ export const submitQuote = createServerFn({ method: "POST" })
           }
         } else {
           console.warn(
-            "Skipping quote notification email; missing app_settings:",
+            "Skipping estimate notification email; missing app_settings:",
             !notificationEmail ? "notification_email" : "sender_domain",
           );
         }
       }
     } catch (emailErr) {
       // Booking was created successfully; do not fail the submission if email fails.
-      console.error("Failed to send quote notification email:", emailErr);
+      console.error("Failed to send estimate notification email:", emailErr);
     }
 
     return { id: booking.id, reference: booking.reference, tentative: data.tentative_hold };

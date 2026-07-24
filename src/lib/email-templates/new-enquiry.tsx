@@ -115,7 +115,7 @@ export const NewEnquiryEmail = ({
             New hire enquiry
           </Heading>
           <Text style={{ fontSize: "16px", color: dark, marginTop: 0 }}>
-            A customer submitted a venue hire quote. Details below.
+            A customer submitted a venue hire estimate. Details below.
           </Text>
 
           {tentativeHold && (
@@ -194,7 +194,7 @@ export const NewEnquiryEmail = ({
 export const template = {
   component: NewEnquiryEmail,
   subject: "New hire enquiry: {eventName}",
-  displayName: "New quote enquiry",
+  displayName: "New estimate enquiry",
   previewData: {
     eventName: "Community Concert",
     eventDate: "2026-08-15",

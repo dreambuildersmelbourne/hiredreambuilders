@@ -14,7 +14,7 @@ export default defineMcp({
   title: "Dreambuilders Venue Hire",
   version: "0.1.0",
   instructions:
-    "Tools for Dreambuilders Venue Hire. Browse rooms, price a venue-hire quote, and read the signed-in customer's own bookings. All booking data is scoped to the authenticated user via row-level security.",
+    "Tools for Dreambuilders Venue Hire. Browse rooms, price a venue-hire estimate, and read the signed-in customer's own bookings. All booking data is scoped to the authenticated user via row-level security.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
