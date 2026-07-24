@@ -133,8 +133,8 @@ function Landing() {
               Select the room that meets your needs
             </h2>
           </div>
-          <Link to="/quote" className="hidden text-sm font-medium text-primary hover:underline sm:inline">
-            Configure your booking →
+          <Link to="/rooms" className="hidden text-sm font-medium text-primary hover:underline sm:inline">
+            Browse our rooms →
           </Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
