@@ -25,10 +25,12 @@ const FOH_TOOLTIP =
 
 
 export const Route = createFileRoute("/quote")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    rooms: typeof s.rooms === "string" ? s.rooms : undefined,
-    inspection: s.inspection === "1" || s.inspection === true ? true : undefined,
-  }),
+  validateSearch: (s: Record<string, unknown>): { rooms?: string; inspection?: boolean } => {
+    const out: { rooms?: string; inspection?: boolean } = {};
+    if (typeof s.rooms === "string") out.rooms = s.rooms;
+    if (s.inspection === "1" || s.inspection === true) out.inspection = true;
+    return out;
+  },
   head: () => ({
     meta: [
       { title: "Get an Estimate — Dreambuilders Venue Hire" },
