@@ -7,7 +7,9 @@ export type CalendarStatus =
   | "pending_approval"
   | "confirmed"
   | "cancelled"
-  | "completed";
+  | "completed"
+  | "internal";
+
 
 export const CALENDAR_STATUS_META: Record<
   CalendarStatus,
