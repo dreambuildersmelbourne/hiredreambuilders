@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/calendar/$token/feed.ics")({
         const { data: bookings, error: bErr } = await supabaseAdmin
           .from("bookings")
           .select(
-            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, estimated_attendance, notes, admin_notes, updated_at, created_at, customers(contact_name, organisation, email, phone), booking_rooms(rooms(name))",
+            "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, entry_type, tentative_hold_requested, estimated_attendance, notes, admin_notes, updated_at, created_at, customers(contact_name, organisation, email, phone), booking_rooms(rooms(name))",
           )
           .order("event_date", { ascending: true });
 
@@ -35,7 +35,9 @@ export const Route = createFileRoute("/api/public/calendar/$token/feed.ics")({
 
         const included = new Set<string>(settings.include_statuses ?? []);
         const filtered = (bookings ?? []).filter((b: any) => {
-          const bucket = calendarStatusFor(b.status, b.tentative_hold_requested);
+          const bucket = calendarStatusFor(b.status, b.tentative_hold_requested, b.entry_type);
+          // Internal blocks always show so rooms read as busy in synced calendars.
+          if (bucket === "internal") return true;
           if (bucket === "tentative" && !settings.include_tentative) return false;
           if (bucket === "cancelled" && !settings.include_cancelled) return false;
           return included.has(bucket);
@@ -129,7 +131,7 @@ function buildIcs(bookings: any[], settings: any) {
   ];
 
   for (const b of bookings) {
-    const bucket = calendarStatusFor(b.status, b.tentative_hold_requested);
+    const bucket = calendarStatusFor(b.status, b.tentative_hold_requested, b.entry_type);
     const rooms = (b.booking_rooms ?? [])
       .map((r: any) => r.rooms?.name)
       .filter(Boolean)
@@ -145,7 +147,9 @@ function buildIcs(bookings: any[], settings: any) {
               ? "COMPLETED"
               : bucket === "pending_approval"
                 ? "PENDING"
-                : "ESTIMATE";
+                : bucket === "internal"
+                  ? "INTERNAL"
+                  : "ESTIMATE";
 
     const summary = `[${shortStatus}] ${b.event_name}${rooms ? ` - ${rooms}` : ""}`;
 

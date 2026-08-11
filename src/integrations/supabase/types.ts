@@ -201,11 +201,13 @@ export type Database = {
           bump_out_time: string
           cleaning_subtotal: number
           created_at: string
-          customer_id: string
+          created_by: string | null
+          customer_id: string | null
           deposit_amount: number
           deposit_paid_at: string | null
           discount_amount: number
           discount_reason: string | null
+          entry_type: string
           estimated_attendance: number | null
           event_date: string
           event_name: string
@@ -247,11 +249,13 @@ export type Database = {
           bump_out_time: string
           cleaning_subtotal?: number
           created_at?: string
-          customer_id: string
+          created_by?: string | null
+          customer_id?: string | null
           deposit_amount?: number
           deposit_paid_at?: string | null
           discount_amount?: number
           discount_reason?: string | null
+          entry_type?: string
           estimated_attendance?: number | null
           event_date: string
           event_name: string
@@ -293,11 +297,13 @@ export type Database = {
           bump_out_time?: string
           cleaning_subtotal?: number
           created_at?: string
-          customer_id?: string
+          created_by?: string | null
+          customer_id?: string | null
           deposit_amount?: number
           deposit_paid_at?: string | null
           discount_amount?: number
           discount_reason?: string | null
+          entry_type?: string
           estimated_attendance?: number | null
           event_date?: string
           event_name?: string
