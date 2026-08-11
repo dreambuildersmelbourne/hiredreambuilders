@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { BookingCalendar, type CalendarBooking } from "@/components/BookingCalendar";
+import { AdminBookingDialog } from "@/components/AdminBookingDialog";
 
 export const Route = createFileRoute("/_authenticated/admin/calendar")({
   head: () => ({
@@ -22,7 +23,7 @@ function AdminCalendarPage() {
       const { data, error } = await supabase
         .from("bookings")
         .select(
-          "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(name))",
+          "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, entry_type, tentative_hold_requested, staff_can_view_tentative, estimated_attendance, customers(contact_name, organisation), booking_rooms(rooms(id, name))",
         )
         .order("event_date", { ascending: true });
       if (error) throw error;
@@ -30,13 +31,29 @@ function AdminCalendarPage() {
     },
   });
 
+  const roomsQ = useQuery({
+    queryKey: ["admin", "calendar", "rooms"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("rooms")
+        .select("id, name")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data;
+    },
+  });
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="font-display text-3xl font-semibold">Booking calendar</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          All hire bookings across statuses. Click an event to open its full booking record.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-3xl font-semibold">Booking calendar</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            All enquiries, bookings and internal blocks by date and room. Click an event to open its record.
+          </p>
+        </div>
+        <AdminBookingDialog onCreated={() => q.refetch()} />
       </div>
 
       {q.isLoading ? (
@@ -46,6 +63,8 @@ function AdminCalendarPage() {
       ) : (
         <BookingCalendar
           bookings={q.data ?? []}
+          rooms={roomsQ.data ?? []}
+          showFilters
           onEventClick={(b) => navigate({ to: "/admin/bookings/$id", params: { id: b.id } })}
         />
       )}
