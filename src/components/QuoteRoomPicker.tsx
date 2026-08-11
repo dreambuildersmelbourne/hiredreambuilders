@@ -407,8 +407,9 @@ function VideoModal({ room, onClose }: { room: RichRoom; onClose: () => void }) 
   const rows = media.data?.rows ?? [];
   const signed = media.data?.signed ?? {};
   const videoRows = rows.filter((m) => m.media_type !== "image");
-  const primary = room.video_url || videoRows[0]?.media_url;
   const primaryRow = videoRows[0];
+  const primary =
+    room.video_url || (primaryRow ? resolveMediaUrl(primaryRow, signed) || primaryRow.media_url : "");
 
   let embed: string | null = null;
   let isFile = false;
