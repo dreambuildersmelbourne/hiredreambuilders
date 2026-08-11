@@ -57,7 +57,15 @@ export const CALENDAR_STATUS_META: Record<
     dot: "bg-muted-foreground/50",
     bar: "border-l-muted-foreground/40 bg-muted",
   },
+  internal: {
+    label: "Internal block",
+    short: "INTERNAL",
+    className: "bg-violet-100 text-violet-900 border-violet-300",
+    dot: "bg-violet-500",
+    bar: "border-l-violet-500 bg-violet-50",
+  },
 };
+
 
 export function calendarStatusFor(
   dbStatus: string,
