@@ -70,8 +70,11 @@ export const CALENDAR_STATUS_META: Record<
 export function calendarStatusFor(
   dbStatus: string,
   tentativeHoldRequested?: boolean | null,
+  entryType?: string | null,
 ): CalendarStatus {
+  if (entryType === "internal") return "internal";
   if (dbStatus === "completed") return "completed";
+
   if (dbStatus === "cancelled" || dbStatus === "rejected") return "cancelled";
   if (dbStatus === "confirmed" || dbStatus === "deposit_paid") return "confirmed";
   if (
