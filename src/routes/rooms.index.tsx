@@ -378,7 +378,7 @@ function RoomsIndex() {
                           onClick={() =>
                             setVideoOpen({
                               room: r,
-                              url: r.video_url || videosByRoom[r.id][0].media_url,
+                              url: r.video_url || resolveMediaUrl(videosByRoom[r.id][0], signed),
                             })
                           }
                           className="inline-flex items-center gap-1 rounded-full bg-background/90 px-2.5 py-1 text-xs font-medium shadow hover:bg-background"
@@ -459,7 +459,7 @@ function RoomsIndex() {
                   onClick={() =>
                     setVideoOpen({
                       room: r,
-                      url: r.video_url || videosByRoom[r.id][0].media_url,
+                      url: r.video_url || resolveMediaUrl(videosByRoom[r.id][0], signed),
                     })
                   }
                   className="group relative aspect-video overflow-hidden rounded-2xl bg-muted shadow-soft"

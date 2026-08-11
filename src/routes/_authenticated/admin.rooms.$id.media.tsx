@@ -140,11 +140,18 @@ function AdminRoomMediaManager() {
                 <div className="relative aspect-video w-full bg-muted">
                   {m.media_type === "image" ? (
                     <img src={resolveMediaUrl(m, signed)} alt={m.caption ?? ""} className="h-full w-full object-cover" />
+                  ) : m.media_type === "video" ? (
+                    <video src={resolveMediaUrl(m, signed)} controls className="h-full w-full bg-black">
+                      <track kind="captions" />
+                    </video>
                   ) : (
-                    <div className="flex h-full items-center justify-center bg-black/90 text-white">
-                      <Film className="mr-2 h-6 w-6" />
-                      <span className="text-sm uppercase">{m.media_type}</span>
-                    </div>
+                    <iframe
+                      src={toEmbedUrl(m.media_url).embed}
+                      title={m.caption ?? "Room video"}
+                      className="h-full w-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
                   )}
                   <div className="absolute left-2 top-2 flex gap-1">
                     {m.is_featured && (
