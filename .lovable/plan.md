@@ -1,33 +1,51 @@
-## Plan: Quote Enquiry Email Alerts
+# Admin booking calendar by room + manual entries
 
-### Goal
-Whenever a customer submits a quote enquiry on `/quote`, the app sends an email notification to a designated staff address containing the enquiry details and a link to review it in the admin dashboard.
+## What you'll get
 
-### Step 1 — Email domain setup
-- Open the Lovable email setup dialog and configure the domain you own.
-- This is required before any app emails can send.
+**1. Room view on the admin calendar**
 
-### Step 2 — Email infrastructure
-- Set up Lovable email infrastructure (queues, send log, unsubscribe handling, and the processing route).
-- This is the backend plumbing that lets the app send emails reliably.
+A new "Rooms" view mode next to Month / Week / Day / List:
 
-### Step 3 — Notification recipient setting
-- Add a small `app_settings` table in the database to store configuration values.
-- Add a `notification_email` setting, editable by admins from the admin area.
-- If no email is configured, fallback to the first admin user's email.
+```text
+              Mon 10   Tue 11   Wed 12   Thu 13   Fri 14
+Main Aud.     [CONF]            [TENT]
+Function 2             [EST]             [CONF]
+Lounge                                            [BLOCK]
+Kitchen       [CONF]
+```
 
-### Step 4 — Email template
-- Create a React Email template for new quote enquiries.
-- It will include: event name, date, bump in/out times, rooms booked, estimated attendance, customer name, email, phone, quote total, and a direct link to the booking in `/admin`.
-- Register the template in the email template registry.
+- Each room is a row, each day of the visible week/month a column.
+- Cells show colour-coded status chips (Estimate, Tentative, Pending, Confirmed, Cancelled, Completed) using the existing calendar colour system.
+- Clicking a chip opens that booking's admin record.
+- Bookings using multiple rooms appear once per room row, so double-bookings are obvious at a glance.
 
-### Step 5 — Trigger on submission
-- After the quote form successfully inserts the customer, booking, and rooms, trigger the email send.
-- Use the booking ID as an idempotency key so retries never send duplicate emails.
-- The email goes to the configured `notification_email` address.
+**2. Room and status filters on all views**
 
-### Step 6 — Admin UI
-- Add a simple field in the admin area to set the notification email address.
+Filter chips above the calendar: filter by room (multi-select) and by status. These apply to Month, Week, Day, List and the new Rooms view.
 
-### Outcome
-Staff receive an immediate email alert when a quote enquiry comes in, with all the key details and a one-click link to the admin booking page.
+**3. Manually add entries from the admin area**
+
+An "Add entry" button on the admin calendar opens a dialog with two modes:
+
+- **Booking** — full details: customer name/email/phone/organisation, event name, date, bump in/out, rooms, attendance, extras and requirements, notes. Pricing is calculated with the same engine used by the public estimate form, and the admin picks the starting status (e.g. Confirmed for a phoned-in booking). Costs can still be overridden afterwards on the booking page.
+- **Internal block** — quick form: title, date, bump in/out, rooms, optional notes. No customer, no pricing. Used to reserve rooms for church/internal events. Shown on the calendar in a distinct neutral "Internal" colour and excluded from revenue/enquiry lists.
+
+Both types appear on the calendar, in the room grid, and in the ICS calendar feed (internal blocks included so rooms show as busy).
+
+## Technical notes
+
+**Database migration**
+- `bookings.entry_type` text, default `'booking'`, check in (`'booking'`, `'internal'`).
+- `bookings.customer_id` made nullable (required only when `entry_type = 'booking'`, enforced by a trigger).
+- `bookings.created_by uuid` to record which admin created a manual entry.
+- New RLS policies: admin/staff may insert and update `bookings`, `booking_rooms`, `booking_extras`, `booking_staff` via `private.has_role`. Existing public 15-minute insert window stays untouched.
+- Reference generation for manual entries reuses the existing reference format.
+
+**Code**
+- `src/lib/calendar-status.ts`: add an `internal` status bucket with its own label/colour, and map `entry_type = 'internal'` to it.
+- `src/components/BookingCalendar.tsx`: add `rooms` view mode (room rows × date columns), plus room/status filter props; keep existing views intact.
+- New `src/components/AdminBookingDialog.tsx`: the two-mode create form (zod-validated), reusing `QuoteRoomPicker` room data and `src/lib/pricing.ts` for the booking mode.
+- New `src/lib/admin-bookings.functions.ts`: `createAdminBooking` server function behind `requireSupabaseAuth`, verifying admin/staff role, computing pricing server-side, and inserting the booking with its room/extra/staff lines in one call.
+- `src/routes/_authenticated/admin.calendar.tsx`: fetch rooms alongside bookings, render filters, view switch and the Add entry button.
+- `src/routes/api/public/calendar.$token.feed[.]ics.ts`: include internal blocks, titled `[INTERNAL] Title - Rooms`.
+- `src/routes/_authenticated/staff.calendar.tsx` and `admin.bookings.$id.tsx`: tolerate rows with no customer so internal blocks render safely.
