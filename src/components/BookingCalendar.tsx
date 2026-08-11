@@ -7,7 +7,6 @@ import {
   endOfMonth,
   endOfWeek,
   format,
-  isSameDay,
   isSameMonth,
   isToday,
   startOfMonth,
@@ -33,14 +32,17 @@ export type CalendarBooking = {
   bump_in_time: string;
   bump_out_time: string;
   status: string;
+  entry_type?: string | null;
   tentative_hold_requested?: boolean | null;
   staff_can_view_tentative?: boolean | null;
   estimated_attendance?: number | null;
   customers?: { contact_name?: string | null; organisation?: string | null } | null;
-  booking_rooms?: Array<{ rooms?: { name?: string | null } | null }> | null;
+  booking_rooms?: Array<{ rooms?: { id?: string | null; name?: string | null } | null }> | null;
 };
 
-type View = "month" | "week" | "day" | "list";
+export type CalendarRoom = { id: string; name: string };
+
+type View = "month" | "week" | "day" | "list" | "rooms";
 
 function bookingDate(b: CalendarBooking) {
   return parseISO(b.event_date);
@@ -53,25 +55,44 @@ function roomsFor(b: CalendarBooking) {
     .join(", ");
 }
 
+function roomIdsFor(b: CalendarBooking) {
+  return (b.booking_rooms ?? []).map((r) => r.rooms?.id).filter(Boolean) as string[];
+}
+
+function statusOf(b: CalendarBooking) {
+  return calendarStatusFor(b.status, b.tentative_hold_requested, b.entry_type);
+}
+
 export function BookingCalendar({
   bookings,
   onEventClick,
   hiddenStatuses,
+  rooms,
+  showFilters = false,
 }: {
   bookings: CalendarBooking[];
   onEventClick: (b: CalendarBooking) => void;
   hiddenStatuses?: CalendarStatus[];
+  rooms?: CalendarRoom[];
+  showFilters?: boolean;
 }) {
   const [view, setView] = useState<View>("month");
   const [cursor, setCursor] = useState<Date>(new Date());
+  const [statusFilter, setStatusFilter] = useState<CalendarStatus[]>([]);
+  const [roomFilter, setRoomFilter] = useState<string[]>([]);
 
   const visible = useMemo(() => {
-    if (!hiddenStatuses?.length) return bookings;
-    const hide = new Set(hiddenStatuses);
-    return bookings.filter(
-      (b) => !hide.has(calendarStatusFor(b.status, b.tentative_hold_requested)),
-    );
-  }, [bookings, hiddenStatuses]);
+    const hide = new Set(hiddenStatuses ?? []);
+    const statusSet = new Set(statusFilter);
+    const roomSet = new Set(roomFilter);
+    return bookings.filter((b) => {
+      const s = statusOf(b);
+      if (hide.has(s)) return false;
+      if (statusSet.size > 0 && !statusSet.has(s)) return false;
+      if (roomSet.size > 0 && !roomIdsFor(b).some((id) => roomSet.has(id))) return false;
+      return true;
+    });
+  }, [bookings, hiddenStatuses, statusFilter, roomFilter]);
 
   const range = useMemo(() => {
     if (view === "month") {
@@ -79,7 +100,7 @@ export function BookingCalendar({
       const e = endOfWeek(endOfMonth(cursor), { weekStartsOn: 1 });
       return { start: s, end: e };
     }
-    if (view === "week") {
+    if (view === "week" || view === "rooms") {
       const s = startOfWeek(cursor, { weekStartsOn: 1 });
       return { start: s, end: endOfWeek(cursor, { weekStartsOn: 1 }) };
     }
@@ -106,7 +127,7 @@ export function BookingCalendar({
 
   function shift(dir: -1 | 1) {
     if (view === "month") setCursor((c) => addMonths(c, dir));
-    else if (view === "week") setCursor((c) => addWeeks(c, dir));
+    else if (view === "week" || view === "rooms") setCursor((c) => addWeeks(c, dir));
     else if (view === "day") setCursor((c) => addDays(c, dir));
     else setCursor((c) => addDays(c, dir * 30));
   }
@@ -114,11 +135,23 @@ export function BookingCalendar({
   const title =
     view === "month"
       ? format(cursor, "MMMM yyyy")
-      : view === "week"
+      : view === "week" || view === "rooms"
         ? `Week of ${format(startOfWeek(cursor, { weekStartsOn: 1 }), "d MMM")}`
         : view === "day"
           ? format(cursor, "EEEE d MMM yyyy")
           : "Upcoming bookings";
+
+  const viewOptions: View[] = rooms?.length
+    ? ["month", "week", "day", "list", "rooms"]
+    : ["month", "week", "day", "list"];
+
+  function toggle<T>(list: T[], value: T, set: (v: T[]) => void) {
+    set(list.includes(value) ? list.filter((v) => v !== value) : [...list, value]);
+  }
+
+  const statusOptions = (Object.keys(CALENDAR_STATUS_META) as CalendarStatus[]).filter(
+    (s) => !(hiddenStatuses ?? []).includes(s),
+  );
 
   return (
     <div className="space-y-4">
@@ -136,7 +169,7 @@ export function BookingCalendar({
           <div className="ml-2 font-display text-lg font-semibold">{title}</div>
         </div>
         <div className="inline-flex overflow-hidden rounded-md border border-border">
-          {(["month", "week", "day", "list"] as View[]).map((v) => (
+          {viewOptions.map((v) => (
             <button
               key={v}
               onClick={() => setView(v)}
@@ -152,18 +185,82 @@ export function BookingCalendar({
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="flex flex-wrap gap-2 text-xs">
-        {(Object.keys(CALENDAR_STATUS_META) as CalendarStatus[]).map((k) => {
-          const m = CALENDAR_STATUS_META[k];
-          return (
-            <span key={k} className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1">
-              <span className={`h-2.5 w-2.5 rounded-full ${m.dot}`} />
-              {m.label}
-            </span>
-          );
-        })}
-      </div>
+      {showFilters ? (
+        <div className="space-y-2 rounded-lg border border-border bg-card p-3">
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="mr-1 font-medium text-muted-foreground">Status</span>
+            {statusOptions.map((k) => {
+              const m = CALENDAR_STATUS_META[k];
+              const on = statusFilter.includes(k);
+              return (
+                <button
+                  key={k}
+                  onClick={() => toggle(statusFilter, k, setStatusFilter)}
+                  className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 transition ${
+                    on ? m.className : "border-border bg-background text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  <span className={`h-2.5 w-2.5 rounded-full ${m.dot}`} />
+                  {m.label}
+                </button>
+              );
+            })}
+            {statusFilter.length > 0 && (
+              <button
+                onClick={() => setStatusFilter([])}
+                className="text-xs underline text-muted-foreground hover:text-foreground"
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {rooms && rooms.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="mr-1 font-medium text-muted-foreground">Room</span>
+              {rooms.map((r) => {
+                const on = roomFilter.includes(r.id);
+                return (
+                  <button
+                    key={r.id}
+                    onClick={() => toggle(roomFilter, r.id, setRoomFilter)}
+                    className={`rounded-full border px-2.5 py-1 transition ${
+                      on
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-background text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {r.name}
+                  </button>
+                );
+              })}
+              {roomFilter.length > 0 && (
+                <button
+                  onClick={() => setRoomFilter([])}
+                  className="text-xs underline text-muted-foreground hover:text-foreground"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Legend */
+        <div className="flex flex-wrap gap-2 text-xs">
+          {statusOptions.map((k) => {
+            const m = CALENDAR_STATUS_META[k];
+            return (
+              <span
+                key={k}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1"
+              >
+                <span className={`h-2.5 w-2.5 rounded-full ${m.dot}`} />
+                {m.label}
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {view === "month" && (
         <MonthView cursor={cursor} days={days} eventsByDate={eventsByDate} onEventClick={onEventClick} />
@@ -173,6 +270,14 @@ export function BookingCalendar({
       )}
       {view === "day" && (
         <WeekOrDayView days={days} eventsByDate={eventsByDate} onEventClick={onEventClick} />
+      )}
+      {view === "rooms" && (
+        <RoomsView
+          days={days}
+          rooms={(rooms ?? []).filter((r) => roomFilter.length === 0 || roomFilter.includes(r.id))}
+          bookings={visible}
+          onEventClick={onEventClick}
+        />
       )}
       {view === "list" && (
         <ListView bookings={visible} onEventClick={onEventClick} from={range.start} to={range.end} />
@@ -224,7 +329,7 @@ function MonthView({
               </div>
               <div className="space-y-1">
                 {events.slice(0, 3).map((b) => {
-                  const status = calendarStatusFor(b.status, b.tentative_hold_requested);
+                  const status = statusOf(b);
                   const m = CALENDAR_STATUS_META[status];
                   return (
                     <button
@@ -246,6 +351,104 @@ function MonthView({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function RoomsView({
+  days,
+  rooms,
+  bookings,
+  onEventClick,
+}: {
+  days: Date[];
+  rooms: CalendarRoom[];
+  bookings: CalendarBooking[];
+  onEventClick: (b: CalendarBooking) => void;
+}) {
+  const byRoomDate = useMemo(() => {
+    const map = new Map<string, CalendarBooking[]>();
+    for (const b of bookings) {
+      for (const rid of roomIdsFor(b)) {
+        const key = `${rid}|${b.event_date}`;
+        const arr = map.get(key) ?? [];
+        arr.push(b);
+        map.set(key, arr);
+      }
+    }
+    return map;
+  }, [bookings]);
+
+  if (rooms.length === 0) {
+    return (
+      <Card>
+        <CardContent className="py-10 text-center text-muted-foreground">No rooms to display.</CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="overflow-x-auto rounded-lg border border-border bg-card">
+      <table className="w-full min-w-[900px] border-collapse text-xs">
+        <thead>
+          <tr className="bg-muted/50 text-muted-foreground">
+            <th className="w-40 border-b border-r border-border p-2 text-left font-medium uppercase tracking-wider">
+              Room
+            </th>
+            {days.map((d) => (
+              <th
+                key={d.toISOString()}
+                className={`border-b border-r border-border p-2 text-center font-medium ${
+                  isToday(d) ? "text-primary" : ""
+                }`}
+              >
+                {format(d, "EEE d MMM")}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rooms.map((room) => (
+            <tr key={room.id}>
+              <th className="border-b border-r border-border bg-muted/30 p-2 text-left align-top font-medium">
+                {room.name}
+              </th>
+              {days.map((d) => {
+                const key = `${room.id}|${format(d, "yyyy-MM-dd")}`;
+                const events = (byRoomDate.get(key) ?? []).sort((a, b) =>
+                  a.bump_in_time.localeCompare(b.bump_in_time),
+                );
+                return (
+                  <td
+                    key={key}
+                    className="min-w-[120px] border-b border-r border-border p-1 align-top"
+                  >
+                    <div className="space-y-1">
+                      {events.map((b) => {
+                        const status = statusOf(b);
+                        const m = CALENDAR_STATUS_META[status];
+                        return (
+                          <button
+                            key={b.id}
+                            onClick={() => onEventClick(b)}
+                            title={calendarEventTitle(status, b.event_name, roomsFor(b))}
+                            className={`w-full rounded border px-1.5 py-1 text-left leading-tight transition hover:opacity-80 ${m.className}`}
+                          >
+                            <div className="truncate font-medium">{b.event_name}</div>
+                            <div className="text-[10px]">
+                              {b.bump_in_time?.slice(0, 5)}–{b.bump_out_time?.slice(0, 5)} · {m.short}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -276,7 +479,7 @@ function WeekOrDayView({
                 <div className="p-2 text-xs text-muted-foreground">—</div>
               ) : (
                 events.map((b) => {
-                  const status = calendarStatusFor(b.status, b.tentative_hold_requested);
+                  const status = statusOf(b);
                   const m = CALENDAR_STATUS_META[status];
                   const rooms = roomsFor(b);
                   return (
@@ -342,7 +545,7 @@ function ListView({
   return (
     <div className="divide-y divide-border overflow-hidden rounded-lg border border-border bg-card">
       {items.map((b) => {
-        const status = calendarStatusFor(b.status, b.tentative_hold_requested);
+        const status = statusOf(b);
         const m = CALENDAR_STATUS_META[status];
         const rooms = roomsFor(b);
         return (
