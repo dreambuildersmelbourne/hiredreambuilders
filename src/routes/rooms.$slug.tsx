@@ -177,10 +177,11 @@ function RoomDetail() {
                 ) : (
                   <div className="flex h-full items-center justify-center text-muted-foreground">No hero photo yet</div>
                 )}
-                {(room.video_url || videos.length > 0) && (
+                {allVideos.length > 0 && (
                   <button
                     type="button"
-                    onClick={() => setVideoOpen(room.video_url || resolveMediaUrl(videos[0], signed))}
+                    onClick={() => { setTab("videos"); setVideoOpen(allVideos[0].url); }}
+
                     className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition hover:opacity-100"
                   >
                     <span className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 text-sm font-medium text-black shadow-lg">
