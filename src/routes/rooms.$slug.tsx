@@ -135,6 +135,19 @@ function RoomDetail() {
   const images = useMemo(() => media.filter((m) => m.media_type === "image"), [media]);
   const videos = useMemo(() => media.filter((m) => m.media_type !== "image"), [media]);
 
+  const allVideos = useMemo(() => {
+    const list: { key: string; url: string; thumb: string | null; caption: string | null }[] = videos.map((v) => ({
+      key: v.id,
+      url: resolveMediaUrl(v, signed),
+      thumb: v.thumbnail_url,
+      caption: v.caption,
+    }));
+    if (room.video_url && !list.some((v) => v.url === room.video_url)) {
+      list.unshift({ key: "room-video", url: room.video_url, thumb: room.hero_url ?? null, caption: "Room walkthrough" });
+    }
+    return list.filter((v) => !!v.url);
+  }, [videos, signed, room.video_url, room.hero_url]);
+
   const featured = images.find((m) => m.is_featured) ?? images[0];
   const heroUrl = room.hero_url || (featured ? resolveMediaUrl(featured, signed) : null);
 
