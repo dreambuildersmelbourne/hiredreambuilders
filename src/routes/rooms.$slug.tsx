@@ -235,57 +235,120 @@ function RoomDetail() {
         </div>
       </section>
 
-      {/* Gallery */}
-      {images.length > 0 && (
+      {/* Media: photos + videos */}
+      {(images.length > 0 || videos.length > 0 || room.video_url) && (
         <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          <h2 className="font-display text-2xl font-semibold">Photo gallery</h2>
-          <div className="relative mt-4 overflow-hidden rounded-2xl bg-muted aspect-[16/9]">
-            <img
-              src={resolveMediaUrl(images[galleryIdx], signed)}
-              alt={images[galleryIdx].caption ?? `${room.name} photo ${galleryIdx + 1}`}
-              className="h-full w-full object-cover transition"
-            />
-            {images.length > 1 && (
-              <>
-                <button
-                  aria-label="Previous"
-                  onClick={() => setGalleryIdx((i) => (i - 1 + images.length) % images.length)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow hover:bg-background"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  aria-label="Next"
-                  onClick={() => setGalleryIdx((i) => (i + 1) % images.length)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow hover:bg-background"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </>
-            )}
-            {images[galleryIdx].caption && (
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-sm text-white">
-                {images[galleryIdx].caption}
-              </div>
-            )}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="font-display text-2xl font-semibold">Gallery</h2>
+            <div className="inline-flex rounded-lg border border-border p-1">
+              <button
+                type="button"
+                onClick={() => setTab("photos")}
+                className={`rounded-md px-4 py-1.5 text-sm font-medium transition ${
+                  tab === "photos" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Photos ({images.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab("videos")}
+                className={`rounded-md px-4 py-1.5 text-sm font-medium transition ${
+                  tab === "videos" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Videos ({allVideos.length})
+              </button>
+            </div>
           </div>
-          {images.length > 1 && (
-            <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
-              {images.map((img, i) => (
+
+          {tab === "photos" ? (
+            images.length > 0 ? (
+              <>
+                <div className="relative mt-4 overflow-hidden rounded-2xl bg-muted aspect-[16/9]">
+                  <img
+                    src={resolveMediaUrl(images[galleryIdx], signed)}
+                    alt={images[galleryIdx].caption ?? `${room.name} photo ${galleryIdx + 1}`}
+                    className="h-full w-full object-cover transition"
+                  />
+                  {images.length > 1 && (
+                    <>
+                      <button
+                        aria-label="Previous"
+                        onClick={() => setGalleryIdx((i) => (i - 1 + images.length) % images.length)}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow hover:bg-background"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        aria-label="Next"
+                        onClick={() => setGalleryIdx((i) => (i + 1) % images.length)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-background/80 p-2 shadow hover:bg-background"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                    </>
+                  )}
+                  {images[galleryIdx].caption && (
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-4 text-sm text-white">
+                      {images[galleryIdx].caption}
+                    </div>
+                  )}
+                </div>
+                {images.length > 1 && (
+                  <div className="mt-3 flex gap-2 overflow-x-auto pb-2">
+                    {images.map((img, i) => (
+                      <button
+                        key={img.id}
+                        onClick={() => setGalleryIdx(i)}
+                        className={`relative h-16 w-24 flex-none overflow-hidden rounded-md border-2 transition ${
+                          i === galleryIdx ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
+                        }`}
+                      >
+                        <img src={resolveMediaUrl(img, signed)} alt="" className="h-full w-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              <p className="mt-4 text-sm text-muted-foreground">No photos uploaded for this room yet.</p>
+            )
+          ) : allVideos.length > 0 ? (
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {allVideos.map((v) => (
                 <button
-                  key={img.id}
-                  onClick={() => setGalleryIdx(i)}
-                  className={`relative h-16 w-24 flex-none overflow-hidden rounded-md border-2 transition ${
-                    i === galleryIdx ? "border-primary" : "border-transparent opacity-70 hover:opacity-100"
-                  }`}
+                  key={v.key}
+                  type="button"
+                  onClick={() => setVideoOpen(v.url)}
+                  className="group relative overflow-hidden rounded-xl bg-muted aspect-video text-left"
                 >
-                  <img src={resolveMediaUrl(img, signed)} alt="" className="h-full w-full object-cover" />
+                  {v.thumb ? (
+                    <img src={v.thumb} alt={v.caption ?? `${room.name} walkthrough`} className="h-full w-full object-cover" />
+                  ) : (
+                    <video src={v.url} className="h-full w-full object-cover" muted preload="metadata">
+                      <track kind="captions" />
+                    </video>
+                  )}
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/30 transition group-hover:bg-black/45">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-sm font-medium text-black shadow">
+                      <Play className="h-4 w-4" /> Play
+                    </span>
+                  </span>
+                  {v.caption && (
+                    <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-xs text-white">
+                      {v.caption}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
+          ) : (
+            <p className="mt-4 text-sm text-muted-foreground">No video walkthroughs for this room yet.</p>
           )}
         </section>
       )}
+
 
       {/* Detail cards */}
       <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
