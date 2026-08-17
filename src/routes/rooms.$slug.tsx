@@ -108,6 +108,8 @@ function RoomDetail() {
   const navigate = useNavigate();
   const [galleryIdx, setGalleryIdx] = useState(0);
   const [videoOpen, setVideoOpen] = useState<string | null>(null);
+  const [tab, setTab] = useState<"photos" | "videos">("photos");
+
 
   const mediaQ = useQuery({
     queryKey: ["public", "room-media", room.id],
