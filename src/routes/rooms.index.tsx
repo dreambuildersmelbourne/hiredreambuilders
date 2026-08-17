@@ -451,7 +451,7 @@ function RoomsIndex() {
       </section>
 
       {/* Video walkthroughs */}
-      {walkthroughRooms.length > 0 && (
+      {walkthroughVideos.length > 0 && (
         <section className="border-t border-border bg-muted/30">
           <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
             <div className="flex items-end justify-between gap-4">
@@ -463,26 +463,25 @@ function RoomsIndex() {
               </div>
             </div>
             <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {walkthroughRooms.map((r) => (
+              {walkthroughVideos.map((v) => (
                 <button
-                  key={r.id}
+                  key={v.key}
                   type="button"
-                  onClick={() =>
-                    setVideoOpen({
-                      room: r,
-                      url: r.video_url || resolveMediaUrl(videosByRoom[r.id][0], signed),
-                    })
-                  }
+                  onClick={() => setVideoOpen({ room: v.room, url: v.url })}
                   className="group relative aspect-video overflow-hidden rounded-2xl bg-muted shadow-soft"
                 >
-                  {heroByRoom[r.id] ? (
+                  {v.thumb ? (
                     <img
-                      src={heroByRoom[r.id]}
-                      alt={`${r.name} walkthrough`}
+                      src={v.thumb}
+                      alt={`${v.room.name} walkthrough`}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                       loading="lazy"
                     />
-                  ) : null}
+                  ) : (
+                    <video src={v.url} className="h-full w-full object-cover" muted preload="metadata">
+                      <track kind="captions" />
+                    </video>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-white/95 text-black shadow-lg transition group-hover:scale-110">
@@ -490,8 +489,8 @@ function RoomsIndex() {
                     </span>
                   </div>
                   <div className="absolute inset-x-0 bottom-0 p-4 text-left">
-                    <div className="font-display text-lg font-semibold text-white">{r.name}</div>
-                    <div className="text-xs text-white/80">Play walkthrough</div>
+                    <div className="font-display text-lg font-semibold text-white">{v.room.name}</div>
+                    <div className="text-xs text-white/80">{v.caption || "Play walkthrough"}</div>
                   </div>
                 </button>
               ))}
@@ -499,6 +498,7 @@ function RoomsIndex() {
           </div>
         </section>
       )}
+
 
       {/* Suggested combinations */}
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6">
