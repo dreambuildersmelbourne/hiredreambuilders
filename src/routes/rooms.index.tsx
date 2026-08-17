@@ -203,10 +203,21 @@ function RoomsIndex() {
     });
   }, [rooms, eventType, capacityIdx, priceIdx]);
 
-  const walkthroughRooms = useMemo(
-    () => rooms.filter((r) => r.video_url || (videosByRoom[r.id]?.length ?? 0) > 0),
-    [rooms, videosByRoom],
-  );
+  const walkthroughVideos = useMemo(() => {
+    const list: { key: string; room: (typeof rooms)[number]; url: string; thumb: string | null; caption: string | null }[] = [];
+    for (const r of rooms) {
+      if (r.video_url) {
+        list.push({ key: `${r.id}-room`, room: r, url: r.video_url, thumb: heroByRoom[r.id] ?? null, caption: null });
+      }
+      for (const v of videosByRoom[r.id] ?? []) {
+        const url = resolveMediaUrl(v, signed);
+        if (!url || list.some((x) => x.url === url)) continue;
+        list.push({ key: v.id, room: r, url, thumb: v.thumbnail_url || heroByRoom[r.id] || null, caption: v.caption });
+      }
+    }
+    return list;
+  }, [rooms, videosByRoom, signed, heroByRoom]);
+
 
   const toggleCompare = (id: string) => {
     setCompareIds((prev) =>
