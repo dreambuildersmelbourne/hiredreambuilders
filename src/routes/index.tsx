@@ -191,46 +191,130 @@ function Landing() {
             Browse our rooms →
           </Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {rooms.map((r) => (
-            <div
-              key={r.name}
-              className={`group relative flex flex-col rounded-2xl border p-6 shadow-soft transition hover:shadow-elevated ${
-                r.highlight ? "border-primary/30 bg-primary text-primary-foreground" : "border-border bg-card"
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <h3 className={`font-display text-xl font-semibold ${r.highlight ? "text-primary-foreground" : ""}`}>
-                  {r.name}
-                </h3>
-                <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                    r.highlight
-                      ? "bg-white/15 text-primary-foreground"
-                      : "bg-accent text-accent-foreground"
+        {roomsQ.isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+                <div className="aspect-[16/10] animate-pulse rounded-xl bg-muted" />
+                <div className="mt-4 h-5 w-2/3 animate-pulse rounded bg-muted" />
+                <div className="mt-2 h-4 w-1/2 animate-pulse rounded bg-muted" />
+                <div className="mt-5 space-y-2">
+                  <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                  <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                  <div className="h-3 w-3/4 animate-pulse rounded bg-muted" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {rooms.map((r) => {
+              const highlight = r.slug === "main-auditorium";
+              const priceText = Number(r.hourly_rate) > 0 ? `${money(Number(r.hourly_rate))}/hr` : "Included";
+              const capacityText =
+                r.slug === "main-auditorium"
+                  ? "Standard theatre ~250 · Expanded up to ~600*"
+                  : r.capacity
+                    ? `Capacity ~${r.capacity}`
+                    : "Flexible capacity";
+              const features =
+                r.included_equipment && r.included_equipment.length > 0
+                  ? r.included_equipment.slice(0, 4)
+                  : fallbackFeatures[r.slug] ?? ["Air conditioned", "Flexible layout", "Event ready"];
+              return (
+                <div
+                  key={r.id}
+                  className={`group relative flex flex-col rounded-2xl border shadow-soft transition hover:shadow-elevated ${
+                    highlight ? "border-primary/30 bg-primary text-primary-foreground" : "border-border bg-card"
                   }`}
                 >
-                  {r.price}
-                </span>
-              </div>
-              <p className={`mt-2 text-sm ${r.highlight ? "text-white/75" : "text-muted-foreground"}`}>
-                {r.capacity}
-              </p>
-              <ul className={`mt-5 space-y-2 text-sm ${r.highlight ? "text-white/85" : "text-foreground/85"}`}>
-                {r.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className={`mt-0.5 h-4 w-4 shrink-0 ${
-                        r.highlight ? "text-brand" : "text-primary"
-                      }`}
-                    />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+                  <Link
+                    to="/rooms/$slug"
+                    params={{ slug: r.slug }}
+                    className="block overflow-hidden rounded-t-2xl"
+                    aria-label={`View ${r.name} details`}
+                  >
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                      {heroByRoom[r.id] ? (
+                        <img
+                          src={heroByRoom[r.id]}
+                          alt={r.name}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                          Photo coming soon
+                        </div>
+                      )}
+                      {highlight && (
+                        <span className="absolute left-3 top-3 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-primary-foreground backdrop-blur">
+                          Featured space
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex flex-1 flex-col p-6">
+                    <Link to="/rooms/$slug" params={{ slug: r.slug }} className="block">
+                      <div className="flex items-start justify-between">
+                        <h3
+                          className={`font-display text-xl font-semibold ${
+                            highlight ? "text-primary-foreground" : ""
+                          }`}
+                        >
+                          {r.name}
+                        </h3>
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            highlight
+                              ? "bg-white/15 text-primary-foreground"
+                              : "bg-accent text-accent-foreground"
+                          }`}
+                        >
+                          {priceText}
+                        </span>
+                      </div>
+                      <p
+                        className={`mt-2 text-sm ${
+                          highlight ? "text-white/75" : "text-muted-foreground"
+                        }`}
+                      >
+                        {capacityText}
+                      </p>
+                      <ul
+                        className={`mt-5 space-y-2 text-sm ${
+                          highlight ? "text-white/85" : "text-foreground/85"
+                        }`}
+                      >
+                        {features.map((f) => (
+                          <li key={f} className="flex items-start gap-2">
+                            <CheckCircle2
+                              className={`mt-0.5 h-4 w-4 shrink-0 ${
+                                highlight ? "text-brand" : "text-primary"
+                              }`}
+                            />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Link>
+                    <div className="mt-auto pt-5">
+                      <Link
+                        to="/rooms/$slug"
+                        params={{ slug: r.slug }}
+                        className={`inline-flex items-center gap-1.5 text-sm font-medium ${
+                          highlight ? "text-white hover:text-white/90" : "text-primary hover:text-primary/90"
+                        }`}
+                      >
+                        View details <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* How it works */}
