@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight, CheckCircle2, Clock3, MapPin, Sparkles, Users } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { supabase } from "@/integrations/supabase/client";
+import { signRoomMediaPaths, resolveMediaUrl, type RoomMedia } from "@/lib/rooms";
+import { money } from "@/lib/pricing";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,34 +48,59 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+const fallbackFeatures: Record<string, string[]> = {
+  "main-auditorium": ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
+  "function-room-2": ["Air conditioned", "Flexible layout", "Great for workshops"],
+  "function-room-3": ["White board", "Flat screen TV", "Air conditioned"],
+  lounge: ["Kitchenette", "Intimate setting", "Air conditioned"],
+  kitchen: ["Commercial appliances", "Prep space", "Ideal with events"],
+};
 
-const rooms = [
-  {
-    name: "Main Auditorium",
-    price: "$400/hr",
-    capacity: "Seats ~250 theatre style",
-    features: ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
-    highlight: true,
-  },
-  {
-    name: "Function Room 2",
-    price: "$150/hr",
-    capacity: "Capacity ~80",
-    features: ["Air conditioned", "Flexible layout", "Great for workshops"],
-  },
-  {
-    name: "Function Room 3",
-    price: "$150/hr",
-    capacity: "Capacity ~60",
-    features: ["White board", "Flat screen TV", "Air conditioned"],
-  },
-  {
-    name: "Lounge",
-    price: "$150/hr",
-    capacity: "16–30 people",
-    features: ["Kitchenette", "Intimate setting", "Air conditioned"],
-  },
-];
+function useHomeRooms() {
+  return useQuery({
+    queryKey: ["public", "home-rooms"],
+    queryFn: async () => {
+      const { data: rooms, error } = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+
+      const { data: media } = await supabase
+        .from("room_media")
+        .select("*")
+        .eq("is_public", true)
+        .order("is_featured", { ascending: false })
+        .order("display_order");
+
+      const paths = (media ?? []).map((m) => m.storage_path).filter((p): p is string => !!p);
+      const signed = paths.length ? await signRoomMediaPaths(paths) : {};
+
+      return {
+        rooms: (rooms ?? []) as unknown as HomeRoom[],
+        media: (media ?? []) as unknown as RoomMedia[],
+        signed,
+      };
+    },
+  });
+}
+
+type HomeRoom = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  description: string | null;
+  hourly_rate: number;
+  min_hours: number;
+  bond: number;
+  capacity: number | null;
+  hero_url: string | null;
+  video_url: string | null;
+  included_equipment: string[] | null;
+};
+
 
 function Landing() {
   return (
