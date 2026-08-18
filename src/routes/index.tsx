@@ -103,6 +103,30 @@ type HomeRoom = {
 
 
 function Landing() {
+  const roomsQ = useHomeRooms();
+  const rooms = roomsQ.data?.rooms ?? [];
+  const media = roomsQ.data?.media ?? [];
+  const signed = roomsQ.data?.signed ?? {};
+
+  const imagesByRoom = useMemo(() => {
+    const map: Record<string, RoomMedia[]> = {};
+    for (const m of media) {
+      if (m.media_type !== "image") continue;
+      (map[m.room_id] ||= []).push(m);
+    }
+    return map;
+  }, [media]);
+
+  const heroByRoom = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const r of rooms) {
+      const first = imagesByRoom[r.id]?.[0];
+      const url = r.hero_url || (first ? resolveMediaUrl(first, signed) : null);
+      if (url) map[r.id] = url;
+    }
+    return map;
+  }, [rooms, imagesByRoom, signed]);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
