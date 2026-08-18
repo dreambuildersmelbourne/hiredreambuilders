@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { ArrowRight, CheckCircle2, Clock3, MapPin, Sparkles, Users } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { supabase } from "@/integrations/supabase/client";
+import { signRoomMediaPaths, resolveMediaUrl, type RoomMedia } from "@/lib/rooms";
+import { money } from "@/lib/pricing";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,36 +49,85 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
+const fallbackFeatures: Record<string, string[]> = {
+  "main-auditorium": ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
+  "function-room-2": ["Air conditioned", "Flexible layout", "Great for workshops"],
+  "function-room-3": ["White board", "Flat screen TV", "Air conditioned"],
+  lounge: ["Kitchenette", "Intimate setting", "Air conditioned"],
+  kitchen: ["Commercial appliances", "Prep space", "Ideal with events"],
+};
 
-const rooms = [
-  {
-    name: "Main Auditorium",
-    price: "$400/hr",
-    capacity: "Seats ~250 theatre style",
-    features: ["3 large audience screens", "Quality sound system", "Theatre lighting", "Air conditioned"],
-    highlight: true,
-  },
-  {
-    name: "Function Room 2",
-    price: "$150/hr",
-    capacity: "Capacity ~80",
-    features: ["Air conditioned", "Flexible layout", "Great for workshops"],
-  },
-  {
-    name: "Function Room 3",
-    price: "$150/hr",
-    capacity: "Capacity ~60",
-    features: ["White board", "Flat screen TV", "Air conditioned"],
-  },
-  {
-    name: "Lounge",
-    price: "$150/hr",
-    capacity: "16–30 people",
-    features: ["Kitchenette", "Intimate setting", "Air conditioned"],
-  },
-];
+function useHomeRooms() {
+  return useQuery({
+    queryKey: ["public", "home-rooms"],
+    queryFn: async () => {
+      const { data: rooms, error } = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order");
+      if (error) throw error;
+
+      const { data: media } = await supabase
+        .from("room_media")
+        .select("*")
+        .eq("is_public", true)
+        .order("is_featured", { ascending: false })
+        .order("display_order");
+
+      const paths = (media ?? []).map((m) => m.storage_path).filter((p): p is string => !!p);
+      const signed = paths.length ? await signRoomMediaPaths(paths) : {};
+
+      return {
+        rooms: (rooms ?? []) as unknown as HomeRoom[],
+        media: (media ?? []) as unknown as RoomMedia[],
+        signed,
+      };
+    },
+  });
+}
+
+type HomeRoom = {
+  id: string;
+  slug: string;
+  name: string;
+  summary: string | null;
+  description: string | null;
+  hourly_rate: number;
+  min_hours: number;
+  bond: number;
+  capacity: number | null;
+  hero_url: string | null;
+  video_url: string | null;
+  included_equipment: string[] | null;
+};
+
 
 function Landing() {
+  const roomsQ = useHomeRooms();
+  const rooms = roomsQ.data?.rooms ?? [];
+  const media = roomsQ.data?.media ?? [];
+  const signed = roomsQ.data?.signed ?? {};
+
+  const imagesByRoom = useMemo(() => {
+    const map: Record<string, RoomMedia[]> = {};
+    for (const m of media) {
+      if (m.media_type !== "image") continue;
+      (map[m.room_id] ||= []).push(m);
+    }
+    return map;
+  }, [media]);
+
+  const heroByRoom = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const r of rooms) {
+      const first = imagesByRoom[r.id]?.[0];
+      const url = r.hero_url || (first ? resolveMediaUrl(first, signed) : null);
+      if (url) map[r.id] = url;
+    }
+    return map;
+  }, [rooms, imagesByRoom, signed]);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -137,46 +191,130 @@ function Landing() {
             Browse our rooms →
           </Link>
         </div>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {rooms.map((r) => (
-            <div
-              key={r.name}
-              className={`group relative flex flex-col rounded-2xl border p-6 shadow-soft transition hover:shadow-elevated ${
-                r.highlight ? "border-primary/30 bg-primary text-primary-foreground" : "border-border bg-card"
-              }`}
-            >
-              <div className="flex items-start justify-between">
-                <h3 className={`font-display text-xl font-semibold ${r.highlight ? "text-primary-foreground" : ""}`}>
-                  {r.name}
-                </h3>
-                <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                    r.highlight
-                      ? "bg-white/15 text-primary-foreground"
-                      : "bg-accent text-accent-foreground"
+        {roomsQ.isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="rounded-2xl border border-border bg-card p-6 shadow-soft">
+                <div className="aspect-[16/10] animate-pulse rounded-xl bg-muted" />
+                <div className="mt-4 h-5 w-2/3 animate-pulse rounded bg-muted" />
+                <div className="mt-2 h-4 w-1/2 animate-pulse rounded bg-muted" />
+                <div className="mt-5 space-y-2">
+                  <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                  <div className="h-3 w-full animate-pulse rounded bg-muted" />
+                  <div className="h-3 w-3/4 animate-pulse rounded bg-muted" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {rooms.map((r) => {
+              const highlight = r.slug === "main-auditorium";
+              const priceText = Number(r.hourly_rate) > 0 ? `${money(Number(r.hourly_rate))}/hr` : "Included";
+              const capacityText =
+                r.slug === "main-auditorium"
+                  ? "Standard theatre ~250 · Expanded up to ~600*"
+                  : r.capacity
+                    ? `Capacity ~${r.capacity}`
+                    : "Flexible capacity";
+              const features =
+                r.included_equipment && r.included_equipment.length > 0
+                  ? r.included_equipment.slice(0, 4)
+                  : fallbackFeatures[r.slug] ?? ["Air conditioned", "Flexible layout", "Event ready"];
+              return (
+                <div
+                  key={r.id}
+                  className={`group relative flex flex-col rounded-2xl border shadow-soft transition hover:shadow-elevated ${
+                    highlight ? "border-primary/30 bg-primary text-primary-foreground" : "border-border bg-card"
                   }`}
                 >
-                  {r.price}
-                </span>
-              </div>
-              <p className={`mt-2 text-sm ${r.highlight ? "text-white/75" : "text-muted-foreground"}`}>
-                {r.capacity}
-              </p>
-              <ul className={`mt-5 space-y-2 text-sm ${r.highlight ? "text-white/85" : "text-foreground/85"}`}>
-                {r.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <CheckCircle2
-                      className={`mt-0.5 h-4 w-4 shrink-0 ${
-                        r.highlight ? "text-brand" : "text-primary"
-                      }`}
-                    />
-                    <span>{f}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+                  <Link
+                    to="/rooms/$slug"
+                    params={{ slug: r.slug }}
+                    className="block overflow-hidden rounded-t-2xl"
+                    aria-label={`View ${r.name} details`}
+                  >
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
+                      {heroByRoom[r.id] ? (
+                        <img
+                          src={heroByRoom[r.id]}
+                          alt={r.name}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                          Photo coming soon
+                        </div>
+                      )}
+                      {highlight && (
+                        <span className="absolute left-3 top-3 rounded-full bg-white/15 px-3 py-1 text-xs font-medium text-primary-foreground backdrop-blur">
+                          Featured space
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+                  <div className="flex flex-1 flex-col p-6">
+                    <Link to="/rooms/$slug" params={{ slug: r.slug }} className="block">
+                      <div className="flex items-start justify-between">
+                        <h3
+                          className={`font-display text-xl font-semibold ${
+                            highlight ? "text-primary-foreground" : ""
+                          }`}
+                        >
+                          {r.name}
+                        </h3>
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            highlight
+                              ? "bg-white/15 text-primary-foreground"
+                              : "bg-accent text-accent-foreground"
+                          }`}
+                        >
+                          {priceText}
+                        </span>
+                      </div>
+                      <p
+                        className={`mt-2 text-sm ${
+                          highlight ? "text-white/75" : "text-muted-foreground"
+                        }`}
+                      >
+                        {capacityText}
+                      </p>
+                      <ul
+                        className={`mt-5 space-y-2 text-sm ${
+                          highlight ? "text-white/85" : "text-foreground/85"
+                        }`}
+                      >
+                        {features.map((f) => (
+                          <li key={f} className="flex items-start gap-2">
+                            <CheckCircle2
+                              className={`mt-0.5 h-4 w-4 shrink-0 ${
+                                highlight ? "text-brand" : "text-primary"
+                              }`}
+                            />
+                            <span>{f}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </Link>
+                    <div className="mt-auto pt-5">
+                      <Link
+                        to="/rooms/$slug"
+                        params={{ slug: r.slug }}
+                        className={`inline-flex items-center gap-1.5 text-sm font-medium ${
+                          highlight ? "text-white hover:text-white/90" : "text-primary hover:text-primary/90"
+                        }`}
+                      >
+                        View details <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* How it works */}
