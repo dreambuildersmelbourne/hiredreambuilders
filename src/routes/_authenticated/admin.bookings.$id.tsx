@@ -50,6 +50,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { EditBookingDialog } from "@/components/EditBookingDialog";
+
 
 export const Route = createFileRoute("/_authenticated/admin/bookings/$id")({
   component: BookingDetail,
