@@ -213,7 +213,9 @@ function BookingDetail() {
           <Button size="sm" onClick={approve} disabled={data.status === "approved"}>
             <Check className="mr-1.5 h-4 w-4" /> Approve
           </Button>
+          <EditBookingDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
           <RejectDialog bookingId={id} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
+
           <RequestInfoDialog bookingId={id} current={data.info_request_message} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
           <DiscountDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
           <OverrideDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
