@@ -216,7 +216,13 @@ function BookingDetail() {
             <Check className="mr-1.5 h-4 w-4" /> Approve
           </Button>
           <EditBookingDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
+          <Button size="sm" variant="outline" asChild>
+            <Link to="/admin/bookings/$id/document" params={{ id }}>
+              <FileText className="mr-1.5 h-4 w-4" /> Estimate / Invoice PDF
+            </Link>
+          </Button>
           <RejectDialog bookingId={id} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
+
 
           <RequestInfoDialog bookingId={id} current={data.info_request_message} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
           <DiscountDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
