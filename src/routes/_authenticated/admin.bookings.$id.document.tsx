@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { ChevronLeft, Loader2, Printer } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { money, FOH_MANAGER_RATE, FOH_MANAGER_MIN_HOURS } from "@/lib/pricing";
@@ -226,8 +226,8 @@ function BookingDocument() {
           </thead>
           <tbody>
             {sections.map((sec) => (
-              <>
-                <tr key={sec.title}>
+              <Fragment key={sec.title}>
+                <tr>
                   <td colSpan={2} className="pt-4 pb-1 text-xs font-semibold uppercase tracking-wider text-primary">
                     {sec.title}
                   </td>
@@ -241,7 +241,7 @@ function BookingDocument() {
                     <td className="py-2 text-right tabular-nums">{money(l.amount)}</td>
                   </tr>
                 ))}
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>
