@@ -217,7 +217,7 @@ function BookingDetail() {
           </Button>
           <EditBookingDialog booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
           <Button size="sm" variant="outline" asChild>
-            <Link to="/admin/bookings/$id/document" params={{ id }}>
+            <Link to="/admin/booking-document/$id" params={{ id }}>
               <FileText className="mr-1.5 h-4 w-4" /> Estimate / Invoice PDF
             </Link>
           </Button>
