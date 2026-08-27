@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { money, FOH_MANAGER_RATE, FOH_MANAGER_MIN_HOURS } from "@/lib/pricing";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/_authenticated/admin/bookings/$id/document")({
+export const Route = createFileRoute("/_authenticated/admin/booking-document/$id")({
   component: BookingDocument,
 });
 
