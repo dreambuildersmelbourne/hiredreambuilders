@@ -39,6 +39,7 @@ import { Route as AuthenticatedAdminBookingsIdRouteImport } from './routes/_auth
 import { Route as AuthenticatedAccountBookingsIdRouteImport } from './routes/_authenticated/account.bookings.$id'
 import { Route as ApiPublicCalendarTokenFeedDoticsRouteImport } from './routes/api/public/calendar.$token.feed[.]ics'
 import { Route as AuthenticatedAdminRoomsIdMediaRouteImport } from './routes/_authenticated/admin.rooms.$id.media'
+import { Route as AuthenticatedAdminBookingsIdDocumentRouteImport } from './routes/_authenticated/admin.bookings.$id.document'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -205,6 +206,12 @@ const AuthenticatedAdminRoomsIdMediaRoute =
     path: '/rooms/$id/media',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBookingsIdDocumentRoute =
+  AuthenticatedAdminBookingsIdDocumentRouteImport.update({
+    id: '/document',
+    path: '/document',
+    getParentRoute: () => AuthenticatedAdminBookingsIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -230,10 +237,11 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
-  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRouteWithChildren
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
+  '/admin/bookings/$id/document': typeof AuthenticatedAdminBookingsIdDocumentRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
@@ -258,10 +266,11 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
-  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRouteWithChildren
   '/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/admin/rooms': typeof AuthenticatedAdminRoomsIndexRoute
+  '/admin/bookings/$id/document': typeof AuthenticatedAdminBookingsIdDocumentRoute
   '/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
@@ -291,10 +300,11 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
   '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
-  '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
+  '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRouteWithChildren
   '/_authenticated/staff/events/$id': typeof AuthenticatedStaffEventsIdRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/_authenticated/admin/rooms/': typeof AuthenticatedAdminRoomsIndexRoute
+  '/_authenticated/admin/bookings/$id/document': typeof AuthenticatedAdminBookingsIdDocumentRoute
   '/_authenticated/admin/rooms/$id/media': typeof AuthenticatedAdminRoomsIdMediaRoute
   '/api/public/calendar/$token/feed.ics': typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
@@ -328,6 +338,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/lovable/email/queue/process'
     | '/admin/rooms/'
+    | '/admin/bookings/$id/document'
     | '/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
   fileRoutesByTo: FileRoutesByTo
@@ -356,6 +367,7 @@ export interface FileRouteTypes {
     | '/staff/events/$id'
     | '/lovable/email/queue/process'
     | '/admin/rooms'
+    | '/admin/bookings/$id/document'
     | '/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
   id:
@@ -388,6 +400,7 @@ export interface FileRouteTypes {
     | '/_authenticated/staff/events/$id'
     | '/lovable/email/queue/process'
     | '/_authenticated/admin/rooms/'
+    | '/_authenticated/admin/bookings/$id/document'
     | '/_authenticated/admin/rooms/$id/media'
     | '/api/public/calendar/$token/feed.ics'
   fileRoutesById: FileRoutesById
@@ -621,6 +634,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRoomsIdMediaRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/bookings/$id/document': {
+      id: '/_authenticated/admin/bookings/$id/document'
+      path: '/document'
+      fullPath: '/admin/bookings/$id/document'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsIdDocumentRouteImport
+      parentRoute: typeof AuthenticatedAdminBookingsIdRoute
+    }
   }
 }
 
@@ -637,12 +657,27 @@ const AuthenticatedAccountRouteChildren: AuthenticatedAccountRouteChildren = {
 const AuthenticatedAccountRouteWithChildren =
   AuthenticatedAccountRoute._addFileChildren(AuthenticatedAccountRouteChildren)
 
+interface AuthenticatedAdminBookingsIdRouteChildren {
+  AuthenticatedAdminBookingsIdDocumentRoute: typeof AuthenticatedAdminBookingsIdDocumentRoute
+}
+
+const AuthenticatedAdminBookingsIdRouteChildren: AuthenticatedAdminBookingsIdRouteChildren =
+  {
+    AuthenticatedAdminBookingsIdDocumentRoute:
+      AuthenticatedAdminBookingsIdDocumentRoute,
+  }
+
+const AuthenticatedAdminBookingsIdRouteWithChildren =
+  AuthenticatedAdminBookingsIdRoute._addFileChildren(
+    AuthenticatedAdminBookingsIdRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCalendarRoute: typeof AuthenticatedAdminCalendarRoute
   AuthenticatedAdminCalendarSyncRoute: typeof AuthenticatedAdminCalendarSyncRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
-  AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRoute
+  AuthenticatedAdminBookingsIdRoute: typeof AuthenticatedAdminBookingsIdRouteWithChildren
   AuthenticatedAdminRoomsIndexRoute: typeof AuthenticatedAdminRoomsIndexRoute
   AuthenticatedAdminRoomsIdMediaRoute: typeof AuthenticatedAdminRoomsIdMediaRoute
 }
@@ -652,7 +687,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCalendarSyncRoute: AuthenticatedAdminCalendarSyncRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
-  AuthenticatedAdminBookingsIdRoute: AuthenticatedAdminBookingsIdRoute,
+  AuthenticatedAdminBookingsIdRoute:
+    AuthenticatedAdminBookingsIdRouteWithChildren,
   AuthenticatedAdminRoomsIndexRoute: AuthenticatedAdminRoomsIndexRoute,
   AuthenticatedAdminRoomsIdMediaRoute: AuthenticatedAdminRoomsIdMediaRoute,
 }
