@@ -365,28 +365,24 @@ function BookingDetail() {
             </CardContent>
           </Card>
 
-          {/* Documents */}
+          {/* Documents & attachments */}
 
           <Card>
             <CardContent className="p-6">
-              <h2 className="font-display text-lg font-semibold">Customer documents</h2>
-              {(!data.documents || data.documents.length === 0) ? (
-                <p className="mt-2 text-sm text-muted-foreground">No documents uploaded yet.</p>
-              ) : (
-                <ul className="mt-3 divide-y divide-border rounded-lg border border-border">
-                  {data.documents.map((d: any) => (
-                    <li key={d.id} className="flex items-center justify-between px-4 py-2.5 text-sm">
-                      <div className="min-w-0">
-                        <div className="font-medium">{docKindLabel(d.kind)}</div>
-                        <div className="truncate text-xs text-muted-foreground">{d.original_name}</div>
-                      </div>
-                      <AdminDownload path={d.file_path} name={d.original_name} />
-                    </li>
-                  ))}
-                </ul>
-              )}
+              <h2 className="font-display text-lg font-semibold">Documents &amp; attachments</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Customer uploads plus anything you attach — liability certificates, paid invoices, receipts.
+              </p>
+              <div className="mt-4">
+                <AdminAttachments
+                  bookingId={id}
+                  documents={(data.documents ?? []) as never}
+                  onChanged={() => qc.invalidateQueries({ queryKey: ["admin", "booking", id] })}
+                />
+              </div>
             </CardContent>
           </Card>
+
 
           {/* Contract status */}
           <Card>
