@@ -477,31 +477,8 @@ function BookingDetail() {
   );
 }
 
-function docKindLabel(k: string) {
-  switch (k) {
-    case "public_liability": return "Public liability certificate";
-    case "streatrader": return "Streatrader approval";
-    case "advertising": return "Advertising material";
-    default: return "Other document";
-  }
-}
 
-function AdminDownload({ path, name }: { path: string; name?: string }) {
-  const [loading, setLoading] = useState(false);
-  async function open() {
-    setLoading(true);
-    const { data, error } = await supabase.storage.from("booking-documents").createSignedUrl(path, 60);
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    window.open(data.signedUrl, "_blank", "noopener");
-  }
-  return (
-    <Button variant="ghost" size="sm" onClick={open} disabled={loading}>
-      <Paperclip className="mr-1.5 h-3.5 w-3.5" />
-      {loading ? "…" : name ? "Download" : "Open"}
-    </Button>
-  );
-}
+
 
 function Info({ label, children }: { label: string; children: React.ReactNode }) {
   return (
