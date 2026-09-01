@@ -11,7 +11,6 @@ import {
   Loader2,
   Mail,
   MessageSquare,
-  Paperclip,
   Phone,
   ShieldAlert,
   ShieldCheck,
