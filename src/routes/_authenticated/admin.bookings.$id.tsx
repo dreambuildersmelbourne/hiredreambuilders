@@ -51,6 +51,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { EditBookingDialog } from "@/components/EditBookingDialog";
+import { AdminAttachments } from "@/components/AdminAttachments";
 
 
 export const Route = createFileRoute("/_authenticated/admin/bookings/$id")({
