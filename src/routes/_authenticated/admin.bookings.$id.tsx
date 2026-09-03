@@ -384,30 +384,12 @@ function BookingDetail() {
           </Card>
 
 
-          {/* Contract status */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center gap-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <h2 className="font-display text-lg font-semibold">Contract</h2>
-              </div>
-              {contract ? (
-                contract.signed_at ? (
-                  <p className="mt-2 text-sm">
-                    <CheckCircle2 className="mr-1 inline h-4 w-4 text-emerald-600" />
-                    Signed by <strong className="font-display italic">{contract.signed_name}</strong> on{" "}
-                    {format(new Date(contract.signed_at), "d MMM yyyy, h:mma")}
-                  </p>
-                ) : (
-                  <p className="mt-2 text-sm text-muted-foreground">Contract created but not yet signed.</p>
-                )
-              ) : (
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Contract will be generated when the customer opens their booking.
-                </p>
-              )}
-            </CardContent>
-          </Card>
+          {/* Contract */}
+          <AdminContractCard
+            booking={data}
+            contract={contract}
+            onChanged={() => qc.invalidateQueries({ queryKey: ["admin", "booking", id] })}
+          />
 
           <EventDayOpsCard booking={data} onDone={() => qc.invalidateQueries({ queryKey: ["admin"] })} />
 
