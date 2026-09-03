@@ -17,6 +17,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RoomsIndexRouteImport } from './routes/rooms.index'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
+import { Route as ContractTokenRouteImport } from './routes/contract.$token'
 import { Route as AuthenticatedStaffRouteImport } from './routes/_authenticated/staff'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
@@ -78,6 +79,11 @@ const RoomsIndexRoute = RoomsIndexRouteImport.update({
 const RoomsSlugRoute = RoomsSlugRouteImport.update({
   id: '/rooms/$slug',
   path: '/rooms/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContractTokenRoute = ContractTokenRouteImport.update({
+  id: '/contract/$token',
+  path: '/contract/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedStaffRoute = AuthenticatedStaffRouteImport.update({
@@ -224,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AuthenticatedAccountRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/staff': typeof AuthenticatedStaffRouteWithChildren
+  '/contract/$token': typeof ContractTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -253,6 +260,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/contract/$token': typeof ContractTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms': typeof RoomsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -287,6 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/account': typeof AuthenticatedAccountRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/staff': typeof AuthenticatedStaffRouteWithChildren
+  '/contract/$token': typeof ContractTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/rooms/': typeof RoomsIndexRoute
   '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/staff'
+    | '/contract/$token'
     | '/rooms/$slug'
     | '/rooms/'
     | '/.lovable/oauth/consent'
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
+    | '/contract/$token'
     | '/rooms/$slug'
     | '/rooms'
     | '/.lovable/oauth/consent'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/_authenticated/staff'
+    | '/contract/$token'
     | '/rooms/$slug'
     | '/rooms/'
     | '/.lovable/oauth/consent'
@@ -414,6 +426,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  ContractTokenRoute: typeof ContractTokenRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
   RoomsIndexRoute: typeof RoomsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
@@ -478,6 +491,13 @@ declare module '@tanstack/react-router' {
       path: '/rooms/$slug'
       fullPath: '/rooms/$slug'
       preLoaderRoute: typeof RoomsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contract/$token': {
+      id: '/contract/$token'
+      path: '/contract/$token'
+      fullPath: '/contract/$token'
+      preLoaderRoute: typeof ContractTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/staff': {
@@ -725,6 +745,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
+  ContractTokenRoute: ContractTokenRoute,
   RoomsSlugRoute: RoomsSlugRoute,
   RoomsIndexRoute: RoomsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
