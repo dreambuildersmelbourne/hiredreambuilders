@@ -429,8 +429,15 @@ export type Database = {
           created_at: string
           file_path: string | null
           id: string
+          sent_at: string | null
+          sent_to: string | null
           signed_at: string | null
+          signed_email: string | null
+          signed_method: string | null
           signed_name: string | null
+          signing_token: string | null
+          uploaded_at: string | null
+          uploaded_file_path: string | null
           version: string
         }
         Insert: {
@@ -438,8 +445,15 @@ export type Database = {
           created_at?: string
           file_path?: string | null
           id?: string
+          sent_at?: string | null
+          sent_to?: string | null
           signed_at?: string | null
+          signed_email?: string | null
+          signed_method?: string | null
           signed_name?: string | null
+          signing_token?: string | null
+          uploaded_at?: string | null
+          uploaded_file_path?: string | null
           version?: string
         }
         Update: {
@@ -447,8 +461,15 @@ export type Database = {
           created_at?: string
           file_path?: string | null
           id?: string
+          sent_at?: string | null
+          sent_to?: string | null
           signed_at?: string | null
+          signed_email?: string | null
+          signed_method?: string | null
           signed_name?: string | null
+          signing_token?: string | null
+          uploaded_at?: string | null
+          uploaded_file_path?: string | null
           version?: string
         }
         Relationships: [
