@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/dialog";
 import { EditBookingDialog } from "@/components/EditBookingDialog";
 import { AdminAttachments } from "@/components/AdminAttachments";
+import { AdminContractCard } from "@/components/AdminContractCard";
 
 
 export const Route = createFileRoute("/_authenticated/admin/bookings/$id")({
