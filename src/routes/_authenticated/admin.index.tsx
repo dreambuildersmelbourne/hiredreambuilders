@@ -15,19 +15,6 @@ export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminEnquiries,
 });
 
-const STATUS_META: Record<
-  string,
-  { label: string; className: string }
-> = {
-  enquiry: { label: "New enquiry", className: "bg-brand/15 text-brand border-brand/30" },
-  reviewing: { label: "Reviewing", className: "bg-accent text-accent-foreground border-accent" },
-  staffing_confirmed: { label: "Staffing confirmed", className: "bg-primary/10 text-primary border-primary/30" },
-  invoiced: { label: "Invoiced", className: "bg-primary/10 text-primary border-primary/30" },
-  deposit_paid: { label: "Deposit paid", className: "bg-green-100 text-green-800 border-green-300" },
-  confirmed: { label: "Confirmed", className: "bg-green-100 text-green-800 border-green-300" },
-  completed: { label: "Completed", className: "bg-muted text-muted-foreground border-border" },
-  cancelled: { label: "Cancelled", className: "bg-destructive/10 text-destructive border-destructive/30" },
-};
 
 function AdminEnquiries() {
   const { data, isLoading } = useQuery({
