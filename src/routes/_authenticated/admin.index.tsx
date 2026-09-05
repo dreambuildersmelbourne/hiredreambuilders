@@ -155,7 +155,7 @@ function BookingsList({
       </h2>
       <div className="grid gap-3">
         {items.map((b) => {
-          const s = STATUS_META[b.status] ?? { label: b.status, className: "" };
+          const s = statusMeta(b.status);
           return (
             <Link
               key={b.id}
