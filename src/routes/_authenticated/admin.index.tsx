@@ -42,11 +42,29 @@ function AdminEnquiries() {
     },
   });
 
+  const [filter, setFilter] = useState<"all" | "new" | "pending" | "approved">("all");
+
   const bookings = data ?? [];
+  const filtered =
+    filter === "all"
+      ? bookings
+      : filter === "new"
+      ? bookings.filter((b) => b.status === "enquiry")
+      : filter === "pending"
+      ? bookings.filter((b) => ["reviewing", "info_requested", "staffing_confirmed", "invoiced"].includes(b.status))
+      : bookings.filter((b) => ["approved", "deposit_paid", "confirmed"].includes(b.status));
+
   const grouped = {
-    active: bookings.filter((b) => !["completed", "cancelled"].includes(b.status)),
-    archive: bookings.filter((b) => ["completed", "cancelled"].includes(b.status)),
+    active: filtered.filter((b) => !["completed", "cancelled"].includes(b.status)),
+    archive: filtered.filter((b) => ["completed", "cancelled"].includes(b.status)),
   };
+
+  const FILTERS: { key: "all" | "new" | "pending" | "approved"; label: string; className: string }[] = [
+    { key: "all", label: "All", className: "bg-muted text-muted-foreground border-border" },
+    { key: "new", label: "New", className: statusMeta("enquiry").className },
+    { key: "pending", label: "Pending", className: statusMeta("reviewing").className },
+    { key: "approved", label: "Approved", className: statusMeta("approved").className },
+  ];
 
   return (
     <div className="space-y-8">
@@ -62,6 +80,34 @@ function AdminEnquiries() {
           <Stat label="New" value={bookings.filter((b) => b.status === "enquiry").length} highlight />
           <Stat label="Confirmed" value={bookings.filter((b) => b.status === "confirmed" || b.status === "deposit_paid").length} />
         </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {FILTERS.map((f) => {
+          const active = filter === f.key;
+          return (
+            <Button
+              key={f.key}
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setFilter(f.key)}
+              className={`rounded-full border px-4 transition ${active ? "ring-2 ring-ring ring-offset-2" : ""}`}
+            >
+              <span className={`mr-2 inline-block h-2 w-2 rounded-full ${f.className.split(" ")[0]}`} />
+              {f.label}
+              <span className="ml-2 text-xs text-muted-foreground">
+                {f.key === "all"
+                  ? bookings.length
+                  : f.key === "new"
+                  ? bookings.filter((b) => b.status === "enquiry").length
+                  : f.key === "pending"
+                  ? bookings.filter((b) => ["reviewing", "info_requested", "staffing_confirmed", "invoiced"].includes(b.status)).length
+                  : bookings.filter((b) => ["approved", "deposit_paid", "confirmed"].includes(b.status)).length}
+              </span>
+            </Button>
+          );
+        })}
       </div>
 
       {isLoading ? (
