@@ -115,7 +115,7 @@ function RunSheet() {
           <p className="text-sm text-muted-foreground">No rooms recorded.</p>
         ) : (
           <ul className="space-y-1.5 text-sm">
-            {rooms.map((r, i) => (
+            {rooms.map((r: { name: string; hours: number }, i: number) => (
               <li key={i} className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 {r.name} <span className="text-muted-foreground">· {r.hours}h</span>
@@ -140,7 +140,7 @@ function RunSheet() {
       {extras.length > 0 && (
         <Section title="Extras">
           <ul className="space-y-1.5 text-sm">
-            {extras.map((e, i) => (
+            {extras.map((e: { name: string; quantity: number }, i: number) => (
               <li key={i}>
                 {e.name}
                 {e.quantity > 1 ? ` × ${e.quantity}` : ""}
@@ -155,7 +155,7 @@ function RunSheet() {
           <p className="text-sm text-muted-foreground">No crew recorded.</p>
         ) : (
           <ul className="space-y-1.5 text-sm">
-            {crew.map((c, i) => (
+            {crew.map((c: { name: string; count: number; hours: number }, i: number) => (
               <li key={i}>
                 {c.count} × {c.name} <span className="text-muted-foreground">· {c.hours}h</span>
               </li>

@@ -10,7 +10,7 @@ const APPROVED_STATUSES = [
   "deposit_paid",
   "confirmed",
   "completed",
-];
+] as const;
 
 async function assertToken(token: string) {
   if (!token || token.length < 16) throw new Error("Not found");
@@ -33,7 +33,7 @@ export const listApprovedRunSheets = createServerFn({ method: "GET" })
       .select(
         "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, estimated_attendance, entry_type, customers(contact_name, organisation), booking_rooms(rooms(name))",
       )
-      .in("status", APPROVED_STATUSES)
+      .in("status", APPROVED_STATUSES as unknown as string[])
       .eq("entry_type", "customer")
       .order("event_date", { ascending: true });
     if (error) throw new Error("Could not load hires");
@@ -65,7 +65,7 @@ export const getRunSheet = createServerFn({ method: "GET" })
       .eq("id", data.id)
       .maybeSingle();
 
-    if (error || !b || !APPROVED_STATUSES.includes(b.status) || b.entry_type !== "customer") {
+    if (error || !b || !(APPROVED_STATUSES as readonly string[]).includes(b.status) || b.entry_type !== "customer") {
       throw new Error("Not found");
     }
 
