@@ -23,6 +23,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
+import { Route as ScheduleTokenIndexRouteImport } from './routes/schedule.$token.index'
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
@@ -113,6 +114,11 @@ const Char91DotmcpChar93ListToolsRoute =
     path: '/.mcp/list-tools',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ScheduleTokenIndexRoute = ScheduleTokenIndexRouteImport.update({
+  id: '/schedule/$token/',
+  path: '/schedule/$token/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedStaffIndexRoute = AuthenticatedStaffIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -243,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
+  '/schedule/$token/': typeof ScheduleTokenIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/booking-document/$id': typeof AuthenticatedAdminBookingDocumentIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -273,6 +280,7 @@ export interface FileRoutesByTo {
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
+  '/schedule/$token': typeof ScheduleTokenIndexRoute
   '/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/admin/booking-document/$id': typeof AuthenticatedAdminBookingDocumentIdRoute
   '/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -308,6 +316,7 @@ export interface FileRoutesById {
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
+  '/schedule/$token/': typeof ScheduleTokenIndexRoute
   '/_authenticated/account/bookings/$id': typeof AuthenticatedAccountBookingsIdRoute
   '/_authenticated/admin/booking-document/$id': typeof AuthenticatedAdminBookingDocumentIdRoute
   '/_authenticated/admin/bookings/$id': typeof AuthenticatedAdminBookingsIdRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/account/'
     | '/admin/'
     | '/staff/'
+    | '/schedule/$token/'
     | '/account/bookings/$id'
     | '/admin/booking-document/$id'
     | '/admin/bookings/$id'
@@ -373,6 +383,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/admin'
     | '/staff'
+    | '/schedule/$token'
     | '/account/bookings/$id'
     | '/admin/booking-document/$id'
     | '/admin/bookings/$id'
@@ -407,6 +418,7 @@ export interface FileRouteTypes {
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/staff/'
+    | '/schedule/$token/'
     | '/_authenticated/account/bookings/$id'
     | '/_authenticated/admin/booking-document/$id'
     | '/_authenticated/admin/bookings/$id'
@@ -431,6 +443,7 @@ export interface RootRouteChildren {
   RoomsIndexRoute: typeof RoomsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ScheduleTokenIndexRoute: typeof ScheduleTokenIndexRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
 }
@@ -533,6 +546,13 @@ declare module '@tanstack/react-router' {
       path: '/.mcp/list-tools'
       fullPath: '/.mcp/list-tools'
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule/$token/': {
+      id: '/schedule/$token/'
+      path: '/schedule/$token'
+      fullPath: '/schedule/$token/'
+      preLoaderRoute: typeof ScheduleTokenIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/staff/': {
@@ -750,6 +770,7 @@ const rootRouteChildren: RootRouteChildren = {
   RoomsIndexRoute: RoomsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ScheduleTokenIndexRoute: ScheduleTokenIndexRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
 }
