@@ -27,6 +27,7 @@ import { Route as ScheduleTokenIndexRouteImport } from './routes/schedule.$token
 import { Route as AuthenticatedStaffIndexRouteImport } from './routes/_authenticated/staff.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account.index'
+import { Route as ScheduleTokenIdRouteImport } from './routes/schedule.$token.$id'
 import { Route as AuthenticatedStaffChecklistRouteImport } from './routes/_authenticated/staff.checklist'
 import { Route as AuthenticatedStaffCalendarRouteImport } from './routes/_authenticated/staff.calendar'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
@@ -135,6 +136,11 @@ const AuthenticatedAccountIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAccountRoute,
   } as any)
+const ScheduleTokenIdRoute = ScheduleTokenIdRouteImport.update({
+  id: '/schedule/$token/$id',
+  path: '/schedule/$token/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedStaffChecklistRoute =
   AuthenticatedStaffChecklistRouteImport.update({
     id: '/checklist',
@@ -246,6 +252,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/staff/checklist': typeof AuthenticatedStaffChecklistRoute
+  '/schedule/$token/$id': typeof ScheduleTokenIdRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/staff/': typeof AuthenticatedStaffIndexRoute
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/staff/checklist': typeof AuthenticatedStaffChecklistRoute
+  '/schedule/$token/$id': typeof ScheduleTokenIdRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/staff': typeof AuthenticatedStaffIndexRoute
@@ -313,6 +321,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/staff/calendar': typeof AuthenticatedStaffCalendarRoute
   '/_authenticated/staff/checklist': typeof AuthenticatedStaffChecklistRoute
+  '/schedule/$token/$id': typeof ScheduleTokenIdRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/staff/': typeof AuthenticatedStaffIndexRoute
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/staff/calendar'
     | '/staff/checklist'
+    | '/schedule/$token/$id'
     | '/account/'
     | '/admin/'
     | '/staff/'
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/staff/calendar'
     | '/staff/checklist'
+    | '/schedule/$token/$id'
     | '/account'
     | '/admin'
     | '/staff'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/staff/calendar'
     | '/_authenticated/staff/checklist'
+    | '/schedule/$token/$id'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
     | '/_authenticated/staff/'
@@ -443,6 +455,7 @@ export interface RootRouteChildren {
   RoomsIndexRoute: typeof RoomsIndexRoute
   DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ScheduleTokenIdRoute: typeof ScheduleTokenIdRoute
   ScheduleTokenIndexRoute: typeof ScheduleTokenIndexRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   ApiPublicCalendarTokenFeedDoticsRoute: typeof ApiPublicCalendarTokenFeedDoticsRoute
@@ -575,6 +588,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/account/'
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedAccountRoute
+    }
+    '/schedule/$token/$id': {
+      id: '/schedule/$token/$id'
+      path: '/schedule/$token/$id'
+      fullPath: '/schedule/$token/$id'
+      preLoaderRoute: typeof ScheduleTokenIdRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/staff/checklist': {
       id: '/_authenticated/staff/checklist'
@@ -770,6 +790,7 @@ const rootRouteChildren: RootRouteChildren = {
   RoomsIndexRoute: RoomsIndexRoute,
   DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ScheduleTokenIdRoute: ScheduleTokenIdRoute,
   ScheduleTokenIndexRoute: ScheduleTokenIndexRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   ApiPublicCalendarTokenFeedDoticsRoute: ApiPublicCalendarTokenFeedDoticsRoute,
