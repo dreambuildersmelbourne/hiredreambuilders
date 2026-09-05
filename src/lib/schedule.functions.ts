@@ -33,7 +33,7 @@ export const listApprovedRunSheets = createServerFn({ method: "GET" })
       .select(
         "id, reference, event_name, event_date, bump_in_time, bump_out_time, status, estimated_attendance, entry_type, customers(contact_name, organisation), booking_rooms(rooms(name))",
       )
-      .in("status", APPROVED_STATUSES as unknown as string[])
+      .in("status", [...APPROVED_STATUSES])
       .eq("entry_type", "customer")
       .order("event_date", { ascending: true });
     if (error) throw new Error("Could not load hires");
