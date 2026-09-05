@@ -55,6 +55,11 @@ function CalendarSyncPage() {
     return `${window.location.origin}/api/public/calendar/${settings.feed_token}/feed.ics`;
   }, [settings?.feed_token]);
 
+  const runSheetUrl = useMemo(() => {
+    if (!settings?.feed_token || typeof window === "undefined") return "";
+    return `${window.location.origin}/schedule/${settings.feed_token}`;
+  }, [settings?.feed_token]);
+
   const webcalUrl = useMemo(
     () => (feedUrl ? feedUrl.replace(/^https?:/, "webcal:") : ""),
     [feedUrl],
