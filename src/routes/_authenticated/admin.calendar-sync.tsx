@@ -189,6 +189,32 @@ function CalendarSyncPage() {
         </CardContent>
       </Card>
 
+      {/* Run sheet links */}
+      <Card>
+        <CardContent className="space-y-4 p-6">
+          <div>
+            <h2 className="font-display text-lg font-semibold">Run sheet links (no login needed)</h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              A private page listing every approved and confirmed hire, with a shareable link per
+              hire showing contact details, spaces, crew and the event day checklist. Paste those
+              links into your Google Calendar event descriptions. Uses the same private token — it
+              is not indexed and is revoked when you regenerate above.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Input value={runSheetUrl} readOnly className="flex-1 font-mono text-xs" />
+            <Button variant="outline" onClick={() => copy(runSheetUrl)}>
+              <Copy className="mr-1.5 h-4 w-4" /> Copy
+            </Button>
+            <Button variant="outline" asChild>
+              <a href={runSheetUrl} target="_blank" rel="noreferrer">
+                <ExternalLink className="mr-1.5 h-4 w-4" /> Open
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* What's included */}
       <Card>
         <CardContent className="space-y-4 p-6">
