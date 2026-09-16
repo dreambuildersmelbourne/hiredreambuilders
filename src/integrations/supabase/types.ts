@@ -1119,6 +1119,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_staff_roles: {
+        Row: {
+          created_at: string
+          id: string
+          staff_role_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          staff_role_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          staff_role_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_staff_roles_staff_role_id_fkey"
+            columns: ["staff_role_id"]
+            isOneToOne: false
+            referencedRelation: "staff_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
