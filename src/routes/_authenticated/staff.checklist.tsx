@@ -72,22 +72,36 @@ function StaffChecklistPage() {
     queryFn: async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id ?? null;
-      if (!uid) return { uid, assignments: [] as Assignment[] };
-      const { data, error } = await supabase
-        .from("staff_assignments")
-        .select(
-          "id, booking_id, staff_role_id, staff_roles(name, slug), bookings(id, reference, event_name, event_date, bump_in_time, bump_out_time, status, booking_rooms(rooms(name)))",
-        )
-        .eq("user_id", uid);
+      if (!uid) return { uid, assignments: [] as Assignment[], jobTypeIds: [] as string[], jobTypeNames: [] as string[] };
+      const [{ data, error }, jobRes] = await Promise.all([
+        supabase
+          .from("staff_assignments")
+          .select(
+            "id, booking_id, staff_role_id, staff_roles(name, slug), bookings(id, reference, event_name, event_date, bump_in_time, bump_out_time, status, booking_rooms(rooms(name)))",
+          )
+          .eq("user_id", uid),
+        supabase.from("user_staff_roles").select("staff_role_id, staff_roles(name)").eq("user_id", uid),
+      ]);
       if (error) throw error;
       const rows = ((data ?? []) as unknown as Assignment[]).filter((a) => a.bookings);
       rows.sort((a, b) => (a.bookings!.event_date < b.bookings!.event_date ? -1 : 1));
-      return { uid, assignments: rows };
+      const jobRows = (jobRes.data ?? []) as unknown as Array<{
+        staff_role_id: string;
+        staff_roles: { name: string | null } | null;
+      }>;
+      return {
+        uid,
+        assignments: rows,
+        jobTypeIds: jobRows.map((j) => j.staff_role_id),
+        jobTypeNames: jobRows.map((j) => j.staff_roles?.name ?? "").filter(Boolean),
+      };
     },
   });
 
   const assignments = meQ.data?.assignments ?? [];
   const uid = meQ.data?.uid ?? null;
+  const jobTypeIds = meQ.data?.jobTypeIds ?? [];
+  const jobTypeNames = meQ.data?.jobTypeNames ?? [];
 
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = assignments.filter((a) => a.bookings!.event_date >= today);
