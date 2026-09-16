@@ -38,8 +38,21 @@ function AdminTeamPage() {
   async function run(action: "grant" | "revoke", targetEmail: string, targetRole: "staff" | "admin") {
     setBusy(true);
     try {
-      await updateRole({ data: { email: targetEmail, role: targetRole, action } });
-      toast.success(action === "grant" ? `${targetRole} access given to ${targetEmail}` : `Removed ${targetRole} access`);
+      const res: any = await updateRole({
+        data: {
+          email: targetEmail,
+          role: targetRole,
+          action,
+          redirectTo: typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined,
+        },
+      });
+      toast.success(
+        action === "revoke"
+          ? `Removed ${targetRole} access`
+          : res?.invited
+            ? `Invite emailed to ${targetEmail}`
+            : `${targetRole} access given to ${targetEmail}`,
+      );
       setEmail("");
       await teamQ.refetch();
     } catch (e: any) {
@@ -66,12 +79,13 @@ function AdminTeamPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <UserPlus className="h-4 w-4 text-primary" /> Give access
+            <UserPlus className="h-4 w-4 text-primary" /> Invite someone
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">
-            They need to create an account first (sign up at the sign-in page), then enter their email here.
+            Enter their email and we'll send them an invite to set a password. If they already have an account, they
+            simply get the access straight away.
           </p>
           <div className="grid gap-2 sm:grid-cols-[1fr_160px_auto]">
             <Input
@@ -90,7 +104,7 @@ function AdminTeamPage() {
               </SelectContent>
             </Select>
             <Button disabled={busy || !email.trim()} onClick={() => run("grant", email.trim(), role)}>
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Give access"}
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send invite"}
             </Button>
           </div>
         </CardContent>
@@ -121,6 +135,11 @@ function AdminTeamPage() {
                           {r}
                         </Badge>
                       ))}
+                      {m.pending ? (
+                        <Badge variant="outline" className="border-amber-300 bg-amber-50 text-amber-900">
+                          Invite pending
+                        </Badge>
+                      ) : null}
                     </div>
                   </div>
                   <div className="flex gap-2">
