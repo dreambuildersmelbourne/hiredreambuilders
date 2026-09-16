@@ -214,7 +214,19 @@ function AdminTeamPage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex flex-wrap gap-2">
+                    <Button size="sm" variant="secondary" disabled={busy} onClick={() => resetPassword(m.user_id, m.email)}>
+                      Set password
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-destructive"
+                      disabled={busy}
+                      onClick={() => deleteAccount(m.user_id, m.email)}
+                    >
+                      Delete
+                    </Button>
                     {(["staff", "admin"] as const).map((r) =>
                       m.roles.includes(r) ? (
                         <Button
