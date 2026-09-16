@@ -52,6 +52,7 @@ import {
 import { EditBookingDialog } from "@/components/EditBookingDialog";
 import { AdminAttachments } from "@/components/AdminAttachments";
 import { AdminContractCard } from "@/components/AdminContractCard";
+import { StaffAssignmentPicker } from "@/components/StaffAssignmentPicker";
 
 
 export const Route = createFileRoute("/_authenticated/admin/bookings/$id")({
