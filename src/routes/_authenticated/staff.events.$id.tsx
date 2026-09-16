@@ -19,10 +19,15 @@ function StaffEventPage() {
       if (!uid) return { staffRoleId: null as string | null, isAdmin: false };
       const [rolesRes, assignRes] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", uid),
-        supabase.from("staff_assignments").select("staff_role_id").eq("user_id", uid).eq("booking_id", id).maybeSingle(),
+        supabase.from("staff_assignments").select("staff_role_id").eq("user_id", uid).eq("booking_id", id),
       ]);
       const isAdmin = (rolesRes.data ?? []).some((r) => r.role === "admin");
-      return { staffRoleId: assignRes.data?.staff_role_id ?? null, isAdmin };
+      const rows = assignRes.data ?? [];
+      return {
+        staffRoleId: rows.find((r) => r.staff_role_id)?.staff_role_id ?? null,
+        isAssigned: rows.length > 0,
+        isAdmin,
+      };
     },
   });
 
@@ -36,7 +41,7 @@ function StaffEventPage() {
 
   const isAdmin = meQ.data?.isAdmin ?? false;
   const staffRoleId = meQ.data?.staffRoleId ?? null;
-  const isAssigned = staffRoleId !== null;
+  const isAssigned = meQ.data?.isAssigned ?? false;
 
   if (!isAdmin && !isAssigned) {
     return (
