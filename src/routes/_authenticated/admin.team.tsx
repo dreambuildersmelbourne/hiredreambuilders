@@ -35,6 +35,78 @@ function AdminTeamPage() {
   const [role, setRole] = useState<"staff" | "admin">("staff");
   const [busy, setBusy] = useState(false);
 
+  const createMember = useServerFn(createTeamMember);
+  const changePassword = useServerFn(setTeamPassword);
+  const removeMember = useServerFn(deleteTeamMember);
+
+  const [newEmail, setNewEmail] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newRole, setNewRole] = useState<"staff" | "admin">("staff");
+
+  function makePassword() {
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+    let out = "";
+    const rand = new Uint32Array(12);
+    crypto.getRandomValues(rand);
+    for (const n of rand) out += chars[n % chars.length];
+    setNewPassword(out);
+  }
+
+  async function createAccount() {
+    setBusy(true);
+    try {
+      const res: any = await createMember({
+        data: {
+          email: newEmail.trim(),
+          password: newPassword,
+          displayName: newName.trim() || undefined,
+          role: newRole,
+        },
+      });
+      toast.success(res?.existed ? "Account updated with the new password" : `Account created for ${newEmail.trim()}`);
+      setNewEmail("");
+      setNewName("");
+      await teamQ.refetch();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not create the account");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resetPassword(userId: string, memberEmail: string) {
+    const pw = window.prompt(`New password for ${memberEmail} (at least 8 characters)`);
+    if (!pw) return;
+    if (pw.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+    setBusy(true);
+    try {
+      await changePassword({ data: { userId, password: pw } });
+      toast.success("Password updated — share it with them securely");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not update the password");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function deleteAccount(userId: string, memberEmail: string) {
+    if (!window.confirm(`Delete the account for ${memberEmail}? This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      await removeMember({ data: { userId } });
+      toast.success("Account deleted");
+      await teamQ.refetch();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not delete the account");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function run(action: "grant" | "revoke", targetEmail: string, targetRole: "staff" | "admin") {
     setBusy(true);
     try {
