@@ -58,9 +58,20 @@ export const setTeamRole = createServerFn({ method: "POST" })
     const email = data.email.toLowerCase();
     const { data: list, error: listErr } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (listErr) throw new Error("Could not look up accounts");
-    const user = (list?.users ?? []).find((u) => (u.email ?? "").toLowerCase() === email);
+    let user = (list?.users ?? []).find((u) => (u.email ?? "").toLowerCase() === email) ?? null;
+    let invited = false;
+
     if (!user) {
-      throw new Error("No account found with that email. Ask them to sign up first, then try again.");
+      if (data.action !== "grant") throw new Error("No account found with that email.");
+      const { data: inv, error: invErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(email, {
+        redirectTo: data.redirectTo || undefined,
+        data: { invited_role: data.role },
+      });
+      if (invErr || !inv?.user) {
+        throw new Error(invErr?.message ?? "Could not send the invite email");
+      }
+      user = inv.user;
+      invited = true;
     }
 
     if (data.action === "grant") {
