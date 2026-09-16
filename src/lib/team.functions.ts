@@ -79,6 +79,58 @@ export const listTeam = createServerFn({ method: "GET" })
     })) as TeamMember[];
   });
 
+export type StaffMemberOption = {
+  user_id: string;
+  email: string;
+  name: string;
+  roles: string[];
+  job_type_ids: string[];
+};
+
+/** Accounts that can work events (staff or admin), for assignment pickers. */
+export const listStaffMembers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    // staff and admins may both view the roster
+    const { data: myRoles, error: myErr } = await context.supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", context.userId);
+    if (myErr) throw new Error("Unable to verify access");
+    const mine = (myRoles ?? []).map((r: any) => r.role as string);
+    if (!mine.includes("admin") && !mine.includes("staff")) throw new Error("Forbidden");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: roleRows } = await supabaseAdmin.from("user_roles").select("user_id, role");
+    const rolesByUser = new Map<string, string[]>();
+    for (const r of roleRows ?? []) {
+      rolesByUser.set(r.user_id, [...(rolesByUser.get(r.user_id) ?? []), r.role as string]);
+    }
+
+    const { data: jobRows } = await supabaseAdmin.from("user_staff_roles").select("user_id, staff_role_id");
+    const jobsByUser = new Map<string, string[]>();
+    for (const j of jobRows ?? []) {
+      jobsByUser.set(j.user_id, [...(jobsByUser.get(j.user_id) ?? []), j.staff_role_id as string]);
+    }
+
+    const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    if (error) throw new Error("Could not load accounts");
+
+    return (list?.users ?? [])
+      .filter((u) => (rolesByUser.get(u.id) ?? []).length > 0)
+      .map((u) => ({
+        user_id: u.id,
+        email: u.email ?? "(no email)",
+        name:
+          (u.user_metadata?.full_name as string | undefined)?.trim() ||
+          (u.email ?? "Team member").split("@")[0],
+        roles: rolesByUser.get(u.id) ?? [],
+        job_type_ids: jobsByUser.get(u.id) ?? [],
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name)) as StaffMemberOption[];
+  });
+
 export const setTeamRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) =>
