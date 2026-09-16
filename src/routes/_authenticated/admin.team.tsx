@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Loader2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 
-import { listTeam, setTeamRole } from "@/lib/team.functions";
+import { listTeam, setTeamRole, createTeamMember, setTeamPassword, deleteTeamMember } from "@/lib/team.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
