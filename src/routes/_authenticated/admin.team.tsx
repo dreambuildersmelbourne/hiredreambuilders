@@ -34,10 +34,26 @@ function AdminTeamPage() {
   const fetchTeam = useServerFn(listTeam);
   const updateRole = useServerFn(setTeamRole);
 
+  const saveJobTypes = useServerFn(setStaffJobTypes);
+
   const teamQ = useQuery({
     queryKey: ["admin", "team"],
     queryFn: () => fetchTeam(),
   });
+
+  const jobTypesQ = useQuery({
+    queryKey: ["admin", "staffRoleTypes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("staff_roles")
+        .select("id, name, slug")
+        .eq("active", true)
+        .order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
 
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"staff" | "admin">("staff");
