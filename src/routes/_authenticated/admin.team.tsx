@@ -185,6 +185,55 @@ function AdminTeamPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
+            <KeyRound className="h-4 w-4 text-primary" /> Create an account yourself
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Set the email and password for them and hand it over directly — no invite email needed. If the email already
+            has an account, this simply resets their password.
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Input
+              placeholder="person@example.com"
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+            />
+            <Input placeholder="Name (optional)" value={newName} onChange={(e) => setNewName(e.target.value)} />
+          </div>
+          <div className="grid gap-2 sm:grid-cols-[1fr_auto_160px_auto]">
+            <Input
+              placeholder="Password (min 8 characters)"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <Button type="button" variant="outline" onClick={makePassword}>
+              Generate
+            </Button>
+            <Select value={newRole} onValueChange={(v) => setNewRole(v as "staff" | "admin")}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="staff">Staff</SelectItem>
+                <SelectItem value="admin">Admin</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button disabled={busy || !newEmail.trim() || newPassword.length < 8} onClick={createAccount}>
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "Create account"}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Existing passwords can never be shown — they're stored scrambled for safety. Copy the password above before
+            you leave the page, or set a new one any time.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
             <ShieldCheck className="h-4 w-4 text-primary" /> People with access
           </CardTitle>
         </CardHeader>
