@@ -763,31 +763,7 @@ function EventDayOpsCard({ booking, onDone }: { booking: any; onDone: () => void
           <div className="mb-2 flex items-center justify-between">
             <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Staff assignments</div>
           </div>
-          {assignQ.isLoading ? (
-            <div className="text-sm text-muted-foreground">Loading…</div>
-          ) : (assignQ.data ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground">No staff assigned yet.</p>
-          ) : (
-            <ul className="divide-y divide-border rounded-lg border border-border">
-              {assignQ.data!.map((a: any) => (
-                <li key={a.id} className="flex items-center justify-between px-3 py-2 text-sm">
-                  <div>
-                    <div className="font-medium">{a.name ?? "Unnamed"}</div>
-                    <div className="text-xs text-muted-foreground">{a.staff_roles?.name ?? "No role"}</div>
-                  </div>
-                  <RemoveAssignmentBtn
-                    id={a.id}
-                    onDone={() => qc.invalidateQueries({ queryKey: ["admin", "assignments", booking.id] })}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
-          <AddAssignmentForm
-            bookingId={booking.id}
-            roles={rolesQ.data ?? []}
-            onDone={() => qc.invalidateQueries({ queryKey: ["admin", "assignments", booking.id] })}
-          />
+          <StaffAssignmentPicker bookingId={booking.id} />
         </div>
       </CardContent>
     </Card>
