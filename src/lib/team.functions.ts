@@ -96,3 +96,79 @@ export const setTeamRole = createServerFn({ method: "POST" })
 
     return { ok: true, email, invited };
   });
+
+export const createTeamMember = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        email: z.string().trim().email().max(255),
+        password: z.string().min(8).max(72),
+        displayName: z.string().trim().max(120).optional(),
+        role: z.enum(["admin", "staff"]),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const email = data.email.toLowerCase();
+    const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    const existing = (list?.users ?? []).find((u) => (u.email ?? "").toLowerCase() === email);
+
+    let userId: string;
+    if (existing) {
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(existing.id, {
+        password: data.password,
+        email_confirm: true,
+      });
+      if (error) throw new Error(error.message);
+      userId = existing.id;
+    } else {
+      const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: data.displayName ? { full_name: data.displayName } : undefined,
+      });
+      if (error || !created?.user) throw new Error(error?.message ?? "Could not create the account");
+      userId = created.user.id;
+    }
+
+    const { error: roleErr } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ user_id: userId, role: data.role }, { onConflict: "user_id,role" });
+    if (roleErr) throw new Error(roleErr.message);
+
+    return { ok: true, email, existed: Boolean(existing) };
+  });
+
+export const setTeamPassword = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({ userId: z.string().uuid(), password: z.string().min(8).max(72) }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(data.userId, {
+      password: data.password,
+      email_confirm: true,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteTeamMember = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ userId: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    if (data.userId === context.userId) throw new Error("You cannot delete your own account.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin.from("user_roles").delete().eq("user_id", data.userId);
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
