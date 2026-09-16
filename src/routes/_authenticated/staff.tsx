@@ -47,7 +47,7 @@ function StaffLayout() {
     navigate({ to: "/auth" });
   }
 
-  if (roleQ.isLoading || roleQ.data === false) {
+  if (roleQ.isLoading || !allowed) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking access…
@@ -92,12 +92,14 @@ function StaffLayout() {
                   </Link>
                 );
               })}
-              <Link
-                to="/admin"
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <Church className="mr-1 inline h-3.5 w-3.5" /> Admin
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <Church className="mr-1 inline h-3.5 w-3.5" /> Admin
+                </Link>
+              )}
             </nav>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="mr-1.5 h-4 w-4" /> Sign out
