@@ -131,6 +131,19 @@ function AdminTeamPage() {
     }
   }
 
+  async function toggleJobType(userId: string, current: string[], roleId: string) {
+    const next = current.includes(roleId) ? current.filter((r) => r !== roleId) : [...current, roleId];
+    setBusy(true);
+    try {
+      await saveJobTypes({ data: { userId, staffRoleIds: next } });
+      await teamQ.refetch();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not update their job types");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function run(action: "grant" | "revoke", targetEmail: string, targetRole: "staff" | "admin") {
     setBusy(true);
     try {
