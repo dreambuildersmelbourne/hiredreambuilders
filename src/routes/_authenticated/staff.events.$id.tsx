@@ -41,7 +41,7 @@ function StaffEventPage() {
 
   const isAdmin = meQ.data?.isAdmin ?? false;
   const staffRoleId = meQ.data?.staffRoleId ?? null;
-  const isAssigned = staffRoleId !== null;
+  const isAssigned = meQ.data?.isAssigned ?? false;
 
   if (!isAdmin && !isAssigned) {
     return (
