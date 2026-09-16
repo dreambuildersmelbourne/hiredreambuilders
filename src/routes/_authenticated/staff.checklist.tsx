@@ -250,7 +250,11 @@ function StaffChecklistPage() {
             {currentAssignment && (
               <>
                 <div className="flex items-center gap-1.5 sm:justify-end">
-                  <User className="h-3.5 w-3.5" /> Your role: <span className="font-medium text-foreground">{currentAssignment.staff_roles?.name ?? "Unassigned role"}</span>
+                  <User className="h-3.5 w-3.5" /> Your role:{" "}
+                  <span className="font-medium text-foreground">
+                    {currentAssignment.staff_roles?.name ??
+                      (jobTypeNames.length > 0 ? jobTypeNames.join(", ") : "Unassigned role")}
+                  </span>
                 </div>
                 <div className="mt-1 flex items-center gap-1.5 sm:justify-end">
                   <CheckCircle2 className="h-3.5 w-3.5" /> {totals.done}/{totals.total} complete ({totals.pct}%)
