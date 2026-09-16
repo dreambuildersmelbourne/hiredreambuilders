@@ -22,29 +22,32 @@ function StaffLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const roleQ = useQuery({
-    queryKey: ["me", "isStaff"],
+    queryKey: ["me", "roles"],
     queryFn: async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
-      if (!uid) return false;
+      if (!uid) return [] as string[];
       const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      if (error) return false;
-      return (data ?? []).some((r) => r.role === "admin" || r.role === "staff");
+      if (error) return [] as string[];
+      return (data ?? []).map((r) => r.role as string);
     },
   });
 
+  const isAdmin = (roleQ.data ?? []).includes("admin");
+  const allowed = isAdmin || (roleQ.data ?? []).includes("staff");
+
   useEffect(() => {
-    if (roleQ.isSuccess && roleQ.data === false) {
+    if (roleQ.isSuccess && !allowed) {
       navigate({ to: "/account", replace: true });
     }
-  }, [roleQ.isSuccess, roleQ.data, navigate]);
+  }, [roleQ.isSuccess, allowed, navigate]);
 
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/auth" });
   }
 
-  if (roleQ.isLoading || roleQ.data === false) {
+  if (roleQ.isLoading || !allowed) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking access…
@@ -89,12 +92,14 @@ function StaffLayout() {
                   </Link>
                 );
               })}
-              <Link
-                to="/admin"
-                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <Church className="mr-1 inline h-3.5 w-3.5" /> Admin
-              </Link>
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  <Church className="mr-1 inline h-3.5 w-3.5" /> Admin
+                </Link>
+              )}
             </nav>
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut className="mr-1.5 h-4 w-4" /> Sign out

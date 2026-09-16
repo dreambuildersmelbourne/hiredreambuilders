@@ -41,10 +41,11 @@ export const Route = createFileRoute("/auth")({
 });
 
 
-async function landingFor(userId: string): Promise<"/admin" | "/account"> {
+async function landingFor(userId: string): Promise<"/admin" | "/staff" | "/account"> {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   const roles = (data ?? []).map((r) => r.role);
-  if (roles.includes("admin") || roles.includes("staff")) return "/admin";
+  if (roles.includes("admin")) return "/admin";
+  if (roles.includes("staff")) return "/staff";
   return "/account";
 }
 
