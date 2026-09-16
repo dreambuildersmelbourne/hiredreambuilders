@@ -60,7 +60,7 @@ function AdminLayout() {
     { to: "/staff", label: "Staff portal", exact: false },
   ];
 
-  if (roleQ.isLoading || roleQ.data === false) {
+  if (roleQ.isLoading || !isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center text-muted-foreground">
         <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Checking access…

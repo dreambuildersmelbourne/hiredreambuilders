@@ -22,22 +22,25 @@ function StaffLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const roleQ = useQuery({
-    queryKey: ["me", "isStaff"],
+    queryKey: ["me", "roles"],
     queryFn: async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
-      if (!uid) return false;
+      if (!uid) return [] as string[];
       const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-      if (error) return false;
-      return (data ?? []).some((r) => r.role === "admin" || r.role === "staff");
+      if (error) return [] as string[];
+      return (data ?? []).map((r) => r.role as string);
     },
   });
 
+  const isAdmin = (roleQ.data ?? []).includes("admin");
+  const allowed = isAdmin || (roleQ.data ?? []).includes("staff");
+
   useEffect(() => {
-    if (roleQ.isSuccess && roleQ.data === false) {
+    if (roleQ.isSuccess && !allowed) {
       navigate({ to: "/account", replace: true });
     }
-  }, [roleQ.isSuccess, roleQ.data, navigate]);
+  }, [roleQ.isSuccess, allowed, navigate]);
 
   async function signOut() {
     await supabase.auth.signOut();
