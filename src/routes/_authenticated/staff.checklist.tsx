@@ -327,7 +327,7 @@ function StaffChecklistPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {grouped[cat].map((item) => (
-                  <ChecklistRow key={item.id} item={item} myRoleId={myRoleId} onToggle={toggle} />
+                  <ChecklistRow key={item.id} item={item} myRoleIds={myRoleIds} onToggle={toggle} />
                 ))}
               </CardContent>
             </Card>
@@ -356,15 +356,16 @@ function Header() {
 
 function ChecklistRow({
   item,
-  myRoleId,
+  myRoleIds,
   onToggle,
 }: {
   item: ChecklistItem;
-  myRoleId: string | null;
+  myRoleIds: string[];
   onToggle: (item: ChecklistItem, checked: boolean) => void;
 }) {
-  // A staff member can complete items that either target their role or are shared (no role).
-  const canComplete = !myRoleId ? false : item.staff_role_id === null || item.staff_role_id === myRoleId;
+  // A staff member can complete items that either target one of their roles or are shared (no role).
+  const canComplete =
+    myRoleIds.length === 0 ? false : item.staff_role_id === null || myRoleIds.includes(item.staff_role_id);
   const roleLabel = item.staff_roles?.name;
 
   return (
