@@ -133,16 +133,21 @@ function StaffChecklistPage() {
   });
 
   const items = checklistQ.data ?? [];
-  const myRoleId = currentAssignment?.staff_role_id ?? null;
+  // Role(s) that scope the checklist: the role rostered for this event, otherwise
+  // the job types an admin has assigned to this person.
+  const myRoleIds = useMemo(
+    () => (currentAssignment?.staff_role_id ? [currentAssignment.staff_role_id] : jobTypeIds),
+    [currentAssignment, jobTypeIds],
+  );
 
   const scoped = useMemo(() => {
     let list = items;
-    if (!showAllRoles && myRoleId) {
-      list = list.filter((i) => i.staff_role_id === myRoleId || i.staff_role_id === null);
+    if (!showAllRoles && myRoleIds.length > 0) {
+      list = list.filter((i) => i.staff_role_id === null || myRoleIds.includes(i.staff_role_id));
     }
     if (hideCompleted) list = list.filter((i) => !i.completed);
     return list;
-  }, [items, showAllRoles, myRoleId, hideCompleted]);
+  }, [items, showAllRoles, myRoleIds, hideCompleted]);
 
   const grouped = useMemo(() => {
     const g: Record<string, ChecklistItem[]> = {};
