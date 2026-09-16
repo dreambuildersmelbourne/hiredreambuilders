@@ -683,27 +683,6 @@ function EventDayOpsCard({ booking, onDone }: { booking: any; onDone: () => void
   const qc = useQueryClient();
   const [secSaving, setSecSaving] = useState(false);
 
-  const rolesQ = useQuery({
-    queryKey: ["staff_roles"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("staff_roles").select("id, name, slug").eq("active", true).order("name");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
-
-  const assignQ = useQuery({
-    queryKey: ["admin", "assignments", booking.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("staff_assignments")
-        .select("*, staff_roles(name)")
-        .eq("booking_id", booking.id)
-        .order("created_at");
-      if (error) throw error;
-      return data ?? [];
-    },
-  });
 
   async function toggleSecurity(v: boolean) {
     setSecSaving(true);
