@@ -59,6 +59,12 @@ export const listTeam = createServerFn({ method: "GET" })
       rolesByUser.set(r.user_id, [...(rolesByUser.get(r.user_id) ?? []), r.role as string]);
     }
 
+    const { data: jobRows } = await supabaseAdmin.from("user_staff_roles").select("user_id, staff_role_id");
+    const jobsByUser = new Map<string, string[]>();
+    for (const j of jobRows ?? []) {
+      jobsByUser.set(j.user_id, [...(jobsByUser.get(j.user_id) ?? []), j.staff_role_id as string]);
+    }
+
     const { data: list, error } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
     if (error) throw new Error("Could not load accounts");
 
@@ -69,6 +75,7 @@ export const listTeam = createServerFn({ method: "GET" })
       last_sign_in_at: u.last_sign_in_at ?? null,
       pending: !u.last_sign_in_at,
       roles: rolesByUser.get(u.id) ?? [],
+      job_type_ids: jobsByUser.get(u.id) ?? [],
     })) as TeamMember[];
   });
 
