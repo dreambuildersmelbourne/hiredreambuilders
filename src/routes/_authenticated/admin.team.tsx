@@ -299,6 +299,34 @@ function AdminTeamPage() {
                         </Badge>
                       ) : null}
                     </div>
+                    <div className="mt-2">
+                      <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Job types (controls which checklist items they see)
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-1.5">
+                        {(jobTypesQ.data ?? []).map((jt: any) => {
+                          const on = m.job_type_ids.includes(jt.id);
+                          return (
+                            <button
+                              key={jt.id}
+                              type="button"
+                              disabled={busy}
+                              onClick={() => toggleJobType(m.user_id, m.job_type_ids, jt.id)}
+                              className={`rounded-full border px-2.5 py-1 text-xs transition ${
+                                on
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-border text-muted-foreground hover:bg-muted"
+                              }`}
+                            >
+                              {jt.name}
+                            </button>
+                          );
+                        })}
+                        {(jobTypesQ.data ?? []).length === 0 && (
+                          <span className="text-xs text-muted-foreground">No job types set up yet.</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button size="sm" variant="secondary" disabled={busy} onClick={() => resetPassword(m.user_id, m.email)}>
