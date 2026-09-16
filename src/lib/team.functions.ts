@@ -13,6 +13,7 @@ export type TeamMember = {
   email: string;
   created_at: string;
   last_sign_in_at: string | null;
+  pending: boolean;
   roles: string[];
 };
 
@@ -36,6 +37,7 @@ export const listTeam = createServerFn({ method: "GET" })
       email: u.email ?? "(no email)",
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at ?? null,
+      pending: !u.last_sign_in_at,
       roles: rolesByUser.get(u.id) ?? [],
     })) as TeamMember[];
   });
@@ -48,6 +50,7 @@ export const setTeamRole = createServerFn({ method: "POST" })
         email: z.string().trim().email().max(255),
         role: z.enum(["admin", "staff"]),
         action: z.enum(["grant", "revoke"]),
+        redirectTo: z.string().trim().max(500).optional(),
       })
       .parse(input),
   )
@@ -91,5 +94,5 @@ export const setTeamRole = createServerFn({ method: "POST" })
       if (error) throw new Error(error.message);
     }
 
-    return { ok: true, email };
+    return { ok: true, email, invited };
   });
