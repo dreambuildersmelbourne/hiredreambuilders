@@ -15,7 +15,37 @@ export type TeamMember = {
   last_sign_in_at: string | null;
   pending: boolean;
   roles: string[];
+  job_type_ids: string[];
 };
+
+export const setStaffJobTypes = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z
+      .object({
+        userId: z.string().uuid(),
+        staffRoleIds: z.array(z.string().uuid()).max(30),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { error: delErr } = await supabaseAdmin
+      .from("user_staff_roles")
+      .delete()
+      .eq("user_id", data.userId);
+    if (delErr) throw new Error(delErr.message);
+
+    if (data.staffRoleIds.length > 0) {
+      const { error } = await supabaseAdmin
+        .from("user_staff_roles")
+        .insert(data.staffRoleIds.map((id) => ({ user_id: data.userId, staff_role_id: id })));
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true };
+  });
 
 export const listTeam = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
