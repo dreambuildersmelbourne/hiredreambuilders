@@ -72,22 +72,36 @@ function StaffChecklistPage() {
     queryFn: async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id ?? null;
-      if (!uid) return { uid, assignments: [] as Assignment[] };
-      const { data, error } = await supabase
-        .from("staff_assignments")
-        .select(
-          "id, booking_id, staff_role_id, staff_roles(name, slug), bookings(id, reference, event_name, event_date, bump_in_time, bump_out_time, status, booking_rooms(rooms(name)))",
-        )
-        .eq("user_id", uid);
+      if (!uid) return { uid, assignments: [] as Assignment[], jobTypeIds: [] as string[], jobTypeNames: [] as string[] };
+      const [{ data, error }, jobRes] = await Promise.all([
+        supabase
+          .from("staff_assignments")
+          .select(
+            "id, booking_id, staff_role_id, staff_roles(name, slug), bookings(id, reference, event_name, event_date, bump_in_time, bump_out_time, status, booking_rooms(rooms(name)))",
+          )
+          .eq("user_id", uid),
+        supabase.from("user_staff_roles").select("staff_role_id, staff_roles(name)").eq("user_id", uid),
+      ]);
       if (error) throw error;
       const rows = ((data ?? []) as unknown as Assignment[]).filter((a) => a.bookings);
       rows.sort((a, b) => (a.bookings!.event_date < b.bookings!.event_date ? -1 : 1));
-      return { uid, assignments: rows };
+      const jobRows = (jobRes.data ?? []) as unknown as Array<{
+        staff_role_id: string;
+        staff_roles: { name: string | null } | null;
+      }>;
+      return {
+        uid,
+        assignments: rows,
+        jobTypeIds: jobRows.map((j) => j.staff_role_id),
+        jobTypeNames: jobRows.map((j) => j.staff_roles?.name ?? "").filter(Boolean),
+      };
     },
   });
 
   const assignments = meQ.data?.assignments ?? [];
   const uid = meQ.data?.uid ?? null;
+  const jobTypeIds = meQ.data?.jobTypeIds ?? [];
+  const jobTypeNames = meQ.data?.jobTypeNames ?? [];
 
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = assignments.filter((a) => a.bookings!.event_date >= today);
@@ -119,16 +133,21 @@ function StaffChecklistPage() {
   });
 
   const items = checklistQ.data ?? [];
-  const myRoleId = currentAssignment?.staff_role_id ?? null;
+  // Role(s) that scope the checklist: the role rostered for this event, otherwise
+  // the job types an admin has assigned to this person.
+  const myRoleIds = useMemo(
+    () => (currentAssignment?.staff_role_id ? [currentAssignment.staff_role_id] : jobTypeIds),
+    [currentAssignment, jobTypeIds],
+  );
 
   const scoped = useMemo(() => {
     let list = items;
-    if (!showAllRoles && myRoleId) {
-      list = list.filter((i) => i.staff_role_id === myRoleId || i.staff_role_id === null);
+    if (!showAllRoles && myRoleIds.length > 0) {
+      list = list.filter((i) => i.staff_role_id === null || myRoleIds.includes(i.staff_role_id));
     }
     if (hideCompleted) list = list.filter((i) => !i.completed);
     return list;
-  }, [items, showAllRoles, myRoleId, hideCompleted]);
+  }, [items, showAllRoles, myRoleIds, hideCompleted]);
 
   const grouped = useMemo(() => {
     const g: Record<string, ChecklistItem[]> = {};
@@ -231,7 +250,11 @@ function StaffChecklistPage() {
             {currentAssignment && (
               <>
                 <div className="flex items-center gap-1.5 sm:justify-end">
-                  <User className="h-3.5 w-3.5" /> Your role: <span className="font-medium text-foreground">{currentAssignment.staff_roles?.name ?? "Unassigned role"}</span>
+                  <User className="h-3.5 w-3.5" /> Your role:{" "}
+                  <span className="font-medium text-foreground">
+                    {currentAssignment.staff_roles?.name ??
+                      (jobTypeNames.length > 0 ? jobTypeNames.join(", ") : "Unassigned role")}
+                  </span>
                 </div>
                 <div className="mt-1 flex items-center gap-1.5 sm:justify-end">
                   <CheckCircle2 className="h-3.5 w-3.5" /> {totals.done}/{totals.total} complete ({totals.pct}%)
@@ -308,7 +331,7 @@ function StaffChecklistPage() {
               </CardHeader>
               <CardContent className="space-y-2">
                 {grouped[cat].map((item) => (
-                  <ChecklistRow key={item.id} item={item} myRoleId={myRoleId} onToggle={toggle} />
+                  <ChecklistRow key={item.id} item={item} myRoleIds={myRoleIds} onToggle={toggle} />
                 ))}
               </CardContent>
             </Card>
@@ -337,15 +360,16 @@ function Header() {
 
 function ChecklistRow({
   item,
-  myRoleId,
+  myRoleIds,
   onToggle,
 }: {
   item: ChecklistItem;
-  myRoleId: string | null;
+  myRoleIds: string[];
   onToggle: (item: ChecklistItem, checked: boolean) => void;
 }) {
-  // A staff member can complete items that either target their role or are shared (no role).
-  const canComplete = !myRoleId ? false : item.staff_role_id === null || item.staff_role_id === myRoleId;
+  // A staff member can complete items that either target one of their roles or are shared (no role).
+  const canComplete =
+    myRoleIds.length === 0 ? false : item.staff_role_id === null || myRoleIds.includes(item.staff_role_id);
   const roleLabel = item.staff_roles?.name;
 
   return (

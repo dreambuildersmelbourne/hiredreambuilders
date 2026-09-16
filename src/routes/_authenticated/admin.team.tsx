@@ -5,7 +5,15 @@ import { useState } from "react";
 import { KeyRound, Loader2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import { toast } from "sonner";
 
-import { listTeam, setTeamRole, createTeamMember, setTeamPassword, deleteTeamMember } from "@/lib/team.functions";
+import {
+  listTeam,
+  setTeamRole,
+  createTeamMember,
+  setTeamPassword,
+  deleteTeamMember,
+  setStaffJobTypes,
+} from "@/lib/team.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -26,10 +34,26 @@ function AdminTeamPage() {
   const fetchTeam = useServerFn(listTeam);
   const updateRole = useServerFn(setTeamRole);
 
+  const saveJobTypes = useServerFn(setStaffJobTypes);
+
   const teamQ = useQuery({
     queryKey: ["admin", "team"],
     queryFn: () => fetchTeam(),
   });
+
+  const jobTypesQ = useQuery({
+    queryKey: ["admin", "staffRoleTypes"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("staff_roles")
+        .select("id, name, slug")
+        .eq("active", true)
+        .order("name");
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
 
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"staff" | "admin">("staff");
@@ -102,6 +126,19 @@ function AdminTeamPage() {
       await teamQ.refetch();
     } catch (e: any) {
       toast.error(e?.message ?? "Could not delete the account");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function toggleJobType(userId: string, current: string[], roleId: string) {
+    const next = current.includes(roleId) ? current.filter((r) => r !== roleId) : [...current, roleId];
+    setBusy(true);
+    try {
+      await saveJobTypes({ data: { userId, staffRoleIds: next } });
+      await teamQ.refetch();
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not update their job types");
     } finally {
       setBusy(false);
     }
@@ -261,6 +298,34 @@ function AdminTeamPage() {
                           Invite pending
                         </Badge>
                       ) : null}
+                    </div>
+                    <div className="mt-2">
+                      <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                        Job types (controls which checklist items they see)
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-1.5">
+                        {(jobTypesQ.data ?? []).map((jt: any) => {
+                          const on = m.job_type_ids.includes(jt.id);
+                          return (
+                            <button
+                              key={jt.id}
+                              type="button"
+                              disabled={busy}
+                              onClick={() => toggleJobType(m.user_id, m.job_type_ids, jt.id)}
+                              className={`rounded-full border px-2.5 py-1 text-xs transition ${
+                                on
+                                  ? "border-primary bg-primary text-primary-foreground"
+                                  : "border-border text-muted-foreground hover:bg-muted"
+                              }`}
+                            >
+                              {jt.name}
+                            </button>
+                          );
+                        })}
+                        {(jobTypesQ.data ?? []).length === 0 && (
+                          <span className="text-xs text-muted-foreground">No job types set up yet.</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2">
