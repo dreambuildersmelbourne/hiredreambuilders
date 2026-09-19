@@ -23,7 +23,8 @@ function AdminEnquiries() {
       const { data, error } = await supabase
         .from("bookings")
         .select("id, reference, event_name, event_date, bump_in_time, bump_out_time, status, total_amount, estimated_attendance, created_at, customers(contact_name, organisation, email, phone)")
-        .order("created_at", { ascending: false });
+        .order("event_date", { ascending: true })
+        .order("bump_in_time", { ascending: true });
       if (error) throw error;
       return data;
     },
