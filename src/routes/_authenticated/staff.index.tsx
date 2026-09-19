@@ -23,7 +23,13 @@ function StaffIndex() {
         .eq("user_id", uid)
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return (data ?? []).filter((a) => a.bookings);
+      return (data ?? [])
+        .filter((a) => a.bookings)
+        .sort((a, b) =>
+          (a.bookings!.event_date + (a.bookings!.bump_in_time ?? "")).localeCompare(
+            b.bookings!.event_date + (b.bookings!.bump_in_time ?? "")
+          )
+        );
     },
   });
 
