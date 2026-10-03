@@ -42,9 +42,15 @@ function AdminEnquiries() {
       ? bookings.filter((b) => ["reviewing", "info_requested", "staffing_confirmed", "invoiced"].includes(b.status))
       : bookings.filter((b) => ["approved", "deposit_paid", "confirmed"].includes(b.status));
 
+  const today = new Date().toISOString().slice(0, 10);
+  const isPast = (b: any) => b.event_date < today || ["completed", "cancelled"].includes(b.status);
   const grouped = {
-    active: filtered.filter((b) => !["completed", "cancelled"].includes(b.status)),
-    archive: filtered.filter((b) => ["completed", "cancelled"].includes(b.status)),
+    active: filtered.filter((b) => !isPast(b)),
+    past: filtered
+      .filter(isPast)
+      .sort((a, b) =>
+        (b.event_date + (b.bump_in_time ?? "")).localeCompare(a.event_date + (a.bump_in_time ?? ""))
+      ),
   };
 
   const FILTERS: { key: "all" | "new" | "pending" | "approved"; label: string; className: string }[] = [
@@ -116,9 +122,9 @@ function AdminEnquiries() {
         </Card>
       ) : (
         <>
-          <BookingsList title="Active" items={grouped.active} />
-          {grouped.archive.length > 0 && (
-            <BookingsList title="Completed & cancelled" items={grouped.archive} muted />
+          <BookingsList title="Upcoming" items={grouped.active} />
+          {grouped.past.length > 0 && (
+            <BookingsList title="Past" items={grouped.past} muted />
           )}
         </>
       )}

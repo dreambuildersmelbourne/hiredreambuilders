@@ -42,8 +42,15 @@ function StaffIndex() {
   }
 
   const rows = q.data ?? [];
-  const upcoming = rows.filter((a) => a.bookings!.event_date >= new Date().toISOString().slice(0, 10));
-  const past = rows.filter((a) => a.bookings!.event_date < new Date().toISOString().slice(0, 10));
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = rows.filter((a) => a.bookings!.event_date >= today);
+  const past = rows
+    .filter((a) => a.bookings!.event_date < today)
+    .sort((a, b) =>
+      (b.bookings!.event_date + (b.bookings!.bump_in_time ?? "")).localeCompare(
+        a.bookings!.event_date + (a.bookings!.bump_in_time ?? "")
+      )
+    );
 
   return (
     <div className="space-y-8">
