@@ -38,7 +38,7 @@ export function EventDayView({ bookingId, staffRoleId, isAdmin = false }: Props)
       const { data, error } = await supabase
         .from("bookings")
         .select(
-          "*, customers(contact_name, organisation, email, phone), booking_rooms(*, rooms(name)), documents(*), payments(*), staff_assignments(*, staff_roles(name, slug))",
+          "id, reference, event_name, event_date, bump_in_time, bump_out_time, hours, estimated_attendance, kitchen, sound_system, av_screens, theatre_lighting, remove_drums, extra_staff_count, security_required, seating_changes, food_served, notes, deposit_paid_at, balance_paid_at, bond_release_notes, bond_released_at, customers(contact_name, organisation, email, phone), booking_rooms(id, hours, rooms(name)), documents(id, original_name, kind), staff_assignments(id, name, staff_roles(name, slug))",
         )
         .eq("id", bookingId)
         .single();
@@ -120,7 +120,6 @@ export function EventDayView({ bookingId, staffRoleId, isAdmin = false }: Props)
 
   const b: any = bookingQ.data;
   const c = b.customers;
-  const paidTotal = (b.payments ?? []).reduce((s: number, p: any) => s + Number(p.amount ?? 0), 0);
   const depositPaid = !!b.deposit_paid_at;
   const balancePaid = !!b.balance_paid_at;
 
@@ -303,16 +302,8 @@ export function EventDayView({ bookingId, staffRoleId, isAdmin = false }: Props)
             <CardContent className="p-6">
               <h2 className="font-display text-lg font-semibold">Payments</h2>
               <div className="mt-3 space-y-2 text-sm">
-                <StatusRow label="Deposit" done={depositPaid} amount={Number(b.deposit_amount)} />
-                <StatusRow
-                  label="Balance"
-                  done={balancePaid}
-                  amount={Number(b.total_amount) - Number(b.deposit_amount) - Number(b.discount_amount ?? 0)}
-                />
-                <div className="mt-2 flex justify-between border-t border-border pt-2 text-xs uppercase tracking-wider text-muted-foreground">
-                  <span>Received</span>
-                  <span>${paidTotal.toFixed(2)}</span>
-                </div>
+                <StatusRow label="Deposit" done={depositPaid} />
+                <StatusRow label="Balance" done={balancePaid} />
               </div>
             </CardContent>
           </Card>
@@ -370,13 +361,13 @@ function Info({ label, children }: { label: string; children: React.ReactNode })
   );
 }
 
-function StatusRow({ label, done, amount }: { label: string; done: boolean; amount: number }) {
+function StatusRow({ label, done }: { label: string; done: boolean }) {
   return (
     <div className="flex items-center justify-between">
       <span>{label}</span>
       <span className={`inline-flex items-center gap-1.5 text-sm ${done ? "text-emerald-600" : "text-muted-foreground"}`}>
         {done && <CheckCircle2 className="h-3.5 w-3.5" />}
-        ${amount.toFixed(2)} {done ? "paid" : "due"}
+        {done ? "Paid" : "Due"}
       </span>
     </div>
   );
@@ -520,7 +511,7 @@ function BondReleaseSection({ booking, onDone }: { booking: any; onDone: () => v
           <ShieldCheck className="h-4 w-4" /> Bond release
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Confirm all bond-release checklist items are complete and no outstanding damage before releasing ${Number(booking.bond ?? 0).toFixed(2)}.
+          Confirm all bond-release checklist items are complete and no outstanding damage before releasing the bond.
         </p>
         <div className="mt-3">
           <Label>Notes</Label>
