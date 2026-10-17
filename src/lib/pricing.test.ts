@@ -1,4 +1,5 @@
-import { describe, expect, test } from "bun:test";
+import { describe, test } from "node:test";
+import { strict as assert } from "node:assert";
 import { calculateQuote, type QuoteInput, type Room } from "./pricing";
 
 const room: Room = {
@@ -14,17 +15,17 @@ const input: QuoteInput = {
 
 describe("mandatory food-service charges", () => {
   test("serving food adds the $250 kitchen fee even when kitchen is not selected", () => {
-    expect(calculateQuote(input, [room]).extrasSubtotal).toBe(250);
+    assert.equal(calculateQuote(input, [room]).extrasSubtotal, 250);
   });
   test("serving food adds extra cleaning even when basic cleaning is included", () => {
-    expect(calculateQuote(input, [room]).cleaningSubtotal).toBe(320);
+    assert.equal(calculateQuote(input, [room]).cleaningSubtotal, 320);
   });
   test("selecting kitchen and food does not double-charge the kitchen", () => {
-    expect(calculateQuote({ ...input, kitchen: true }, [room]).extrasSubtotal).toBe(250);
+    assert.equal(calculateQuote({ ...input, kitchen: true }, [room]).extrasSubtotal, 250);
   });
   test("no food and no kitchen adds neither charge", () => {
     const quote = calculateQuote({ ...input, foodServed: false }, [room]);
-    expect(quote.extrasSubtotal).toBe(0);
-    expect(quote.cleaningSubtotal).toBe(0);
+    assert.equal(quote.extrasSubtotal, 0);
+    assert.equal(quote.cleaningSubtotal, 0);
   });
 });
