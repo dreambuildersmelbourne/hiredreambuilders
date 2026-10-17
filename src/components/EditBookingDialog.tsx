@@ -28,7 +28,7 @@ const TECH_FIELDS = [
   { key: "theatre_lighting", label: "Theatre lighting" },
   { key: "seating_changes", label: "Expanded seating" },
   { key: "remove_drums", label: "Remove drums" },
-  { key: "food_served", label: "Food served" },
+  { key: "food_served", label: "Food served (kitchen + extra cleaning required)" },
 ] as const;
 
 type TechKey = (typeof TECH_FIELDS)[number]["key"];
@@ -106,7 +106,7 @@ export function EditBookingDialog({ booking, onDone }: { booking: any; onDone: (
 
   const allRooms = roomsQ.data ?? [];
   const kitchenRoom = allRooms.find((r) => r.slug === "kitchen");
-  const kitchenSelected = kitchenRoom ? roomIds.includes(kitchenRoom.id) : false;
+  const kitchenSelected = tech.food_served || (kitchenRoom ? roomIds.includes(kitchenRoom.id) : false);
 
   const preview = useMemo(() => {
     if (isInternal || allRooms.length === 0) return null;
@@ -220,7 +220,8 @@ export function EditBookingDialog({ booking, onDone }: { booking: any; onDone: (
               {allRooms.map((r) => (
                 <label key={r.id} className="flex cursor-pointer items-center gap-2 rounded-md border border-border p-2 text-sm">
                   <Checkbox
-                    checked={roomIds.includes(r.id)}
+                    checked={roomIds.includes(r.id) || (!isInternal && tech.food_served && r.slug === "kitchen")}
+                    disabled={!isInternal && tech.food_served && r.slug === "kitchen"}
                     onCheckedChange={(c) =>
                       setRoomIds((prev) => (c ? [...prev, r.id] : prev.filter((id) => id !== r.id)))
                     }

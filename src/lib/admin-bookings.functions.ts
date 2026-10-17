@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import { calculateQuote } from "@/lib/pricing";
+import { calculateQuote, KITCHEN_FEE } from "@/lib/pricing";
 
 const adminEntrySchema = z.object({
   entry_type: z.enum(["booking", "internal"]),
@@ -53,7 +53,10 @@ export const createAdminBooking = createServerFn({ method: "POST" })
     const allRooms = rooms ?? [];
     const nonKitchenRooms = allRooms.filter((r) => r.slug !== "kitchen");
     const kitchenRoom = allRooms.find((r) => r.slug === "kitchen");
-    const selectedRoomIds = data.selected_room_ids;
+    data.kitchen = data.kitchen || data.food_served;
+    const selectedRoomIds = data.entry_type !== "internal" && data.kitchen && kitchenRoom
+      ? [...new Set([...data.selected_room_ids, kitchenRoom.id])]
+      : data.selected_room_ids;
     const isInternal = data.entry_type === "internal";
 
     const quote = isInternal
@@ -146,7 +149,7 @@ export const createAdminBooking = createServerFn({ method: "POST" })
           return { booking_id: booking.id, room_id: r.id, hours, line_total: 0 };
         }
         if (kitchenRoom && r.id === kitchenRoom.id) {
-          return { booking_id: booking.id, room_id: r.id, hours: 0, line_total: 250 };
+          return { booking_id: booking.id, room_id: r.id, hours: 0, line_total: KITCHEN_FEE };
         }
         const chargeHours = Math.max(quote?.hours ?? 0, r.min_hours);
         return {
@@ -201,7 +204,10 @@ export const updateAdminBooking = createServerFn({ method: "POST" })
     const allRooms = rooms ?? [];
     const nonKitchenRooms = allRooms.filter((r) => r.slug !== "kitchen");
     const kitchenRoom = allRooms.find((r) => r.slug === "kitchen");
-    const selectedRoomIds = data.selected_room_ids;
+    data.kitchen = data.kitchen || data.food_served;
+    const selectedRoomIds = data.entry_type !== "internal" && data.kitchen && kitchenRoom
+      ? [...new Set([...data.selected_room_ids, kitchenRoom.id])]
+      : data.selected_room_ids;
     const isInternal = data.entry_type === "internal";
 
     const quote = isInternal
@@ -291,7 +297,7 @@ export const updateAdminBooking = createServerFn({ method: "POST" })
           return { booking_id: data.booking_id, room_id: r.id, hours, line_total: 0 };
         }
         if (kitchenRoom && r.id === kitchenRoom.id) {
-          return { booking_id: data.booking_id, room_id: r.id, hours: 0, line_total: 250 };
+          return { booking_id: data.booking_id, room_id: r.id, hours: 0, line_total: KITCHEN_FEE };
         }
         const chargeHours = Math.max(quote?.hours ?? 0, r.min_hours);
         return {

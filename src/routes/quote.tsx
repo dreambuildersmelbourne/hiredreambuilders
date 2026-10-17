@@ -47,6 +47,7 @@ export const Route = createFileRoute("/quote")({
       },
       { property: "og:url", content: "https://hiredreambuilders.lovable.app/quote" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://hiredreambuilders.lovable.app/quote" }],
   }),
@@ -375,7 +376,8 @@ function QuotePage() {
               <div className="mt-4 flex items-start gap-3 rounded-lg border border-dashed border-border p-3">
                 <Checkbox
                   id="kitchen"
-                  checked={form.kitchen}
+                  checked={form.kitchen || form.foodServed}
+                  disabled={form.foodServed}
                   onCheckedChange={(v) => setForm({ ...form, kitchen: !!v })}
                 />
                 <div>
@@ -383,7 +385,7 @@ function QuotePage() {
                     Kitchen (+$250 flat fee)
                   </Label>
                   <p className="text-xs text-muted-foreground">
-                    Only chargeable when hired alongside another room.
+                    Required whenever food is served; otherwise optional alongside another room.
                   </p>
                 </div>
               </div>
@@ -402,7 +404,7 @@ function QuotePage() {
               )}
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
-                  ["foodServed", "Food will be served (adds cleaning fee)"],
+                  ["foodServed", "Food will be served (adds kitchen and extra cleaning fees)"],
                   ["soundSystem", "Sound system needed (adds required Sound Operator)"],
                   ["avScreens", "AV screens needed (adds required Multimedia / AV Operator)"],
                   ["theatreLighting", "Theatre lighting needed (adds required Lighting Operator)"],

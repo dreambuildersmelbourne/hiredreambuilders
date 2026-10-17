@@ -28,7 +28,7 @@ const TECH_FIELDS = [
   { key: "theatre_lighting", label: "Theatre lighting" },
   { key: "seating_changes", label: "Seating changes" },
   { key: "remove_drums", label: "Remove drums" },
-  { key: "food_served", label: "Food served" },
+  { key: "food_served", label: "Food served (kitchen + extra cleaning required)" },
 ] as const;
 
 type TechKey = (typeof TECH_FIELDS)[number]["key"];
@@ -226,7 +226,8 @@ export function AdminBookingDialog({ onCreated }: { onCreated?: (id: string) => 
                   className="flex cursor-pointer items-center gap-2 rounded-md border border-border p-2 text-sm"
                 >
                   <Checkbox
-                    checked={roomIds.includes(r.id)}
+                    checked={roomIds.includes(r.id) || (mode === "booking" && tech.food_served && r.slug === "kitchen")}
+                    disabled={mode === "booking" && tech.food_served && r.slug === "kitchen"}
                     onCheckedChange={(c) =>
                       setRoomIds((prev) => (c ? [...prev, r.id] : prev.filter((id) => id !== r.id)))
                     }
