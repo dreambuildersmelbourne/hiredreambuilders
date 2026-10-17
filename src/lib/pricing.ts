@@ -65,7 +65,7 @@ const EXTRA_CLEANING_RATE = 80;
 const EXTRA_CLEANING_MIN_HOURS = 3;
 const SEATING_FEE = 200;
 const DRUMS_FEE = 200;
-const KITCHEN_FEE = 250;
+export const KITCHEN_FEE = 250;
 
 export function hoursBetween(from: string, to: string): number {
   if (!from || !to) return 0;
@@ -106,7 +106,7 @@ export function calculateQuote(
   // Kitchen: only chargeable when hired alongside another room
   const extrasLines: QuoteLine[] = [];
   let extrasSubtotal = 0;
-  if (input.kitchen && selectedRooms.length > 0) {
+  if ((input.kitchen || input.foodServed) && selectedRooms.length > 0) {
     extrasLines.push({ label: "Kitchen", amount: KITCHEN_FEE, detail: "Flat fee" });
     extrasSubtotal += KITCHEN_FEE;
   }
@@ -119,7 +119,7 @@ export function calculateQuote(
     extrasSubtotal += DRUMS_FEE;
   }
 
-  // Cleaning — only when food is served AND cleaning isn't already included
+  // Additional food-service cleaning is mandatory even if basic cleaning is included.
   const cleaningLines: QuoteLine[] = [];
   let cleaningSubtotal = 0;
   if (input.foodServed) {

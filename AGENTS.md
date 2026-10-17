@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep mandatory hire charges in the shared pricing engine and normalize matching booking requirements before saving, so estimates and operational records stay consistent.

@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { calculateQuote, money } from "@/lib/pricing";
+import { calculateQuote, KITCHEN_FEE, money } from "@/lib/pricing";
 import type { NewEnquiryEmailProps } from "@/lib/email-templates/new-enquiry";
 
 const quoteInputSchema = z.object({
@@ -29,6 +29,7 @@ const quoteInputSchema = z.object({
 export const submitQuote = createServerFn({ method: "POST" })
   .validator((input) => quoteInputSchema.parse(input))
   .handler(async ({ data }) => {
+    data.kitchen = data.kitchen || data.food_served;
     const [{ supabaseAdmin }, { render }, { sendLovableEmail }] = await Promise.all([
       import("@/integrations/supabase/client.server"),
       import("@react-email/render"),
@@ -140,7 +141,7 @@ export const submitQuote = createServerFn({ method: "POST" })
         booking_id: booking.id,
         room_id: kitchenRoom.id,
         hours: 0,
-        line_total: 250,
+        line_total: KITCHEN_FEE,
       });
     }
     if (bookingRoomsRows.length > 0) {
