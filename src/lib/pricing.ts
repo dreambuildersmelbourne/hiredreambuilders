@@ -67,6 +67,9 @@ const SEATING_FEE = 200;
 const DRUMS_FEE = 200;
 export const KITCHEN_FEE = 250;
 
+// Bond is a fixed refundable amount for all hires.
+export const BOND_AMOUNT = 2000;
+
 export function hoursBetween(from: string, to: string): number {
   if (!from || !to) return 0;
   const [fh, fm] = from.split(":").map(Number);
