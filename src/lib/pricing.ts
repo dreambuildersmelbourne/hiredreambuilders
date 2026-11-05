@@ -102,7 +102,7 @@ export function calculateQuote(
       detail: `${chargeHours}h × $${r.hourly_rate}/hr (min ${r.min_hours}h)`,
     });
     roomSubtotal += line;
-    bond = Math.max(bond, r.bond);
+    if (selectedRooms.length > 0) bond = BOND_AMOUNT;
     if (r.includes_cleaning) anyIncludesCleaning = true;
   }
 
