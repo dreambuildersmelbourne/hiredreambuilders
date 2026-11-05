@@ -29,3 +29,16 @@ describe("mandatory food-service charges", () => {
     assert.equal(quote.cleaningSubtotal, 0);
   });
 });
+
+describe("bond", () => {
+  test("bond is a flat $2,000 regardless of the room's stored bond", () => {
+    assert.equal(calculateQuote(input, [room]).bond, 2000);
+  });
+  test("bond is $2,000 even with several rooms of differing bonds", () => {
+    const other: Room = { ...room, id: "hall", name: "Hall", bond: 1200 };
+    assert.equal(calculateQuote(input, [room, other]).bond, 2000);
+  });
+  test("bond is $0 when no rooms are selected", () => {
+    assert.equal(calculateQuote(input, [room]).bond > 0 && calculateQuote({ ...input, selectedRoomIds: [] }, [room]).bond, 0);
+  });
+});
