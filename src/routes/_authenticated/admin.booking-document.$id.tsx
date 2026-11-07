@@ -33,7 +33,7 @@ function BookingDocument() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("bookings")
-        .select("*, customers(*), booking_rooms(*, rooms(name, hourly_rate)), payments(*)")
+        .select("*, customers(*), booking_rooms(*, rooms(name, slug, hourly_rate)), payments(*)")
         .eq("id", id)
         .single();
       if (error) throw error;
@@ -53,7 +53,11 @@ function BookingDocument() {
   const c = b.customers;
   const hours = Number(b.hours ?? 0);
 
-  const roomLines: Line[] = (b.booking_rooms ?? []).map((br: any) => ({
+  // Kitchen is billed as the flat "Commercial kitchen access" extra, never as room hire —
+  // exclude its room row so it isn't double-counted (which produced a negative adjustment line).
+  const roomLines: Line[] = (b.booking_rooms ?? [])
+    .filter((br: any) => br.rooms?.slug !== "kitchen")
+    .map((br: any) => ({
     label: br.rooms?.name ?? "Room hire",
     detail:
       br.rooms?.hourly_rate && Number(br.hours) > 0
