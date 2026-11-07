@@ -10,6 +10,16 @@ import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/booking-document/$id")({
   component: BookingDocument,
+  head: () => ({
+    meta: [
+      { title: "Hire Estimate & Invoice | Dreambuilders Church" },
+      { name: "description", content: "Review your Dreambuilders Church hire estimate, invoice and confirmation payment requirements." },
+      { property: "og:title", content: "Hire Estimate & Invoice | Dreambuilders Church" },
+      { property: "og:description", content: "Hire line items and the deposit plus bond required to confirm your dates." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
 });
 
 const VENUE = {
@@ -265,7 +275,8 @@ function BookingDocument() {
               <span className="font-medium">Total payable</span>
               <span className="font-display text-2xl font-semibold text-primary tabular-nums">{money(total)}</span>
             </div>
-            <TotalRow label="20% deposit to secure date" value={money(deposit)} muted />
+            <TotalRow label="20% deposit" value={money(deposit)} muted />
+            <TotalRow label="Deposit + bond to confirm dates" value={money(deposit + bond)} bold />
             {paid > 0 && <TotalRow label="Payments received" value={`- ${money(paid)}`} />}
             <TotalRow label="Balance outstanding" value={money(balance)} bold />
           </div>
@@ -282,11 +293,12 @@ function BookingDocument() {
           {mode === "estimate" ? (
             <p>
               This estimate is valid for 30 days and is not a confirmed booking. The date is secured once the
-              agreement is signed, required documents are supplied and the 20% deposit is received.
+              agreement is signed, required documents are supplied and both the 20% deposit and refundable bond are paid.
             </p>
           ) : (
             <p>
-              Please pay the balance by the due date agreed with the hire coordinator. The bond is refundable after the
+              The 20% deposit plus refundable bond must be paid to confirm your dates. Please pay the remaining balance
+              by the due date agreed with the hire coordinator. The bond is refundable after the
               event subject to inspection. Reference {b.reference} on all payments.
             </p>
           )}
