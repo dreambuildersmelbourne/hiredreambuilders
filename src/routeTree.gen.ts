@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CancellationPolicyRouteImport } from './routes/cancellation-policy'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -57,6 +58,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CancellationPolicyRoute = CancellationPolicyRouteImport.update({
+  id: '/cancellation-policy',
+  path: '/cancellation-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -240,6 +246,7 @@ const ApiPublicCalendarTokenFeedDoticsRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -276,6 +283,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -311,6 +319,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/cancellation-policy': typeof CancellationPolicyRoute
   '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -349,6 +358,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cancellation-policy'
     | '/mcp'
     | '/quote'
     | '/sitemap.xml'
@@ -385,6 +395,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/cancellation-policy'
     | '/mcp'
     | '/quote'
     | '/sitemap.xml'
@@ -419,6 +430,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/cancellation-policy'
     | '/mcp'
     | '/quote'
     | '/sitemap.xml'
@@ -457,6 +469,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  CancellationPolicyRoute: typeof CancellationPolicyRoute
   McpRoute: typeof McpRoute
   QuoteRoute: typeof QuoteRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -494,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cancellation-policy': {
+      id: '/cancellation-policy'
+      path: '/cancellation-policy'
+      fullPath: '/cancellation-policy'
+      preLoaderRoute: typeof CancellationPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -800,6 +820,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  CancellationPolicyRoute: CancellationPolicyRoute,
   McpRoute: McpRoute,
   QuoteRoute: QuoteRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
