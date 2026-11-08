@@ -27,6 +27,12 @@ export function SiteHeader() {
             Rooms
           </Link>
           <Link
+            to="/cancellation-policy"
+            className="hidden rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:inline-flex"
+          >
+            Policies
+          </Link>
+          <Link
             to="/quote"
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
